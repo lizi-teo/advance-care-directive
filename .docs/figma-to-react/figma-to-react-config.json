@@ -1,0 +1,14 @@
+{
+    "ui-library": [
+        "shadcn/ui"
+    ],
+    "form-library": [
+        "React Hook Form"
+    ],
+    "css-framework": [
+        "Tailwind CSS"
+    ],
+    "validation-library": [
+        "zod"
+    ]
+}
