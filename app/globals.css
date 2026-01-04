@@ -1,209 +1,258 @@
 @import "tailwindcss";
 
-@theme {
-  /* Replace Tailwind's default colors with your design system */
+@layer base {
+  :root {
+    /* Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 260 48% 49%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 79 55% 76%;
+    --secondary-foreground: 259 20% 22%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 337 65% 84%;
+    --destructive-foreground: 259 20% 22%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 267 49% 49%;
+    --ghost: 0 0% 100% / 0;
+    --ghost-foreground: 259 20% 22%;
+    --ghost-hover: 261 89% 85%;
+    --ghost-focus: 259 20% 22%;
+    --outline-border: 259 51% 47%;
+    --outline-foreground: 259 20% 22%;
+    --outline-hover: 0 0% 93%;
+    --outline-focus: 259 51% 47%;
+    --background-2: 271 24% 18%;
 
-  --color-white: #FFFFFF;
-  --color-black: #000000;
+    /* Typography - Font Families */
+    --font-family-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    --font-family-display: var(--font-family-display);
 
-  /* Purple scale */
-  --color-purple-950: #30227A;
-  --color-purple-900: #342294;
-  --color-purple-800: #472EA3;
-  --color-purple-700: #5434AB;
-  --color-purple-600: #613BB4;
-  --color-purple-500: #6A41BB;
-  --color-purple-400: #825BC6;
-  --color-purple-300: #9879D1;
-  --color-purple-200: #B69FDE;
-  --color-purple-100: #D3C6EC;
-  --color-purple-50: #EEE8F7;
+    /* Typography - Font Sizes */
+    --text-xs: 0.75rem; /* 12px */
+    --text-sm: 0.875rem; /* 14px */
+    --text-base: 1rem; /* 16px */
+    --text-lg: 1.125rem; /* 18px */
+    --text-h1-sm: 1.875rem; /* 30px - small H1 for question cards */
+    --text-h1-lg: 2.25rem; /* 36px - large H1 for question cards */
+    --text-display-2-sm: 2.25rem; /* 36px */
+    --text-display-1-sm: 3rem; /* 48px */
+    --text-display-2-lg: 3.75rem; /* 60px */
+    --text-display-1-lg: 4.5rem; /* 72px */
 
-  /* Lavender scale (custom) */
-  --color-lavender-950: #1B152A;
-  --color-lavender-900: #1E192C;
-  --color-lavender-800: #292337;
-  --color-lavender-700: #342D43;
-  --color-lavender-600: #3F384F;
-  --color-lavender-500: #4A445B;
-  --color-lavender-400: #564F66;
-  --color-lavender-300: #625B73;
-  --color-lavender-200: #7B748C;
-  --color-lavender-100: #988DA6;
-  --color-lavender-50: #B2A7C2;
+    /* Typography - Font Weights */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-display: 300; /* Lighter weight for display/heading fonts */
 
-  /* Gray scale */
-  --color-gray-950: #0A0A0A;
-  --color-gray-900: #171717;
-  --color-gray-800: #262626;
-  --color-gray-700: #404040;
-  --color-gray-600: #525252;
-  --color-gray-500: #737373;
-  --color-gray-400: #A3A3A3;
-  --color-gray-300: #D4D4D4;
-  --color-gray-200: #E5E5E5;
-  --color-gray-100: #F5F5F5;
-  --color-gray-50: #FAFAFA;
+    /* Typography - Line Heights */
+    --leading-tight: 1; /* 100% - used for captions and compact text */
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+    --leading-body-sm: 1.5rem; /* 24px - small body text */
+    --leading-body-lg: 1.875rem; /* 30px - large body text */
+    --leading-h1-sm: 2.5rem; /* 40px - small H1 for question cards */
+    --leading-h1-lg: 2.625rem; /* 42px - large H1 for question cards */
+    --leading-display-1-sm: 3.625rem; /* 58px */
+    --leading-display-2-sm: 3.125rem; /* 50px */
+    --leading-display-1-lg: 5rem; /* 80px */
+    --leading-display-2-lg: 4.125rem; /* 66px */
 
-  /* Rose scale */
-  --color-rose-950: #672043;
-  --color-rose-900: #74284E;
-  --color-rose-800: #9A2F5A;
-  --color-rose-700: #B03260;
-  --color-rose-600: #C63666;
-  --color-rose-500: #D7396A;
-  --color-rose-400: #DB4F7F;
-  --color-rose-300: #E16A95;
-  --color-rose-200: #E993B3;
-  --color-rose-100: #F1BDD1;
-  --color-rose-50: #F9E5EC;
+    /* Border Radius */
+    --radius: 0.5rem;
 
-  /* Orange scale */
-  --color-orange-950: #94361E;
-  --color-orange-900: #A84127;
-  --color-orange-800: #B94830;
-  --color-orange-700: #C64E36;
-  --color-orange-600: #D8573C;
-  --color-orange-500: #E5603D;
-  --color-orange-400: #E36955;
-  --color-orange-300: #DB8177;
-  --color-orange-200: #E8A39C;
-  --color-orange-100: #F0C3C3;
-  --color-orange-50: #FDEDEE;
+    /* Gradients - Light Mode */
+    --gradient-light-1: linear-gradient(-54.59deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-2: linear-gradient(-36.48deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-3: linear-gradient(-42.31deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-4: linear-gradient(251.79deg, rgb(212, 186, 255) 4.14%, rgb(255, 195, 203) 20.67%, rgb(250, 247, 255) 80.80%);
+    --gradient-light-question-sm: linear-gradient(-61.26deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-question-lg: linear-gradient(-31.25deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+  }
 
-  /* Cyan scale */
-  --color-cyan-950: #00211E;
-  --color-cyan-900: #002C29;
-  --color-cyan-800: #003835;
-  --color-cyan-700: #004441;
-  --color-cyan-600: #00524E;
-  --color-cyan-500: #006059;
-  --color-cyan-400: #006C67;
-  --color-cyan-300: #008680;
-  --color-cyan-200: #08A09A;
-  --color-cyan-100: #3DBCB5;
-  --color-cyan-50: #5FD8D1;
+  .dark {
+    /* Colors */
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 267 49% 49%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 267 21% 26%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 341 66% 53%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 267 49% 49%;
+    --ghost: 0 0% 100% / 0;
+    --ghost-foreground: 0 0% 98%;
+    --ghost-hover: 267 49% 49%;
+    --ghost-focus: 267 100% 82%;
+    --outline-border: 267 13% 40%;
+    --outline-foreground: 0 0% 98%;
+    --outline-hover: 267 30% 18%;
+    --outline-focus: 267 13% 40%;
+    --background-2: 271 24% 18%;
 
-  /* Green scale */
-  --color-green-950: #3A6B07;
-  --color-green-900: #3B6C07;
-  --color-green-800: #608E17;
-  --color-green-700: #73A11C;
-  --color-green-600: #89B527;
-  --color-green-500: #99C52D;
-  --color-green-400: #AACE54;
-  --color-green-300: #B9D775;
-  --color-green-200: #CDE39E;
-  --color-green-100: #E1EDC5;
-  --color-green-50: #F3F8E8;
-
-  /* Semantic theme tokens - Light mode (default) */
-  --color-text: var(--color-lavender-700);
-  --color-icon: var(--color-purple-700);
-  --color-icon-background: var(--color-cyan-200);
-
-  --color-primary: var(--color-purple-100);
-  --color-primary-hover-active: var(--color-purple-50);
-  --color-primary-focus: var(--color-purple-100);
-  --color-primary-foreground: var(--color-gray-200);
-  --color-primary-disabled: #B69FDE80;
-
-  --color-secondary: var(--color-green-200);
-  --color-secondary-hover-active: var(--color-green-100);
-  --color-secondary-focus: var(--color-green-300);
-  --color-secondary-foreground: var(--color-gray-200);
-  --color-secondary-disabled: #E1EDC580;
-
-  --color-accent: var(--color-orange-100);
-  --color-accent-hover-active: var(--color-orange-200);
-  --color-accent-focus: var(--color-orange-600);
-  --color-accent-foreground: var(--color-gray-200);
-  --color-accent-disabled: #F0C3C380;
-
-  --color-destructive: var(--color-rose-300);
-  --color-destructive-foreground: var(--color-gray-200);
-
-  --color-outline: var(--color-lavender-700);
-  --color-focus-ring: var(--color-purple-600);
-  --color-error-focus-ring: var(--color-orange-600);
-
-  --color-card: var(--color-gray-200);
-  --color-card-hover-active: var(--color-gray-200);
-  --color-card-foreground: var(--color-lavender-700);
-
-  --color-background: var(--color-gray-50);
-  --color-foreground: var(--color-lavender-700);
-
-  --color-muted: var(--color-gray-200);
-  --color-muted-foreground: var(--color-gray-400);
-
-  --color-ghost: var(--color-gray-950);
-  --color-ghost-hover-active: var(--color-purple-800);
-  --color-ghost-focus: var(--color-purple-600);
-  --color-ghost-foreground: var(--color-gray-50);
-  --color-ghost-disabled: #0A0A0A80;
-
-  --color-scrim: #EDEDEDB2;
-  --color-border: var(--color-lavender-700);
-  --color-input: var(--color-lavender-700);
-  --color-ring: var(--color-purple-600);
-
-  --color-popover: var(--color-gray-200);
-  --color-popover-foreground: var(--color-lavender-700);
+    /* Gradients - Dark Mode */
+    --gradient-dark-1: linear-gradient(-65.99deg, rgb(119, 88, 176) 7.45%, rgb(134, 78, 107) 20.65%, rgb(63, 34, 116) 81.64%);
+    --gradient-dark-2: linear-gradient(-28.28deg, rgb(119, 88, 176) 12.52%, rgb(134, 78, 107) 17.15%, rgb(63, 34, 116) 86.19%);
+    --gradient-dark-3: linear-gradient(-16.19deg, rgb(119, 88, 176) 3.90%, rgb(134, 78, 107) 29.10%, rgb(63, 34, 116) 84.50%);
+    --gradient-dark-4: linear-gradient(-74.81deg, rgb(119, 88, 176) 5.56%, rgb(134, 78, 107) 21.50%, rgb(63, 34, 116) 95.16%);
+    --gradient-dark-question-sm: linear-gradient(-57.68deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
+    --gradient-dark-question-lg: linear-gradient(-27.75deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
+  }
 }
 
-/* Dark mode theme overrides */
-.dark {
-  --color-text: var(--color-gray-50);
-  --color-icon: var(--color-white);
-  --color-icon-background: var(--color-cyan-400);
+@theme inline {
+  /* Colors */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-ghost: hsl(var(--ghost));
+  --color-ghost-foreground: hsl(var(--ghost-foreground));
+  --color-ghost-hover: hsl(var(--ghost-hover));
+  --color-ghost-focus: hsl(var(--ghost-focus));
+  --color-outline-border: hsl(var(--outline-border));
+  --color-outline-foreground: hsl(var(--outline-foreground));
+  --color-outline-hover: hsl(var(--outline-hover));
+  --color-outline-focus: hsl(var(--outline-focus));
+  --color-background-2: hsl(var(--background-2));
 
-  --color-primary: var(--color-purple-500);
-  --color-primary-hover-active: var(--color-purple-800);
-  --color-primary-focus: var(--color-purple-300);
-  --color-primary-foreground: var(--color-lavender-800);
-  --color-primary-disabled: #6A41BB80;
+  /* Typography - Font Families */
+  --font-family-body: var(--font-family-body);
+  --font-family-display: var(--font-family-display);
 
-  --color-secondary: var(--color-lavender-600);
-  --color-secondary-hover-active: var(--color-lavender-800);
-  --color-secondary-focus: var(--color-lavender-300);
-  --color-secondary-foreground: var(--color-gray-50);
-  --color-secondary-disabled: #3F384F80;
+  /* Typography - Font Sizes */
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-h1-sm: var(--text-h1-sm);
+  --font-size-h1-lg: var(--text-h1-lg);
+  --font-size-display-2-sm: var(--text-display-2-sm);
+  --font-size-display-1-sm: var(--text-display-1-sm);
+  --font-size-display-2-lg: var(--text-display-2-lg);
+  --font-size-display-1-lg: var(--text-display-1-lg);
 
-  --color-accent: var(--color-orange-500);
-  --color-accent-hover-active: var(--color-orange-700);
-  --color-accent-focus: var(--color-orange-300);
-  --color-accent-foreground: var(--color-gray-50);
-  --color-accent-disabled: #E5603D80;
+  /* Typography - Font Weights */
+  --font-weight-light: var(--font-weight-light);
+  --font-weight-regular: var(--font-weight-regular);
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-semibold: var(--font-weight-semibold);
+  --font-weight-display: var(--font-weight-display);
 
-  --color-destructive: var(--color-rose-600);
-  --color-destructive-foreground: var(--color-gray-50);
+  /* Typography - Line Heights */
+  --line-height-tight: var(--leading-tight);
+  --line-height-normal: var(--leading-normal);
+  --line-height-relaxed: var(--leading-relaxed);
+  --line-height-body-sm: var(--leading-body-sm);
+  --line-height-body-lg: var(--leading-body-lg);
+  --line-height-h1-sm: var(--leading-h1-sm);
+  --line-height-h1-lg: var(--leading-h1-lg);
+  --line-height-display-1-sm: var(--leading-display-1-sm);
+  --line-height-display-2-sm: var(--leading-display-2-sm);
+  --line-height-display-1-lg: var(--leading-display-1-lg);
+  --line-height-display-2-lg: var(--leading-display-2-lg);
 
-  --color-outline: var(--color-lavender-200);
-  --color-focus-ring: var(--color-purple-300);
-  --color-error-focus-ring: #DB8177FF;
+  /* Gradients */
+  --gradient-light-1: var(--gradient-light-1);
+  --gradient-light-2: var(--gradient-light-2);
+  --gradient-light-3: var(--gradient-light-3);
+  --gradient-light-4: var(--gradient-light-4);
+  --gradient-light-question-sm: var(--gradient-light-question-sm);
+  --gradient-light-question-lg: var(--gradient-light-question-lg);
+  --gradient-dark-1: var(--gradient-dark-1);
+  --gradient-dark-2: var(--gradient-dark-2);
+  --gradient-dark-3: var(--gradient-dark-3);
+  --gradient-dark-4: var(--gradient-dark-4);
+  --gradient-dark-question-sm: var(--gradient-dark-question-sm);
+  --gradient-dark-question-lg: var(--gradient-dark-question-lg);
+}
 
-  --color-card: var(--color-lavender-800);
-  --color-card-hover-active: var(--color-lavender-900);
-  --color-card-foreground: var(--color-gray-50);
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family-body);
+    font-weight: var(--font-weight-regular);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-display);
+  }
+}
 
-  --color-background: var(--color-lavender-950);
-  --color-foreground: var(--color-gray-50);
+@layer components {
+  /* Header card gradient backgrounds - auto-switches with theme */
+  .header-card-gradient {
+    background: var(--gradient-light-1);
+  }
 
-  --color-muted: var(--color-lavender-800);
-  --color-muted-foreground: var(--color-gray-800);
+  .dark .header-card-gradient {
+    background: var(--gradient-dark-1);
+  }
 
-  --color-ghost: var(--color-gray-50);
-  --color-ghost-hover-active: var(--color-purple-200);
-  --color-ghost-focus: var(--color-lavender-50);
-  --color-ghost-foreground: var(--color-lavender-950);
-  --color-ghost-disabled: #FAFAFA80;
+  .header-card-gradient[data-image="true"] {
+    background: var(--gradient-light-4);
+  }
 
-  --color-scrim: #161616B2;
-  --color-border: var(--color-lavender-200);
-  --color-input: var(--color-lavender-200);
-  --color-ring: var(--color-purple-300);
+  .dark .header-card-gradient[data-image="true"] {
+    background: var(--gradient-dark-4);
+  }
 
-  --color-popover: var(--color-lavender-800);
-  --color-popover-foreground: var(--color-gray-50);
+  /* Question card gradient backgrounds - auto-switches with theme and size */
+  .question-card-gradient[data-size="small"] {
+    background: var(--gradient-light-question-sm);
+  }
+
+  .dark .question-card-gradient[data-size="small"] {
+    background: var(--gradient-dark-question-sm);
+  }
+
+  .question-card-gradient[data-size="large"] {
+    background: var(--gradient-light-question-lg);
+  }
+
+  .dark .question-card-gradient[data-size="large"] {
+    background: var(--gradient-dark-question-lg);
+  }
 }

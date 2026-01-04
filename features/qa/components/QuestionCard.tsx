@@ -2,7 +2,10 @@
 
 import { QuestionWithOptions } from '../types'
 import { Button } from '@/components/ui/button'
+import { RadioCardGroup, RadioCard } from '@/components/ui/radio-card'
 import { Textarea } from '@/components/ui/textarea'
+import { CirclePlus } from 'lucide-react'
+import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState } from 'react'
 
 interface QuestionCardProps {
@@ -14,6 +17,7 @@ interface QuestionCardProps {
 export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: QuestionCardProps) {
   const [selected, setSelected] = useState<string | undefined>(selectedAnswerId)
   const [note, setNote] = useState<string>('')
+  const [showNote, setShowNote] = useState<boolean>(false)
 
   const handleSelect = (answerOptionId: string) => {
     setSelected(answerOptionId)
@@ -21,48 +25,46 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
   }
 
   return (
-    <div className="border rounded-lg p-6 space-y-4">
-      {question.caption && (
-        <p className="text-sm text-muted-foreground">{question.caption}</p>
-      )}
-
-      <h3 className="text-xl font-semibold">{question.question_text}</h3>
-
-      {question.image_url && (
-        <img
-          src={question.image_url}
-          alt={question.caption || 'Question image'}
-          className="w-full max-w-md rounded-md"
-        />
-      )}
-
-      <div className="space-y-2 pt-4">
+    <div className="space-y-5 md:space-y-6">
+      <RadioCardGroup
+        value={selected}
+        onValueChange={(value) => handleSelect(value)}
+      >
         {question.answer_options
           .sort((a, b) => a.option_order - b.option_order)
           .map((option) => (
-            <Button
+            <RadioCard
               key={option.id}
-              variant={selected === option.id ? 'default' : 'outline'}
-              className="w-full justify-start text-left h-auto py-3 px-4"
-              onClick={() => handleSelect(option.id)}
-            >
-              {option.option_text}
-            </Button>
+              value={option.id}
+              title={option.option_text}
+            />
           ))}
-      </div>
+      </RadioCardGroup>
 
-      <div className="pt-4 space-y-2">
-        <label htmlFor={`note-${question.id}`} className="text-sm font-medium">
-          Additional notes (optional)
-        </label>
-        <Textarea
-          id={`note-${question.id}`}
-          placeholder="Add any additional thoughts or notes..."
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          className="min-h-[100px]"
-        />
-      </div>
+      {!showNote ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowNote(true)}
+          className="h-auto px-0 py-0 text-foreground hover:text-foreground/80"
+        >
+          <CirclePlus size={24} strokeWidth={ICON_STROKE_WIDTH} className="mr-2" />
+          Add a note
+        </Button>
+      ) : (
+        <div className="space-y-2">
+          <label htmlFor={`note-${question.id}`} className="text-sm font-medium">
+            Additional notes (optional)
+          </label>
+          <Textarea
+            id={`note-${question.id}`}
+            placeholder="Add any additional thoughts or notes..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="min-h-[100px]"
+          />
+        </div>
+      )}
     </div>
   )
 }
