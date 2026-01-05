@@ -1,15 +1,15 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { HeartHandshake, Play, Info } from "lucide-react"
+import { Info } from "lucide-react"
 
 interface QuestionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   caption?: string
   title: string
-  onPlayClick?: () => void
   onLearnMoreClick?: () => void
   size?: "small" | "large"
   showImage?: boolean
   imageUrl?: string
+  roundedHeader?: boolean
 }
 
 const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
@@ -17,11 +17,11 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
     {
       caption = "Caption",
       title,
-      onPlayClick,
       onLearnMoreClick,
       size = "small",
       showImage = false,
       imageUrl,
+      roundedHeader = true,
       className,
       ...props
     },
@@ -37,7 +37,9 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
         className={cn(
           "relative flex flex-col",
           // Width: mobile 393px max (small) or full width, desktop 868px max (large)
-          isSmall && "w-full max-w-[393px]",
+          // When roundedHeader=false, remove max-width to extend to edges
+          isSmall && roundedHeader && "w-full max-w-[393px]",
+          isSmall && !roundedHeader && "w-full",
           isLarge && "w-full max-w-[868px]",
           // Padding: small = 20px (p-5), large = 32px (p-8)
           isSmall && "p-5",
@@ -46,50 +48,38 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
           isSmall && "gap-5",
           isLarge && "gap-6",
           // Border radius: small = 24px (rounded-3xl), large = none
-          isSmall && "rounded-3xl overflow-hidden",
+          // roundedHeader=false removes rounded corners
+          isSmall && roundedHeader && "rounded-3xl overflow-hidden",
           // Custom class for gradient background (auto-switches via CSS based on theme)
           "question-card-gradient",
           className
         )}
         {...props}
       >
-        {/* Top row: Icon/Caption and Play Button */}
-        <div className="flex items-start justify-between gap-4 w-full">
-          {/* Left: Icon and Caption */}
-          <div className="flex flex-col gap-4">
-            {/* Icon: 64px on both mobile and desktop */}
-            <div className="shrink-0 w-16 h-16">
-              <HeartHandshake className="w-full h-full text-foreground" strokeWidth={0.5} />
-            </div>
-
-            {/* Caption - Responsive Typography
-                Small: 12px (text-xs), Desktop: 14px (text-sm)
-            */}
-            {caption && (
-              <p
-                className={cn(
-                  "uppercase leading-tight text-foreground font-[family-name:var(--font-family-body)]",
-                  isSmall && "text-xs md:text-sm",
-                  isLarge && "text-sm"
-                )}
-              >
-                {caption}
-              </p>
-            )}
+        {/* Image for small size - positioned at top */}
+        {isSmall && showImage && imageUrl && (
+          <div className="h-[160px] -mt-5 -mr-5 -ml-5 mb-0 relative overflow-hidden">
+            <img
+              src={imageUrl}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
           </div>
+        )}
 
-          {/* Right: Play Button */}
-          <button
-            onClick={onPlayClick}
+        {/* Caption */}
+        {caption && (
+          <p
             className={cn(
-              "shrink-0 rounded-full bg-primary flex items-center justify-center transition-opacity hover:opacity-90",
-              "w-16 h-16"
+              "uppercase leading-tight text-foreground font-[family-name:var(--font-family-body)]",
+              isSmall && "text-xs md:text-sm",
+              isLarge && "text-sm"
             )}
-            aria-label="Play"
           >
-            <Play className="w-8 h-8 text-primary-foreground" strokeWidth={0.5} />
-          </button>
-        </div>
+            {caption}
+          </p>
+        )}
 
         {/* Title - Responsive Typography */}
         <h2
@@ -121,7 +111,6 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
               isSmall && "w-5 h-5",
               isLarge && "w-6 h-6"
             )}
-            strokeWidth={0.5}
           />
           <span
             className={cn(
@@ -133,18 +122,6 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
             Tell me more
           </span>
         </button>
-
-        {/* Image for small size */}
-        {isSmall && showImage && imageUrl && (
-          <div className="h-[120px] -mb-5 -mr-5 -ml-5 relative overflow-hidden">
-            <img
-              src={imageUrl}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
-          </div>
-        )}
       </div>
     )
   }

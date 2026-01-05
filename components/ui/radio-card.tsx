@@ -20,7 +20,7 @@ const RadioCardGroup = React.forwardRef<
 RadioCardGroup.displayName = "RadioCardGroup"
 
 const radioCardVariants = cva(
-  "group relative flex cursor-pointer rounded-2xl border border-outline-border bg-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:border-primary hover:bg-outline-hover data-[state=checked]:border-primary data-[state=checked]:bg-outline-hover disabled:cursor-not-allowed disabled:opacity-50",
+  "group relative flex cursor-pointer rounded-2xl border border-outline-border bg-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 hover:border-primary hover:bg-outline-hover data-[state=checked]:border-primary data-[state=checked]:bg-card-hover-active disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       size: {

@@ -234,13 +234,52 @@ import { ICON_STROKE_WIDTH } from "@/lib/theme-config"
 
 ### Spacing Patterns
 
-| Context | Mobile | Tablet | Desktop |
-|---------|--------|--------|---------|
-| Page padding | `px-4 py-6` | `px-8 py-8` | `px-12 py-12` |
-| Card padding | `p-4` | `p-6` | `p-8` |
-| Section gaps | `space-y-6` | `space-y-8` | `space-y-12` |
-| Form fields | `space-y-4` | `space-y-6` | `space-y-6` |
-| Button groups | `gap-2` | `gap-3` | `gap-4` |
+**IMPORTANT: Margins and padding must scale progressively across breakpoints**
+
+| Context | Mobile | Tablet (md) | Desktop (lg) | Large Desktop (xl) |
+|---------|--------|-------------|--------------|-------------------|
+| Page horizontal margins | `px-4` or `px-5` | `px-8` | `px-24` or `px-32` | `px-60` |
+| Page vertical padding | `py-6` | `py-8` | `py-12` | `py-12` |
+| Card padding | `p-4` | `p-6` | `p-8` | `p-8` |
+| Section gaps | `space-y-6` | `space-y-8` | `space-y-12` | `space-y-12` |
+| Form fields | `space-y-4` | `space-y-6` | `space-y-6` | `space-y-6` |
+| Button groups | `gap-2` | `gap-3` | `gap-4` | `gap-4` |
+
+**Example - Progressive Horizontal Margins:**
+```tsx
+// ❌ WRONG - Jumps from 20px to 240px
+<div className="px-5 md:px-60">
+
+// ✅ CORRECT - Scales progressively
+<div className="px-5 md:px-8 lg:px-32 xl:px-60">
+//             20px → 32px → 128px → 240px
+```
+
+**Why this matters:**
+- Prevents cramped layouts on tablet/small desktop (768-1024px)
+- Ensures content has breathing room at each breakpoint
+- Avoids jarring jumps in spacing
+- Prioritizes content width on constrained screens
+
+**Example - Progressive Gaps Between Elements:**
+```tsx
+// ❌ WRONG - Fixed or jumping gaps
+<div className="flex gap-8">
+<div className="flex gap-2 md:gap-8">  // Too big a jump
+
+// ✅ CORRECT - Progressive gaps
+<div className="flex gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+//             16px → 20px → 24px → 32px
+
+// ✅ CORRECT - Progressive vertical spacing
+<div className="space-y-6 lg:space-y-8 xl:space-y-10">
+//             24px → 32px → 40px
+```
+
+**Rule of Thumb:**
+- Small gaps (buttons, inline elements): `gap-2` → `gap-3` → `gap-4` → `gap-6`
+- Medium gaps (cards, sections): `gap-4` → `gap-5` → `gap-6` → `gap-8`
+- Large gaps (major sections): `gap-6` → `gap-8` → `gap-10` → `gap-12`
 
 ### Touch Target Sizes
 
@@ -284,14 +323,28 @@ import { ICON_STROKE_WIDTH } from "@/lib/theme-config"
 
 ### Icons with Theme Stroke Width
 
+**IMPORTANT RULE: Icon sizes 32px and smaller use standard weight**
+
 ```tsx
 import { ICON_STROKE_WIDTH } from "@/lib/theme-config"
-import { Heart, ChevronLeft, Menu } from "lucide-react"
+import { Heart, ChevronLeft, Menu, Info, Plus } from "lucide-react"
 
-<Heart size={24} strokeWidth={ICON_STROKE_WIDTH} />
-<ChevronLeft size={20} strokeWidth={ICON_STROKE_WIDTH} />
-<Menu size={24} strokeWidth={ICON_STROKE_WIDTH} />
+// ✅ Icons 32px and SMALLER - Use standard weight (omit strokeWidth or use default)
+<Info size={24} />  // Standard weight for better visibility
+<Plus size={20} />  // Standard weight for better visibility
+<Heart size={32} /> // Standard weight at 32px
+
+// ✅ Icons LARGER than 32px - Use ICON_STROKE_WIDTH
+<Heart size={64} strokeWidth={ICON_STROKE_WIDTH} />
+<Menu size={48} strokeWidth={ICON_STROKE_WIDTH} />
+<ChevronLeft size={40} strokeWidth={ICON_STROKE_WIDTH} />
 ```
+
+**Why this rule?**
+- Small icons (≤32px) with thin strokes are hard to see and appear too light
+- Standard Lucide stroke width (2) provides better visibility for small icons
+- Large icons (>32px) can use thin strokes (0.5) for elegant appearance
+- Maintains consistency with design system while ensuring usability
 
 ### Basic Button
 
@@ -541,8 +594,11 @@ const newBrandColor = '#10B981'; // ❌ Don't do this!
 <div className="bg-blue-500 text-white">
 
 // Hardcoded icon stroke widths
-<Heart size={24} strokeWidth={0.5} /> // ❌ Hardcoded!
+<Heart size={24} strokeWidth={0.5} /> // ❌ Hardcoded! Also too thin for small icons
 <Menu size={20} strokeWidth={1} /> // ❌ Inconsistent!
+
+// Using ICON_STROKE_WIDTH on small icons (makes them too thin)
+<Info size={24} strokeWidth={ICON_STROKE_WIDTH} /> // ❌ Too thin! Use standard weight for ≤32px
 
 // Hardcoded spacing values
 <div style={{ padding: '16px' }}>
@@ -596,9 +652,10 @@ const figmaData = await mcp_figma_get_figma_data({ fileKey, nodeId })
 // 5. After approval, map to theme tokens
 <div className="bg-primary text-primary-foreground"> // Maps to Figma primary
 
-// 6. Use theme constants for icons
+// 6. Use correct stroke width for icons based on size
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
-<Heart size={24} strokeWidth={ICON_STROKE_WIDTH} /> // ✅ Consistent!
+<Info size={24} /> // ✅ Icons ≤32px use standard weight (better visibility)
+<Heart size={64} strokeWidth={ICON_STROKE_WIDTH} /> // ✅ Large icons use thin weight
 
 // 7. Use Tailwind spacing (not Figma pixel values)
 <div className="p-4 md:p-6 lg:p-8">

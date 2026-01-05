@@ -5,9 +5,11 @@ import { QuestionCard as QuestionHeaderCard } from '@/components/ui/question-car
 import { useQuestions } from '@/features/qa/hooks/useQuestions'
 import { useResponseSubmit } from '@/features/qa/hooks/useResponseSubmit'
 import { Button } from '@/components/ui/button'
-import { HeartHandshake, Play, Info, Feather, Sparkles, Type, X } from 'lucide-react'
+import { Info, Feather, Sparkles, X } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState } from 'react'
+import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
+import { SettingsPanel } from '@/components/SettingsPanel'
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
@@ -15,6 +17,7 @@ export default function QAPage() {
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const scrollDirection = useScrollDirection(10)
 
   const handleAnswerSelect = async (questionId: string, answerOptionId: string, note?: string) => {
     // Update local state
@@ -76,8 +79,10 @@ export default function QAPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden">
-      {/* App Bar - Mobile: 56px, Desktop: 80px */}
-      <div className="w-full flex items-center justify-between h-14 md:h-20 px-5 md:px-8 border-b border-border shrink-0">
+      {/* App Bar - Mobile: 56px, Desktop: 80px - Hides on scroll down (mobile only) */}
+      <div className={`w-full flex items-center justify-between h-14 md:h-20 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-background transition-transform duration-300 ease-in-out ${
+        scrollDirection === 'down' ? '-translate-y-full md:translate-y-0' : 'translate-y-0'
+      }`}>
         <div className="flex items-center gap-3 md:gap-5 text-sm text-foreground overflow-hidden">
           <div className="whitespace-nowrap">{currentQuestionIndex + 1} of {questions.length}</div>
           <div className="text-right truncate">
@@ -85,9 +90,11 @@ export default function QAPage() {
           </div>
         </div>
         <div className="flex items-center gap-5 md:gap-8 shrink-0">
-          <button className="w-8 h-8 flex items-center justify-center" aria-label="Text size">
-            <Type size={32} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground" />
-          </button>
+          <SettingsPanel>
+            <button className="w-8 h-8 flex items-center justify-center font-[family-name:var(--font-family-display)] text-xl font-medium text-foreground" aria-label="Settings">
+              Aa
+            </button>
+          </SettingsPanel>
           <button className="w-8 h-8 flex items-center justify-center" aria-label="Close">
             <X size={32} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground" />
           </button>
@@ -96,53 +103,44 @@ export default function QAPage() {
 
       {/* Main Content */}
       <div className="flex-1 w-full overflow-y-auto">
-        {/* Mobile: Use QuestionHeaderCard component with padding */}
-        <div className="md:hidden w-full px-5 py-8">
+        {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
+        <div className="md:hidden w-full">
           <QuestionHeaderCard
             caption={currentQuestion.caption || "VALUES AND WHAT MATTERS"}
             title={currentQuestion.question_text}
             size="small"
             showImage={!!currentQuestion.image_url}
             imageUrl={currentQuestion.image_url}
+            roundedHeader={false}
           />
         </div>
 
-        {/* Desktop: Header Question Card with gradient background and margins */}
-        <div className="hidden md:block w-full header-card-gradient px-60 py-8">
-          <div className="w-full flex flex-col gap-6">
-            <div className="w-full flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-4 flex-1 min-w-0">
-                <HeartHandshake size={64} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground shrink-0" />
-                <p className="text-sm uppercase leading-none text-foreground font-[family-name:var(--font-family-body)]">
-                  {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-                </p>
-              </div>
-              <button
-                className="shrink-0 w-16 h-16 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
-                aria-label="Play audio"
-              >
-                <Play size={32} strokeWidth={ICON_STROKE_WIDTH} className="text-primary-foreground" />
-              </button>
-            </div>
+        {/* Desktop: Header Question Card with gradient background - extends to edges */}
+        <div className="hidden md:block w-full question-card-gradient py-8" data-size="small">
+          <div className="w-full flex flex-col gap-5 lg:gap-6 xl:gap-8 px-8 lg:px-32 xl:px-60">
+            {/* Caption */}
+            <p className="text-sm uppercase leading-none text-foreground font-[family-name:var(--font-family-body)]">
+              {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+            </p>
 
             <h1 className="w-full text-4xl leading-[2.625rem] text-foreground font-[family-name:var(--font-family-display)]">
               {currentQuestion.question_text}
             </h1>
 
             <button className="flex items-center gap-2 text-foreground hover:opacity-80 self-start transition-opacity">
-              <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
+              <Info size={24} />
               <span className="text-base underline underline-offset-2 font-[family-name:var(--font-family-body)]">Tell me more</span>
             </button>
           </div>
         </div>
 
-        {/* Question Options and Actions - Mobile: padding 20px, Desktop: padding 32px with 240px margins */}
-        <div className="w-full px-5 md:px-60 py-5 md:py-8">
+        {/* Question Options and Actions - Responsive margins: 20px → 32px → 128px → 240px */}
+        <div className="w-full px-5 md:px-8 lg:px-32 xl:px-60 py-5 md:py-8">
           {/* Desktop: two-column layout (image + content), Mobile: single column */}
-          <div className="w-full flex flex-col md:flex-row gap-0 md:gap-8">
-            {/* Desktop Image - Left sidebar (428×438px) */}
+          <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
+            {/* Desktop Image - Left sidebar, scales responsively */}
             {currentQuestion.image_url && (
-              <div className="hidden md:block md:w-[428px] md:h-[438px] rounded-b-full overflow-hidden relative shrink-0">
+              <div className="hidden md:block md:w-[280px] md:h-[290px] lg:w-[360px] lg:h-[370px] xl:w-[428px] xl:h-[438px] rounded-b-full overflow-hidden relative shrink-0">
                 <img
                   src={currentQuestion.image_url}
                   alt=""
@@ -153,15 +151,15 @@ export default function QAPage() {
             )}
 
             {/* Question Card and Actions */}
-            <div className="w-full flex-1 space-y-8 md:space-y-6 min-w-0">
+            <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
               <QuestionCard
                 question={currentQuestion}
                 onAnswerSelect={handleAnswerSelect}
                 selectedAnswerId={responses[currentQuestion.id]}
               />
 
-              {/* Journal and Pause Buttons - Mobile: gap 20px, Desktop: gap 24px */}
-              <div className="w-full flex gap-5 md:gap-6">
+              {/* Journal and Pause Buttons - Responsive gap */}
+              <div className="w-full flex gap-4 md:gap-5 lg:gap-6">
                 <Button
                   variant="secondary"
                   className="flex-1 h-12 rounded-full text-base min-w-0"

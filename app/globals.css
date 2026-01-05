@@ -2,6 +2,9 @@
 
 @layer base {
   :root {
+    /* Font Size Scaling - Default to medium (1x) */
+    --font-scale: 1;
+
     /* Colors */
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
@@ -28,25 +31,26 @@
     --ghost-focus: 259 20% 22%;
     --outline-border: 259 51% 47%;
     --outline-foreground: 259 20% 22%;
-    --outline-hover: 0 0% 93%;
+    --outline-hover: 263 49% 94%;
     --outline-focus: 259 51% 47%;
+    --card-hover-active: 267 55% 94%;
     --background-2: 271 24% 18%;
 
     /* Typography - Font Families */
     --font-family-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     --font-family-display: var(--font-family-display);
 
-    /* Typography - Font Sizes */
-    --text-xs: 0.75rem; /* 12px */
-    --text-sm: 0.875rem; /* 14px */
-    --text-base: 1rem; /* 16px */
-    --text-lg: 1.125rem; /* 18px */
-    --text-h1-sm: 1.875rem; /* 30px - small H1 for question cards */
-    --text-h1-lg: 2.25rem; /* 36px - large H1 for question cards */
-    --text-display-2-sm: 2.25rem; /* 36px */
-    --text-display-1-sm: 3rem; /* 48px */
-    --text-display-2-lg: 3.75rem; /* 60px */
-    --text-display-1-lg: 4.5rem; /* 72px */
+    /* Typography - Font Sizes (scaled by --font-scale) */
+    --text-xs: calc(0.75rem * var(--font-scale)); /* 12px */
+    --text-sm: calc(0.875rem * var(--font-scale)); /* 14px */
+    --text-base: calc(1rem * var(--font-scale)); /* 16px */
+    --text-lg: calc(1.125rem * var(--font-scale)); /* 18px */
+    --text-h1-sm: calc(1.875rem * var(--font-scale)); /* 30px - small H1 for question cards */
+    --text-h1-lg: calc(2.25rem * var(--font-scale)); /* 36px - large H1 for question cards */
+    --text-display-2-sm: calc(2.25rem * var(--font-scale)); /* 36px */
+    --text-display-1-sm: calc(3rem * var(--font-scale)); /* 48px */
+    --text-display-2-lg: calc(3.75rem * var(--font-scale)); /* 60px */
+    --text-display-1-lg: calc(4.5rem * var(--font-scale)); /* 72px */
 
     /* Typography - Font Weights */
     --font-weight-light: 300;
@@ -55,18 +59,18 @@
     --font-weight-semibold: 600;
     --font-weight-display: 300; /* Lighter weight for display/heading fonts */
 
-    /* Typography - Line Heights */
+    /* Typography - Line Heights (scaled by --font-scale for fixed values) */
     --leading-tight: 1; /* 100% - used for captions and compact text */
     --leading-normal: 1.5;
     --leading-relaxed: 1.625;
-    --leading-body-sm: 1.5rem; /* 24px - small body text */
-    --leading-body-lg: 1.875rem; /* 30px - large body text */
-    --leading-h1-sm: 2.5rem; /* 40px - small H1 for question cards */
-    --leading-h1-lg: 2.625rem; /* 42px - large H1 for question cards */
-    --leading-display-1-sm: 3.625rem; /* 58px */
-    --leading-display-2-sm: 3.125rem; /* 50px */
-    --leading-display-1-lg: 5rem; /* 80px */
-    --leading-display-2-lg: 4.125rem; /* 66px */
+    --leading-body-sm: calc(1.5rem * var(--font-scale)); /* 24px - small body text */
+    --leading-body-lg: calc(1.875rem * var(--font-scale)); /* 30px - large body text */
+    --leading-h1-sm: calc(2.5rem * var(--font-scale)); /* 40px - small H1 for question cards */
+    --leading-h1-lg: calc(2.625rem * var(--font-scale)); /* 42px - large H1 for question cards */
+    --leading-display-1-sm: calc(3.625rem * var(--font-scale)); /* 58px */
+    --leading-display-2-sm: calc(3.125rem * var(--font-scale)); /* 50px */
+    --leading-display-1-lg: calc(5rem * var(--font-scale)); /* 80px */
+    --leading-display-2-lg: calc(4.125rem * var(--font-scale)); /* 66px */
 
     /* Border Radius */
     --radius: 0.5rem;
@@ -109,6 +113,7 @@
     --outline-foreground: 0 0% 98%;
     --outline-hover: 267 30% 18%;
     --outline-focus: 267 13% 40%;
+    --card-hover-active: 267 30% 22%;
     --background-2: 271 24% 18%;
 
     /* Gradients - Dark Mode */
@@ -118,6 +123,19 @@
     --gradient-dark-4: linear-gradient(-74.81deg, rgb(119, 88, 176) 5.56%, rgb(134, 78, 107) 21.50%, rgb(63, 34, 116) 95.16%);
     --gradient-dark-question-sm: linear-gradient(-57.68deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
     --gradient-dark-question-lg: linear-gradient(-27.75deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
+  }
+
+  /* Font Size Scaling Classes */
+  .font-size-small {
+    --font-scale: 0.875; /* 87.5% - Small */
+  }
+
+  .font-size-medium {
+    --font-scale: 1; /* 100% - Default/Medium */
+  }
+
+  .font-size-large {
+    --font-scale: 1.125; /* 112.5% - Large */
   }
 }
 
@@ -150,6 +168,7 @@
   --color-outline-foreground: hsl(var(--outline-foreground));
   --color-outline-hover: hsl(var(--outline-hover));
   --color-outline-focus: hsl(var(--outline-focus));
+  --color-card-hover-active: hsl(var(--card-hover-active));
   --color-background-2: hsl(var(--background-2));
 
   /* Typography - Font Families */
