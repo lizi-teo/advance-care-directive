@@ -14,11 +14,11 @@ export function useQuestions() {
       try {
         setLoading(true)
 
-        // Fetch questions (try lowercase 'questions' first)
+        // Fetch questions ordered by display_order column
         const { data: questionsData, error: questionsError } = await supabase
           .from('questions')
           .select('*')
-          .order('id')
+          .order('display_order')
 
         if (questionsError) {
           throw questionsError

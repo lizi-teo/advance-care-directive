@@ -2,6 +2,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Info } from "lucide-react"
 import { Button } from "./button"
+import { Skeleton } from "./skeleton"
 
 interface QuestionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   caption?: string
@@ -28,8 +29,16 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
     },
     ref
   ) => {
+    const [imageLoaded, setImageLoaded] = React.useState(false)
     const isSmall = size === "small"
     const isLarge = size === "large"
+
+    // Reset loading state when imageUrl changes
+    React.useEffect(() => {
+      if (imageUrl) {
+        setImageLoaded(false)
+      }
+    }, [imageUrl])
 
     return (
       <div
@@ -60,10 +69,17 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
         {/* Image for small size - positioned at top */}
         {isSmall && showImage && imageUrl && (
           <div className="h-[160px] -mt-5 -mr-5 -ml-5 mb-0 relative overflow-hidden">
+            {!imageLoaded && (
+              <Skeleton className="absolute inset-0 w-full h-full" />
+            )}
             <img
               src={imageUrl}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className={cn(
+                "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
+                imageLoaded ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => setImageLoaded(true)}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
           </div>

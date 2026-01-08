@@ -8,23 +8,28 @@ import { useProgressAutoSave } from '@/features/qa/hooks/useProgressAutoSave'
 import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Info, Feather, Wind, X } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 import { SettingsPanel } from '@/components/SettingsPanel'
+import { toast } from 'sonner'
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
   const { submitResponse, submitting, error: submitError } = useResponseSubmit()
   const { saveProgress } = useProgressAutoSave()
   const [responses, setResponses] = useState<Record<string, string>>({})
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showTellMeMore, setShowTellMeMore] = useState(false)
+  const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
   const scrollDirection = useScrollDirection(10)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
+
+  // Define currentQuestion early so it can be used in useEffect hooks
+  const currentQuestion = questions[currentQuestionIndex]
 
   // Focus management when question changes
   useEffect(() => {
@@ -32,6 +37,13 @@ export default function QAPage() {
       questionHeadingRef.current.focus()
     }
   }, [currentQuestionIndex])
+
+  // Reset image loading state when question changes
+  useEffect(() => {
+    if (currentQuestion?.image_url) {
+      setDesktopImageLoaded(false)
+    }
+  }, [currentQuestion?.image_url])
 
   const handleAnswerSelect = async (questionId: string, answerOptionId: string, note?: string) => {
     // Update local state
@@ -41,8 +53,7 @@ export default function QAPage() {
     const success = await submitResponse(questionId, answerOptionId, note)
 
     if (success) {
-      setSuccessMessage('Response saved!')
-      setTimeout(() => setSuccessMessage(null), 3000)
+      toast.success('Response saved!')
     }
   }
 
@@ -110,7 +121,15 @@ export default function QAPage() {
     )
   }
 
-  const currentQuestion = questions[currentQuestionIndex]
+  // Safety check for currentQuestion
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-lg text-foreground">Loading question...</p>
+      </div>
+    )
+  }
+
   const hasSelectedAnswer = !!responses[currentQuestion.id]
 
   return (
@@ -145,18 +164,6 @@ export default function QAPage() {
           </Button>
         </div>
       </div>
-
-      {/* Success Message - Announced to screen readers */}
-      {successMessage && (
-        <div
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-          className="fixed top-20 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg z-50"
-        >
-          {successMessage}
-        </div>
-      )}
 
       {/* Main Content */}
       <div className="flex-1 w-full overflow-y-auto">
@@ -209,10 +216,16 @@ export default function QAPage() {
             {/* Desktop Image - Left sidebar, scales responsively */}
             {currentQuestion.image_url && (
               <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
+                {!desktopImageLoaded && (
+                  <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
+                )}
                 <img
                   src={currentQuestion.image_url}
                   alt="Question illustration"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                    desktopImageLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  onLoad={() => setDesktopImageLoaded(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
               </div>

@@ -4,6 +4,7 @@ export interface Question {
   question_text: string
   image_url: string | null
   tell_me_more: string | null
+  display_order: number
 }
 
 export interface AnswerOption {

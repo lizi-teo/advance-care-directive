@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SettingsProvider } from "@/lib/contexts/SettingsContext";
+import { Toaster } from "@/components/ui/sonner";
 
 // Poppins for all text
 const poppins = Poppins({
@@ -28,6 +29,7 @@ export default function RootLayout({
           <SettingsProvider>
             {children}
           </SettingsProvider>
+          <Toaster position="top-center" />
         </ThemeProvider>
       </body>
     </html>

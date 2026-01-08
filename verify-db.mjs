@@ -30,10 +30,10 @@ async function verifyTables() {
   console.log('🔍 Verifying Supabase tables...\n')
 
   try {
-    // Check Questions table
-    console.log('📋 Checking "Questions" table...')
+    // Check questions table (lowercase)
+    console.log('📋 Checking "questions" table...')
     const { data: questions, error: questionsError } = await supabase
-      .from('Questions')
+      .from('questions')
       .select('*')
       .limit(5)
 
