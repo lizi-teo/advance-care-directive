@@ -118,10 +118,10 @@ export function TellMeMoreModal({
         {/* Content - Responsive padding and spacing */}
         <div className="flex-1 flex flex-col p-5 md:p-6 lg:p-8 overflow-y-auto">
           <div className="flex flex-col gap-6 md:gap-8">
-            <h1 className="font-[family-name:var(--font-family-display)] text-lg font-medium leading-[30px] text-foreground">
+            <h1 className="font-[family-name:var(--font-family-display)] text-lg font-medium leading-normal text-foreground">
               &ldquo;{questionText}&rdquo;
             </h1>
-            <div className="font-[family-name:var(--font-family-body)] md:font-[family-name:var(--font-family-display)] text-base md:text-lg leading-6 md:leading-[30px] text-foreground">
+            <div className="font-[family-name:var(--font-family-body)] md:font-[family-name:var(--font-family-display)] text-base md:text-lg leading-normal text-foreground">
               {formatContent(tellMeMoreContent)}
             </div>
           </div>

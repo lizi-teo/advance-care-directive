@@ -61,6 +61,7 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
               key={option.id}
               value={option.id}
               title={option.option_text}
+              className="md:gap-6 md:p-6 [&_p]:md:[font-size:var(--text-lg)]"
             />
           ))}
       </RadioCardGroup>

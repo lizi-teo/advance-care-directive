@@ -151,13 +151,13 @@ export const LargeInline: Story = {
     return (
       <RadioCardGroup value={value} onValueChange={setValue}>
         <RadioCard value="option1" size="large" layout="inline">
-          <p className="text-lg leading-[30px]">Label</p>
+          <p className="text-lg leading-normal">Label</p>
         </RadioCard>
         <RadioCard value="option2" size="large" layout="inline">
-          <p className="text-lg leading-[30px]">Label</p>
+          <p className="text-lg leading-normal">Label</p>
         </RadioCard>
         <RadioCard value="option3" size="large" layout="inline">
-          <p className="text-lg leading-[30px]">Label</p>
+          <p className="text-lg leading-normal">Label</p>
         </RadioCard>
       </RadioCardGroup>
     );
@@ -322,10 +322,10 @@ export const AllStates: Story = {
         <h3 className="mb-4 text-base font-semibold text-foreground">Large Size - Inline</h3>
         <RadioCardGroup defaultValue="option2">
           <RadioCard value="option1" size="large" layout="inline">
-            <p className="text-lg leading-[30px]">Label</p>
+            <p className="text-lg leading-normal">Label</p>
           </RadioCard>
           <RadioCard value="option2" size="large" layout="inline">
-            <p className="text-lg leading-[30px]">Label</p>
+            <p className="text-lg leading-normal">Label</p>
           </RadioCard>
         </RadioCardGroup>
       </div>

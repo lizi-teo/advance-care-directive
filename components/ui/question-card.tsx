@@ -74,8 +74,8 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
           <p
             className={cn(
               "uppercase leading-tight text-foreground font-[family-name:var(--font-family-body)]",
-              isSmall && "text-xs md:text-sm",
-              isLarge && "text-sm"
+              isSmall && "[font-size:var(--text-xs)] md:[font-size:var(--text-sm)]",
+              isLarge && "[font-size:var(--text-sm)]"
             )}
           >
             {caption}
@@ -83,24 +83,27 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
         )}
 
         {/* Title - Responsive Typography */}
-        <h2
+        <h1
           className={cn(
             "text-foreground",
             "font-[family-name:var(--font-family-display)]",
             "font-[var(--font-weight-display)]",
             isSmall && [
-              // Small H1: mobile 30px/40px, desktop 36px/42px
-              "text-[length:var(--text-h1-sm)] leading-[var(--leading-h1-sm)]",
-              "md:text-[length:var(--text-h1-lg)] md:leading-[var(--leading-h1-lg)]",
+              // Small H1: mobile 30px, desktop 36px
+              "[font-size:var(--text-h1-sm)]",
+              "[line-height:var(--leading-h1-sm)]",
+              "md:[font-size:var(--text-h1-lg)]",
+              "md:[line-height:var(--leading-h1-lg)]",
             ],
             isLarge && [
-              // Large H1: 36px/42px on all screens
-              "text-[length:var(--text-h1-lg)] leading-[var(--leading-h1-lg)]",
+              // Large H1: 36px on all screens
+              "[font-size:var(--text-h1-lg)]",
+              "[line-height:var(--leading-h1-lg)]",
             ]
           )}
         >
           {title}
-        </h2>
+        </h1>
 
         {/* Learn More Link - Only show if callback provided */}
         {onLearnMoreClick && (
@@ -109,8 +112,8 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
             onClick={onLearnMoreClick}
             className={cn(
               "self-start h-auto px-0 py-2",
-              isSmall && "text-base",
-              isLarge && "text-lg"
+              isSmall && "[font-size:var(--text-base)]",
+              isLarge && "[font-size:var(--text-lg)]"
             )}
           >
             <Info

@@ -177,14 +177,14 @@ export default function QAPage() {
         <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
           <div className="w-full flex flex-col gap-6 px-8 lg:px-32 xl:px-60">
             {/* Caption */}
-            <p className="text-sm uppercase leading-none text-foreground font-[family-name:var(--font-family-body)]">
+            <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)]">
               {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
             </p>
 
             <h1
               ref={questionHeadingRef}
               tabIndex={-1}
-              className="w-full text-4xl leading-[2.625rem] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
+              className="w-full [font-size:var(--text-h1-lg)] [line-height:var(--leading-h1-lg)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
             >
               {currentQuestion.question_text}
             </h1>
@@ -193,7 +193,7 @@ export default function QAPage() {
               <Button
                 variant="ghost-subtle"
                 onClick={() => setShowTellMeMore(true)}
-                className="self-start h-auto px-0 py-0 text-base"
+                className="self-start h-auto px-0 py-0 [font-size:var(--text-base)]"
               >
                 <Info size={24} />
                 <span className="font-[family-name:var(--font-family-body)]">Tell me more</span>
@@ -230,7 +230,8 @@ export default function QAPage() {
               <div className="w-full flex gap-4 md:gap-5 lg:gap-6">
                 <Button
                   variant="secondary"
-                  className="flex-1 h-12 rounded-full text-base min-w-0"
+                  size="lg"
+                  className="flex-1 min-w-0"
                   aria-label="Journal"
                 >
                   <Feather strokeWidth={ICON_STROKE_WIDTH} />
@@ -238,7 +239,8 @@ export default function QAPage() {
                 </Button>
                 <Button
                   variant="secondary"
-                  className="flex-1 h-12 rounded-full text-base min-w-0"
+                  size="lg"
+                  className="flex-1 min-w-0"
                   onClick={handlePause}
                   aria-label="Breathe"
                 >

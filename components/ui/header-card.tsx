@@ -120,26 +120,24 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
 
             {/* Title - Responsive Typography
                 Without image:
-                  Mobile: 36px (text-4xl), line-height 50px
-                  Desktop: 60px (text-6xl), line-height 66px
+                  Mobile: 36px (text-4xl)
+                  Desktop: 60px (text-6xl)
                 With image:
-                  Mobile: 48px (text-5xl), line-height 58px
-                  Desktop: 72px (text-7xl), line-height 80px
+                  Mobile: 48px (text-5xl)
+                  Desktop: 72px (text-7xl)
             */}
             <h2
               className={cn(
-                "text-foreground",
+                "text-foreground leading-tight",
                 "font-[family-name:var(--font-family-display)]",
                 "font-[var(--font-weight-display)]",
                 !image && [
-                  // Display 2: mobile 36px/50px, desktop 60px/66px
-                  "text-[2.25rem] leading-[3.125rem]",
-                  "md:text-[3.75rem] md:leading-[4.125rem]",
+                  "text-[2.25rem]",
+                  "md:text-[3.75rem]",
                 ],
                 image && [
-                  // Display 1: mobile 48px/58px, desktop 72px/80px
-                  "text-[3rem] leading-[3.625rem]",
-                  "md:text-[4.5rem] md:leading-[5rem]",
+                  "text-[3rem]",
+                  "md:text-[4.5rem]",
                 ]
               )}
             >
@@ -147,16 +145,14 @@ const HeaderCard = React.forwardRef<HTMLDivElement, HeaderCardProps>(
             </h2>
 
             {/* Body text - Responsive Typography
-                Mobile: 16px (text-base), line-height 24px (leading-6)
-                Desktop: 18px (text-lg), line-height 30px (leading-[1.875rem])
+                Mobile: 16px (text-base)
+                Desktop: 18px (text-lg)
             */}
             <p
               className={cn(
-                "text-foreground",
+                "text-foreground leading-normal",
                 "font-[family-name:var(--font-family-body)]",
-                // Mobile: 16px/24px, Desktop: 18px/30px
-                "text-base leading-6",
-                "md:text-lg md:leading-[1.875rem]"
+                "text-base md:text-lg"
               )}
             >
               {body}

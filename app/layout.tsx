@@ -3,11 +3,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SettingsProvider } from "@/lib/contexts/SettingsContext";
 
-// Poppins for display/heading text
+// Poppins for all text
 const poppins = Poppins({
   weight: ["300", "400", "500"],
   subsets: ["latin"],
-  variable: "--font-family-display",
+  variable: "--font-poppins",
   display: "swap",
 });
 

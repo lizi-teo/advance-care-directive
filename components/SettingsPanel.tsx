@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes'
 import { useSettings, type FontSize } from '@/lib/contexts/SettingsContext'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer'
+import { Button } from '@/components/ui/button'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery'
 

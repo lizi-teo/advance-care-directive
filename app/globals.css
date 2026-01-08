@@ -138,8 +138,8 @@
     --icon-accent: var(--purple-500);
 
     /* Typography - Font Families */
-    --font-family-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
-    --font-family-display: var(--font-family-display);
+    --font-family-body: var(--font-poppins);
+    --font-family-display: var(--font-poppins);
 
     /* Typography - Font Sizes (scaled by --font-scale) */
     --text-xs: calc(0.75rem * var(--font-scale)); /* 12px */

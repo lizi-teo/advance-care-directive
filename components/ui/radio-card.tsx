@@ -25,7 +25,7 @@ const radioCardVariants = cva(
     variants: {
       size: {
         small: "gap-5 p-5",
-        large: "gap-6 p-8",
+        large: "gap-6 p-6",
       },
       layout: {
         stacked: "items-start",
@@ -75,16 +75,16 @@ const RadioCard = React.forwardRef<
         {icon && <div className="mb-2">{icon}</div>}
         {title && (
           <p className={cn(
-            "font-semibold leading-normal text-left",
-            size === "small" ? "text-base" : "text-lg"
+            "font-normal leading-normal text-left",
+            size === "small" ? "[font-size:var(--text-base)]" : "[font-size:var(--text-lg)]"
           )}>
             {title}
           </p>
         )}
         {description && (
           <p className={cn(
-            "font-normal text-left",
-            size === "small" ? "text-base leading-6" : "text-lg leading-[30px]"
+            "font-normal leading-normal text-left",
+            size === "small" ? "[font-size:var(--text-base)]" : "[font-size:var(--text-lg)]"
           )}>
             {description}
           </p>

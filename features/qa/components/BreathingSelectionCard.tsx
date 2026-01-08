@@ -95,12 +95,12 @@ export function BreathingSelectionCard({ onBeginExercise }: BreathingSelectionCa
                   </div>
 
                   {/* Title */}
-                  <h1 className="font-display text-[30px] leading-[36px] text-foreground font-normal text-center w-full max-w-[300px] px-5">
+                  <h1 className="font-display text-[30px] leading-tight text-foreground font-normal text-center w-full max-w-[300px] px-5">
                     {PATTERN_LABELS[pattern]}
                   </h1>
 
                   {/* Description */}
-                  <p className="font-body text-base leading-6 text-foreground text-center w-full max-w-[300px] px-5">
+                  <p className="font-body text-base leading-normal text-foreground text-center w-full max-w-[300px] px-5">
                     {PATTERN_DESCRIPTIONS[pattern]}
                   </p>
                 </div>
