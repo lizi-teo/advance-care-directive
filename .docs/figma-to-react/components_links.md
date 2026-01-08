@@ -38,3 +38,22 @@ https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?
 Small screen: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=85-2077&m=dev
 Large screen: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=85-2076&m=dev
 
+2. Breathing exercise
+## 4-7-8 breathing exercise
+Small screen dark: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2262&m=dev
+Small screen light: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2014&m=dev
+Large screen dark: 
+https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2135&m=dev
+## Box breathing
+small screen dark: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2016&m=dev
+small screen light: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2013&m=dev
+## Simple breathing
+Small screen dark: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2017&m=dev
+small screen light: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=167-2012&m=dev
+
+3. Tell me more
+Small and large screen: https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=202-1257&m=dev
+
+
+
+

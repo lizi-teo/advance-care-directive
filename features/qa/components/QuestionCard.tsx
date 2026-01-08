@@ -6,7 +6,7 @@ import { RadioCardGroup, RadioCard } from '@/components/ui/radio-card'
 import { Textarea } from '@/components/ui/textarea'
 import { CirclePlus } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface QuestionCardProps {
   question: QuestionWithOptions
@@ -18,14 +18,38 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
   const [selected, setSelected] = useState<string | undefined>(selectedAnswerId)
   const [note, setNote] = useState<string>('')
   const [showNote, setShowNote] = useState<boolean>(false)
+  const [announcement, setAnnouncement] = useState<string>('')
+
+  // Sync local state with prop when question changes
+  useEffect(() => {
+    setSelected(selectedAnswerId)
+  }, [selectedAnswerId, question.id])
 
   const handleSelect = (answerOptionId: string) => {
     setSelected(answerOptionId)
     onAnswerSelect(question.id, answerOptionId, note)
+
+    // Find the selected option text for screen reader announcement
+    const selectedOption = question.answer_options.find(opt => opt.id === answerOptionId)
+    if (selectedOption) {
+      setAnnouncement(`Selected: ${selectedOption.option_text}`)
+      // Clear announcement after it's been read
+      setTimeout(() => setAnnouncement(''), 1000)
+    }
   }
 
   return (
     <div className="space-y-5 md:space-y-6">
+      {/* Screen reader announcement for answer selection */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+
       <RadioCardGroup
         value={selected}
         onValueChange={(value) => handleSelect(value)}
@@ -44,16 +68,14 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
       {!showNote ? (
         <Button
           variant="ghost"
-          size="sm"
           onClick={() => setShowNote(true)}
-          className="h-auto px-0 py-0 text-foreground hover:text-foreground/80"
         >
-          <CirclePlus size={24} strokeWidth={ICON_STROKE_WIDTH} className="mr-2" />
+          <CirclePlus size={24} />
           Add a note
         </Button>
       ) : (
-        <div className="space-y-2">
-          <label htmlFor={`note-${question.id}`} className="text-sm font-medium">
+        <div className="flex flex-col gap-2">
+          <label htmlFor={`note-${question.id}`} className="text-sm font-medium block">
             Additional notes (optional)
           </label>
           <Textarea

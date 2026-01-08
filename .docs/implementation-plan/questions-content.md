@@ -23,9 +23,9 @@ Question 1: If you could no longer recognise the people you love:
 
 [ ] Stop life-extending treatments; allow a natural death with comfort care.
 
-[ ] I’m not sure how I’d feel.
+[ ] I'm not sure how I'd feel.
 
-[ ] I’d want my loved ones to decide when the time comes.
+[ ] I'd want my loved ones to decide when the time comes.
 
 Page: Independence
 Heading: Personal Care & Independence Question: If you needed total help with eating, washing, and dressing:
@@ -34,27 +34,27 @@ Heading: Personal Care & Independence Question: If you needed total help with ea
 
 [ ] Stop treatments; my independence is essential to me.
 
-[ ] I’m not sure—it would depend on other things.
+[ ] I'm not sure—it would depend on other factors.
 
-[ ] I’d want my loved ones to decide.
+[ ] I'd want my loved ones to decide.
 
 Page: Communication
 Heading: Communication & Understanding Question: If you could no longer understand others or express your own thoughts:
 
-[ ] Continue treatments; I’d find other ways to connect.
+[ ] Continue treatments; I'd find other ways to connect.
 
 [ ] Stop treatments; being able to communicate is essential to me.
 
-[ ] I’m not sure—it depends on if I still feel love and kindness.
+[ ] I'm not sure—it depends on if I could still feel love and connection.
 
-[ ] I’d want my loved ones to decide.
+[ ] I'd want my loved ones to decide.
 
 Page: Eating & Drinking
 Heading: Food & Hydration Question: If you could no longer eat or drink by mouth and needed a feeding tube:
 
 [ ] Continue with a feeding tube; staying alive is worth it.
 
-[ ] Stop life-extending treatments; eating and drinking are too important to me.
+[ ] Stop life-extending treatments; being able to eat and drink are too important to me.
 
 [ ] I’m not sure—I’d need to know more about my daily life.
 

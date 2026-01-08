@@ -2,39 +2,140 @@
 
 @layer base {
   :root {
-    /* Font Size Scaling - Default to medium (1x) */
+    /* ========================================
+       Centralized Color System (Origin Tints)
+       ======================================== */
+
+    /* Basics */
+    --basics-white: #FFFFFF;
+    --basics-black: #000000;
+
+    /* Purple Scale */
+    --purple-950: #30227A;
+    --purple-900: #342294;
+    --purple-800: #472EA3;
+    --purple-700: #5434AB;
+    --purple-600: #613BB4;
+    --purple-500: #6A41BB;
+    --purple-400: #825BC6;
+    --purple-300: #9879D1;
+    --purple-200: #C5A3FF;
+    --purple-100: #D0B9FB;
+    --purple-50: #EEE8F7;
+
+    /* Lavender Scale */
+    --lavender-950: #1B1724;
+    --lavender-900: #1E192C;
+    --lavender-800: #292337;
+    --lavender-700: #342D43;
+    --lavender-600: #3F384F;
+    --lavender-500: #4A445B;
+    --lavender-400: #564F66;
+    --lavender-300: #625B73;
+    --lavender-200: #7B748C;
+    --lavender-100: #988DA6;
+    --lavender-50: #D8CDE9;
+
+    /* Gray Scale */
+    --gray-950: #161616;
+    --gray-900: #1E1E1E;
+    --gray-800: #262626;
+    --gray-700: #404040;
+    --gray-600: #525252;
+    --gray-500: #737373;
+    --gray-400: #A3A3A3;
+    --gray-300: #D4D4D4;
+    --gray-200: #EDEDED;
+    --gray-100: #F5F5F5;
+    --gray-50: #FAFAFA;
+
+    /* Rose Scale */
+    --rose-950: #672043;
+    --rose-900: #74284E;
+    --rose-800: #9A2F5A;
+    --rose-700: #B03260;
+    --rose-600: #C63666;
+    --rose-500: #D7396A;
+    --rose-400: #DB4F7F;
+    --rose-300: #E16A95;
+    --rose-200: #E993B3;
+    --rose-100: #F1BDD1;
+    --rose-50: #F9E5EC;
+
+    /* Orange Scale */
+    --orange-950: #94361E;
+    --orange-900: #A84127;
+    --orange-800: #B94830;
+    --orange-700: #C64E36;
+    --orange-600: #D8573C;
+    --orange-500: #E5603D;
+    --orange-400: #E36955;
+    --orange-300: #DB8177;
+    --orange-200: #E8A39C;
+    --orange-100: #FAC9C9;
+    --orange-50: #FAD6D8;
+    --orange-20: #F8E6E7;
+
+    /* Cyan Scale */
+    --cyan-950: #00211E;
+    --cyan-900: #002C29;
+    --cyan-800: #003835;
+    --cyan-700: #004441;
+    --cyan-600: #00524E;
+    --cyan-500: #006059;
+    --cyan-400: #006C67;
+    --cyan-300: #008680;
+    --cyan-200: #08A09A;
+    --cyan-100: #3DBCB5;
+    --cyan-50: #5FD8D1;
+
+    /* Green Scale */
+    --green-950: #3A6B07;
+    --green-900: #3B6C07;
+    --green-800: #608E17;
+    --green-700: #73A11C;
+    --green-600: #89B527;
+    --green-500: #99C52D;
+    --green-400: #AACE54;
+    --green-300: #B9D775;
+    --green-200: #CDE39E;
+    --green-100: #E1EDC5;
+    --green-50: #E7EFD5;
+
+    /* ========================================
+       Font Size Scaling - Default to medium (1x)
+       ======================================== */
     --font-scale: 1;
 
-    /* Colors */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 260 48% 49%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 79 55% 76%;
-    --secondary-foreground: 259 20% 22%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 337 65% 84%;
-    --destructive-foreground: 259 20% 22%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 267 49% 49%;
-    --ghost: 0 0% 100% / 0;
-    --ghost-foreground: 259 20% 22%;
-    --ghost-hover: 261 89% 85%;
-    --ghost-focus: 259 20% 22%;
-    --outline-border: 259 51% 47%;
-    --outline-foreground: 259 20% 22%;
-    --outline-hover: 263 49% 94%;
-    --outline-focus: 259 51% 47%;
-    --card-hover-active: 267 55% 94%;
-    --background-2: 271 24% 18%;
+    /* ========================================
+       Theme Colors - Light Mode
+       ======================================== */
+    --background: var(--basics-white);
+    --foreground: var(--gray-950);
+    --card: var(--basics-white);
+    --card-foreground: var(--gray-950);
+    --popover: var(--basics-white);
+    --popover-foreground: var(--gray-950);
+    --primary: var(--purple-500);
+    --primary-foreground: var(--gray-50);
+    --secondary: var(--green-300);
+    --secondary-foreground: var(--lavender-700);
+    --muted: var(--purple-50);
+    --muted-foreground: var(--gray-500);
+    --accent: var(--lavender-700);
+    --accent-foreground: var(--gray-50);
+    --destructive: var(--rose-100);
+    --destructive-foreground: var(--lavender-700);
+    --border: var(--gray-200);
+    --input: var(--gray-200);
+    --ring: var(--purple-500);
+    --outline-border: var(--purple-500);
+    --outline-foreground: var(--lavender-700);
+    --outline-hover: var(--purple-50);
+    --outline-focus: var(--purple-500);
+    --card-hover-active: var(--purple-50);
+    --background-2: var(--lavender-800);
+    --icon-accent: var(--purple-500);
 
     /* Typography - Font Families */
     --font-family-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
@@ -76,45 +177,45 @@
     --radius: 0.5rem;
 
     /* Gradients - Light Mode */
-    --gradient-light-1: linear-gradient(-54.59deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-2: linear-gradient(-36.48deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-3: linear-gradient(-42.31deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-4: linear-gradient(251.79deg, rgb(212, 186, 255) 4.14%, rgb(255, 195, 203) 20.67%, rgb(250, 247, 255) 80.80%);
-    --gradient-light-question-sm: linear-gradient(-61.26deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-question-lg: linear-gradient(-31.25deg, rgb(207, 185, 245) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-1: linear-gradient(-54.59deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-2: linear-gradient(-36.48deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-3: linear-gradient(-42.31deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-4: linear-gradient(251.79deg, var(--purple-200) 4.14%, rgb(255, 195, 203) 20.67%, rgb(250, 247, 255) 80.80%);
+    --gradient-light-question-sm: linear-gradient(-61.26deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-light-question-lg: linear-gradient(-31.25deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-breathing-light: linear-gradient(-27.23deg, rgba(119, 88, 176, 1) 0.28%, rgba(134, 78, 107, 1) 30.04%, rgba(63, 34, 116, 1) 100%);
   }
 
   .dark {
-    /* Colors */
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 267 49% 49%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 267 21% 26%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 341 66% 53%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 267 49% 49%;
-    --ghost: 0 0% 100% / 0;
-    --ghost-foreground: 0 0% 98%;
-    --ghost-hover: 267 49% 49%;
-    --ghost-focus: 267 100% 82%;
-    --outline-border: 267 13% 40%;
-    --outline-foreground: 0 0% 98%;
-    --outline-hover: 267 30% 18%;
-    --outline-focus: 267 13% 40%;
-    --card-hover-active: 267 30% 22%;
-    --background-2: 271 24% 18%;
+    /* ========================================
+       Theme Colors - Dark Mode
+       ======================================== */
+    --background: var(--lavender-950);
+    --foreground: var(--gray-50);
+    --card: var(--lavender-950);
+    --card-foreground: var(--gray-50);
+    --popover: var(--lavender-950);
+    --popover-foreground: var(--gray-50);
+    --primary: var(--purple-500);
+    --primary-foreground: var(--gray-50);
+    --secondary: var(--lavender-600);
+    --secondary-foreground: var(--gray-50);
+    --muted: var(--lavender-800);
+    --muted-foreground: var(--gray-400);
+    --accent: var(--lavender-700);
+    --accent-foreground: var(--gray-50);
+    --destructive: var(--rose-500);
+    --destructive-foreground: var(--gray-50);
+    --border: var(--gray-900);
+    --input: var(--gray-900);
+    --ring: var(--purple-500);
+    --outline-border: var(--lavender-500);
+    --outline-foreground: var(--gray-50);
+    --outline-hover: var(--lavender-800);
+    --outline-focus: var(--lavender-500);
+    --card-hover-active: var(--lavender-700);
+    --background-2: var(--lavender-800);
+    --icon-accent: var(--purple-200);
 
     /* Gradients - Dark Mode */
     --gradient-dark-1: linear-gradient(-65.99deg, rgb(119, 88, 176) 7.45%, rgb(134, 78, 107) 20.65%, rgb(63, 34, 116) 81.64%);
@@ -123,6 +224,7 @@
     --gradient-dark-4: linear-gradient(-74.81deg, rgb(119, 88, 176) 5.56%, rgb(134, 78, 107) 21.50%, rgb(63, 34, 116) 95.16%);
     --gradient-dark-question-sm: linear-gradient(-57.68deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
     --gradient-dark-question-lg: linear-gradient(-27.75deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
+    --gradient-breathing-dark: linear-gradient(-27.23deg, rgba(119, 88, 176, 1) 0.28%, rgba(134, 78, 107, 1) 30.04%, rgba(63, 34, 116, 1) 100%);
   }
 
   /* Font Size Scaling Classes */
@@ -141,35 +243,32 @@
 
 @theme inline {
   /* Colors */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-ghost: hsl(var(--ghost));
-  --color-ghost-foreground: hsl(var(--ghost-foreground));
-  --color-ghost-hover: hsl(var(--ghost-hover));
-  --color-ghost-focus: hsl(var(--ghost-focus));
-  --color-outline-border: hsl(var(--outline-border));
-  --color-outline-foreground: hsl(var(--outline-foreground));
-  --color-outline-hover: hsl(var(--outline-hover));
-  --color-outline-focus: hsl(var(--outline-focus));
-  --color-card-hover-active: hsl(var(--card-hover-active));
-  --color-background-2: hsl(var(--background-2));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-outline-border: var(--outline-border);
+  --color-outline-foreground: var(--outline-foreground);
+  --color-outline-hover: var(--outline-hover);
+  --color-outline-focus: var(--outline-focus);
+  --color-card-hover-active: var(--card-hover-active);
+  --color-background-2: var(--background-2);
+  --color-icon-accent: var(--icon-accent);
 
   /* Typography - Font Families */
   --font-family-body: var(--font-family-body);
@@ -220,6 +319,8 @@
   --gradient-dark-4: var(--gradient-dark-4);
   --gradient-dark-question-sm: var(--gradient-dark-question-sm);
   --gradient-dark-question-lg: var(--gradient-dark-question-lg);
+  --gradient-breathing-light: var(--gradient-breathing-light);
+  --gradient-breathing-dark: var(--gradient-breathing-dark);
 }
 
 @layer base {
@@ -241,6 +342,11 @@
 }
 
 @layer components {
+  /* Icon accent color - auto-switches with theme */
+  .text-icon-accent {
+    color: hsl(var(--icon-accent));
+  }
+
   /* Header card gradient backgrounds - auto-switches with theme */
   .header-card-gradient {
     background: var(--gradient-light-1);
@@ -273,5 +379,19 @@
 
   .dark .question-card-gradient[data-size="large"] {
     background: var(--gradient-dark-question-lg);
+  }
+
+  /* Breathing card background - uses image with overlay for dark mode */
+  .breathing-card-gradient {
+    background: url('/images/breathing-bg.jpg') center/cover no-repeat !important;
+  }
+
+  .dark .breathing-card-gradient {
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
+      url('/images/breathing-bg.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
   }
 }

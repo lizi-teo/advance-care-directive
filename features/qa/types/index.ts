@@ -3,6 +3,7 @@ export interface Question {
   caption: string | null
   question_text: string
   image_url: string | null
+  tell_me_more: string | null
 }
 
 export interface AnswerOption {

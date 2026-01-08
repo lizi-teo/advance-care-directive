@@ -8,12 +8,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ICON_STROKE_WIDTH } from "@/lib/theme-config"
 
 const appBarVariants = cva(
-  "flex items-center justify-between bg-[hsl(var(--background-2))] w-full",
+  "flex items-center justify-between bg-muted w-full",
   {
     variants: {
       size: {
-        small: "h-14 px-5", // 56px height, 20px padding
-        large: "h-20 px-8", // 80px height, 32px padding
+        small: "h-12 px-5", // 48px height, 20px padding (mobile)
+        large: "h-14 px-8", // 56px height, 32px padding (desktop)
       },
     },
     defaultVariants: {
@@ -60,7 +60,7 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
   ) => {
     const isSmall = size === "small"
     const buttonSize = isSmall ? "sm" : "default"
-    const iconSize = isSmall ? 20 : 24
+    const iconSize = isSmall ? 24 : 32
     const avatarSize = isSmall ? "size-8" : "size-12"
 
     return (
@@ -106,38 +106,46 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
             <div className="flex items-center gap-4 md:gap-6">
               {!isSmall && (
                 <>
-                  <button
+                  <Button
+                    variant="ghost-subtle"
+                    size="icon"
                     onClick={onFontSize}
-                    className="text-foreground hover:text-foreground/80 transition-colors"
+                    className="h-auto w-auto p-0"
                     aria-label="Change font size"
                   >
                     <ALargeSmall size={iconSize + 8} strokeWidth={ICON_STROKE_WIDTH} />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost-subtle"
+                    size="icon"
                     onClick={onClose}
-                    className="text-foreground hover:text-foreground/80 transition-colors"
+                    className="h-auto w-auto p-0"
                     aria-label="Close"
                   >
                     <X size={iconSize + 8} strokeWidth={ICON_STROKE_WIDTH} />
-                  </button>
+                  </Button>
                 </>
               )}
               {isSmall && (
                 <>
-                  <button
+                  <Button
+                    variant="ghost-subtle"
+                    size="icon"
                     onClick={onFontSize}
-                    className="text-foreground hover:text-foreground/80 transition-colors"
+                    className="h-auto w-auto p-0"
                     aria-label="Change font size"
                   >
                     <ALargeSmall size={iconSize + 12} strokeWidth={ICON_STROKE_WIDTH} />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost-subtle"
+                    size="icon"
                     onClick={onClose}
-                    className="text-foreground hover:text-foreground/80 transition-colors"
+                    className="h-auto w-auto p-0"
                     aria-label="Close"
                   >
                     <X size={iconSize + 12} strokeWidth={ICON_STROKE_WIDTH} />
-                  </button>
+                  </Button>
                 </>
               )}
             </div>
@@ -151,13 +159,15 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
               <p className="text-sm md:text-base text-primary-foreground">
                 {brandText}
               </p>
-              <button
+              <Button
+                variant="ghost-subtle"
+                size="icon"
                 onClick={onMenu}
-                className="text-foreground hover:text-foreground/80 transition-colors"
+                className="h-auto w-auto p-0"
                 aria-label="Menu"
               >
                 <Menu size={iconSize} strokeWidth={ICON_STROKE_WIDTH} />
-              </button>
+              </Button>
             </div>
             <div className="flex items-center gap-4">
               <Button
@@ -184,13 +194,15 @@ const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
         {type === "close" && (
           <>
             <div className="flex items-center gap-4">
-              <button
+              <Button
+                variant="ghost-subtle"
+                size="icon"
                 onClick={onMenu}
-                className="text-foreground hover:text-foreground/80 transition-colors"
+                className="h-auto w-auto p-0"
                 aria-label="Menu"
               >
                 <Menu size={iconSize} strokeWidth={ICON_STROKE_WIDTH} />
-              </button>
+              </Button>
               <p className="text-sm md:text-base text-primary-foreground">
                 {brandText}
               </p>

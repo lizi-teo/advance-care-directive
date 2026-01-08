@@ -35,17 +35,18 @@ function SettingsContent() {
         <h3 className="text-sm font-medium text-foreground">Font Size</h3>
         <div className="grid grid-cols-3 gap-2">
           {fontSizes.map((size) => (
-            <button
+            <Button
               key={size.value}
+              variant="outline"
               onClick={() => setFontSize(size.value)}
-              className={`h-12 rounded-lg border-2 transition-colors font-[family-name:var(--font-family-display)] text-lg ${
+              className={`h-12 rounded-lg font-[family-name:var(--font-family-display)] text-lg ${
                 fontSize === size.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-background text-foreground hover:border-primary/50'
+                  ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20'
+                  : 'hover:border-primary/50'
               }`}
             >
               {size.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -55,17 +56,18 @@ function SettingsContent() {
         <h3 className="text-sm font-medium text-foreground">Theme</h3>
         <div className="grid grid-cols-3 gap-2">
           {themes.map((themeOption) => (
-            <button
+            <Button
               key={themeOption.value}
+              variant="outline"
               onClick={() => setTheme(themeOption.value)}
-              className={`h-12 rounded-lg border-2 transition-colors text-sm ${
+              className={`h-12 rounded-lg text-sm ${
                 theme === themeOption.value
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-background text-foreground hover:border-primary/50'
+                  ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20'
+                  : 'hover:border-primary/50'
               }`}
             >
               {themeOption.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

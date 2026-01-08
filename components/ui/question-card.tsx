@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Info } from "lucide-react"
+import { Button } from "./button"
 
 interface QuestionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   caption?: string
@@ -101,27 +102,28 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
           {title}
         </h2>
 
-        {/* Learn More Link */}
-        <button
-          onClick={onLearnMoreClick}
-          className="flex items-center gap-2 text-foreground hover:opacity-80 transition-opacity self-start"
-        >
-          <Info
+        {/* Learn More Link - Only show if callback provided */}
+        {onLearnMoreClick && (
+          <Button
+            variant="ghost-subtle"
+            onClick={onLearnMoreClick}
             className={cn(
-              isSmall && "w-5 h-5",
-              isLarge && "w-6 h-6"
-            )}
-          />
-          <span
-            className={cn(
-              "underline underline-offset-2 font-[family-name:var(--font-family-body)]",
-              isSmall && "text-base leading-tight",
-              isLarge && "text-lg leading-[var(--leading-body-lg)]"
+              "self-start h-auto px-0 py-2",
+              isSmall && "text-base",
+              isLarge && "text-lg"
             )}
           >
-            Tell me more
-          </span>
-        </button>
+            <Info
+              className={cn(
+                isSmall && "w-5 h-5",
+                isLarge && "w-6 h-6"
+              )}
+            />
+            <span className="font-[family-name:var(--font-family-body)]">
+              Tell me more
+            </span>
+          </Button>
+        )}
       </div>
     )
   }

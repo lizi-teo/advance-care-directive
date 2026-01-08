@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'secondary', 'outline', 'ghost', 'destructive', 'link'],
+      options: ['default', 'secondary', 'outline', 'ghost', 'ghost-subtle', 'destructive', 'link'],
     },
     size: {
       control: 'select',
@@ -150,6 +150,34 @@ export const GhostWithIcon: Story = {
   },
 };
 
+// Ghost Subtle Button Stories (for gradient/colored backgrounds)
+export const GhostSubtle: Story = {
+  args: {
+    variant: 'ghost-subtle',
+    children: 'Button',
+  },
+};
+
+export const GhostSubtleLarge: Story = {
+  args: {
+    variant: 'ghost-subtle',
+    size: 'lg',
+    children: 'Button',
+  },
+};
+
+export const GhostSubtleWithIcon: Story = {
+  args: {
+    variant: 'ghost-subtle',
+    children: (
+      <>
+        <Mic />
+        Button
+      </>
+    ),
+  },
+};
+
 // Link Button Stories
 export const Link: Story = {
   args: {
@@ -240,6 +268,17 @@ export const AllVariants: Story = {
           <Button variant="ghost" size="lg">Button</Button>
           <Button variant="ghost"><Mic />Button</Button>
           <Button variant="ghost" disabled>Button</Button>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-4 text-lg font-semibold">Ghost Subtle (for gradients)</h3>
+        <div className="flex gap-4 flex-wrap items-center">
+          <Button variant="ghost-subtle" size="sm">Button</Button>
+          <Button variant="ghost-subtle">Button</Button>
+          <Button variant="ghost-subtle" size="lg">Button</Button>
+          <Button variant="ghost-subtle"><Mic />Button</Button>
+          <Button variant="ghost-subtle" disabled>Button</Button>
         </div>
       </div>
 
