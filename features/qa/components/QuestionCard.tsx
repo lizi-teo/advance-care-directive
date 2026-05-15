@@ -23,7 +23,9 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
   // Sync local state with prop when question changes
   useEffect(() => {
     setSelected(selectedAnswerId)
-  }, [selectedAnswerId, question.id])
+    setNote('')
+    setShowNote(false)
+  }, [question.id])
 
   const handleSelect = (answerOptionId: string) => {
     setSelected(answerOptionId)
@@ -84,6 +86,7 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
             placeholder="Add any additional thoughts or notes..."
             value={note}
             onChange={(e) => setNote(e.target.value)}
+            onBlur={() => { if (selected) onAnswerSelect(question.id, selected, note) }}
             className="min-h-[100px]"
           />
         </div>

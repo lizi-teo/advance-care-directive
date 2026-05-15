@@ -45,11 +45,11 @@ export default function QAPage() {
   const [showDone, setShowDone] = useState(false)
   const [signedAt, setSignedAt] = useState('')
   const [downloading, setDownloading] = useState(false)
-  const [direction, setDirection] = useState(1)
+  const [direction, setDirection] = useState(0)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
   const summaryScrollRef = useRef<HTMLDivElement>(null)
-  const swipeRef = useRef({ handleContinue: () => {}, handleBack: () => {}, hasSelected: false })
+  const swipeRef = useRef<{ handleContinue: (fromSwipe?: boolean) => void; handleBack: (fromSwipe?: boolean) => void; hasSelected: boolean }>({ handleContinue: () => {}, handleBack: () => {}, hasSelected: false })
 
   // Define currentQuestion early so it can be used in useEffect hooks
   const currentQuestion = questions[currentQuestionIndex]
@@ -101,8 +101,8 @@ export default function QAPage() {
     }
   }
 
-  const handleContinue = () => {
-    setDirection(1)
+  const handleContinue = (fromSwipe = false) => {
+    setDirection(fromSwipe ? 1 : 0)
     if (editingFromSummary) {
       setEditingFromSummary(false)
       setShowSummary(true)
@@ -129,8 +129,8 @@ export default function QAPage() {
     }
   }
 
-  const handleBack = () => {
-    setDirection(-1)
+  const handleBack = (fromSwipe = false) => {
+    setDirection(fromSwipe ? -1 : 0)
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1)
     }
@@ -257,8 +257,8 @@ export default function QAPage() {
       const dx = e.changedTouches[0].clientX - startX
       const dy = e.changedTouches[0].clientY - startY
       if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return
-      if (dx < 0 && swipeRef.current.hasSelected) swipeRef.current.handleContinue()
-      else if (dx > 0) swipeRef.current.handleBack()
+      if (dx < 0 && swipeRef.current.hasSelected) swipeRef.current.handleContinue(true)
+      else if (dx > 0) swipeRef.current.handleBack(true)
     }
 
     document.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -327,7 +327,7 @@ export default function QAPage() {
                 <Button
                   variant="ghost-subtle"
                   size="icon"
-                  onClick={handleBack}
+                  onClick={() => handleBack()}
                   className="-ml-2 w-8 h-8 p-0"
                   aria-label="Go to previous question"
                 >
@@ -454,7 +454,7 @@ export default function QAPage() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                  transition={direction !== 0 ? { duration: 0.18, ease: 'easeOut' } : { duration: 0 }}
                 >
                   {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
                   <div className="md:hidden w-full">
@@ -556,7 +556,7 @@ export default function QAPage() {
           <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex md:justify-end">
             <Button
               size="lg"
-              onClick={handleContinue}
+              onClick={() => handleContinue()}
               disabled={!hasSelectedAnswer}
               className="w-full md:w-auto h-12 md:h-11"
             >
