@@ -89,9 +89,7 @@ export function TellMeMoreModal({
           'flex flex-col items-stretch p-0 border-none bg-background',
           'md:rounded-lg overflow-hidden'
         )}
-        aria-label="Learn more"
       >
-        {/* Visually hidden title for accessibility */}
         <DialogTitle className="sr-only">Learn more</DialogTitle>
 
         {/* Custom Header - Responsive padding */}
@@ -118,9 +116,9 @@ export function TellMeMoreModal({
         {/* Content - Responsive padding and spacing */}
         <div className="flex-1 flex flex-col p-5 md:p-6 lg:p-8 overflow-y-auto">
           <div className="flex flex-col gap-6 md:gap-8">
-            <h1 className="font-[family-name:var(--font-family-display)] text-lg font-medium leading-normal text-foreground">
+            <h2 className="font-[family-name:var(--font-family-display)] text-lg font-medium leading-normal text-foreground">
               &ldquo;{questionText}&rdquo;
-            </h1>
+            </h2>
             <div className="font-[family-name:var(--font-family-body)] md:font-[family-name:var(--font-family-display)] text-base md:text-lg leading-normal text-foreground">
               {formatContent(tellMeMoreContent)}
             </div>
@@ -131,7 +129,7 @@ export function TellMeMoreModal({
         <div className="border-t border-border p-5 md:p-8 shrink-0 flex md:justify-end">
           <Button
             onClick={() => onOpenChange(false)}
-            className="w-full md:w-auto md:min-w-[120px] h-10 md:h-12 text-base font-semibold"
+            className="w-full md:w-auto md:min-w-[120px] h-12 md:h-11 text-base font-semibold"
           >
             Ok
           </Button>

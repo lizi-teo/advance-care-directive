@@ -69,8 +69,8 @@ export default function QAPage() {
     // Submit to database
     const success = await submitResponse(questionId, answerOptionId, note, sessionId)
 
-    if (success) {
-      toast.success('Response saved!')
+    if (!success) {
+      toast.error('Failed to save response. Please try again.')
     }
   }
 
