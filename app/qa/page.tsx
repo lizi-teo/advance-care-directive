@@ -290,25 +290,24 @@ export default function QAPage() {
         />
       ) : (
         <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">
-          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
-            {currentQuestionIndex > 0 && !editingFromSummary && (
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={handleBack}
-                className="flex-1 md:flex-none"
-              >
-                Back
-              </Button>
-            )}
+          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
             <Button
               size="lg"
               onClick={handleContinue}
               disabled={!hasSelectedAnswer}
-              className="flex-1 md:flex-none"
+              className="w-full md:w-auto md:order-2"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>
+            {currentQuestionIndex > 0 && !editingFromSummary && (
+              <Button
+                variant="ghost"
+                onClick={handleBack}
+                className="w-full md:w-auto md:order-1 h-9 md:h-11 text-sm md:text-base text-muted-foreground"
+              >
+                Back
+              </Button>
+            )}
           </div>
         </div>
       )}

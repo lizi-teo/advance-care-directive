@@ -403,13 +403,13 @@
 
   /* Breathing card background - uses image with overlay for dark mode */
   .breathing-card-gradient {
-    background: url('/images/breathing-bg.jpg') center/cover no-repeat !important;
+    background: #FFFFFF url('/images/breathing-bg.jpg') center/cover no-repeat !important;
   }
 
   .dark .breathing-card-gradient {
     background:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)),
-      url('/images/breathing-bg.jpg') !important;
+      url('/images/breathing-bg.jpg') #1B1724 !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;

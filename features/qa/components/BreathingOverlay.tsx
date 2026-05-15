@@ -40,6 +40,11 @@ export function BreathingOverlay({ open, onClose }: BreathingOverlayProps) {
     cycleCount,
   })
 
+  // Preload background image on mount so it's cached when the modal opens
+  useEffect(() => {
+    new Image().src = '/images/breathing-bg.jpg'
+  }, [])
+
   // Reset to selection view when overlay opens
   useEffect(() => {
     if (open) {
