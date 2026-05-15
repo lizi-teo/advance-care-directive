@@ -240,9 +240,7 @@ export default function QAPage() {
 
   // Swipe left/right to navigate questions on touch devices
   useEffect(() => {
-    if (showDone || showFinalise || showSummary) return
-    const el = questionScrollRef.current
-    if (!el) return
+    if (showDone || showFinalise || showSummary || showBreathing || showTellMeMore) return
 
     let startX = 0
     let startY = 0
@@ -260,13 +258,13 @@ export default function QAPage() {
       else if (dx > 0) swipeRef.current.handleBack()
     }
 
-    el.addEventListener('touchstart', onTouchStart, { passive: true })
-    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    document.addEventListener('touchstart', onTouchStart, { passive: true })
+    document.addEventListener('touchend', onTouchEnd, { passive: true })
     return () => {
-      el.removeEventListener('touchstart', onTouchStart)
-      el.removeEventListener('touchend', onTouchEnd)
+      document.removeEventListener('touchstart', onTouchStart)
+      document.removeEventListener('touchend', onTouchEnd)
     }
-  }, [showDone, showFinalise, showSummary])
+  }, [showDone, showFinalise, showSummary, showBreathing, showTellMeMore])
 
   if (loading) {
     return (
