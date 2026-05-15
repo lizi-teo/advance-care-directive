@@ -1,38 +1,92 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { notFound } from 'next/navigation'
 import { Printer } from 'lucide-react'
 
-interface PageProps {
-  params: Promise<{ sessionId: string }>
+interface Response {
+  question_id: string
+  answer_option_id: string
+  free_text_note: string | null
+  created_at: string
 }
 
-async function getSessionResponses(sessionId: string) {
-  const { data: responses, error } = await supabase
-    .from('user_responses')
-    .select('question_id, answer_option_id, free_text_note')
-    .eq('session_id', sessionId)
-
-  if (error || !responses || responses.length === 0) return null
-
-  const { data: questions } = await supabase
-    .from('questions')
-    .select('id, question_text, caption, display_order')
-    .order('display_order', { ascending: true })
-
-  const { data: answerOptions } = await supabase
-    .from('answer_options')
-    .select('id, question_id, option_text')
-
-  return { responses, questions: questions ?? [], answerOptions: answerOptions ?? [] }
+interface Question {
+  id: string
+  question_text: string
+  caption: string | null
+  display_order: number
 }
 
-export default async function SummaryPage({ params }: PageProps) {
-  const { sessionId } = await params
-  const data = await getSessionResponses(sessionId)
+interface AnswerOption {
+  id: string
+  question_id: string
+  option_text: string
+}
 
-  if (!data) return notFound()
+export default function SummaryPage() {
+  const { sessionId } = useParams<{ sessionId: string }>()
+  const [responses, setResponses] = useState<Response[]>([])
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [answerOptions, setAnswerOptions] = useState<AnswerOption[]>([])
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
 
-  const { responses, questions, answerOptions } = data
+  useEffect(() => {
+    async function load() {
+      const { data: rawResponses, error } = await supabase
+        .from('user_responses')
+        .select('question_id, answer_option_id, free_text_note, created_at')
+        .eq('session_id', sessionId)
+        .order('created_at', { ascending: false })
+
+      if (error || !rawResponses || rawResponses.length === 0) {
+        setNotFound(true)
+        setLoading(false)
+        return
+      }
+
+      // Keep only the latest response per question
+      const seen = new Set<string>()
+      const deduped = rawResponses.filter(r => {
+        if (seen.has(r.question_id)) return false
+        seen.add(r.question_id)
+        return true
+      })
+
+      const [{ data: qs }, { data: opts }] = await Promise.all([
+        supabase.from('questions').select('id, question_text, caption, display_order').order('display_order', { ascending: true }),
+        supabase.from('answer_options').select('id, question_id, option_text'),
+      ])
+
+      setResponses(deduped)
+      setQuestions(qs ?? [])
+      setAnswerOptions(opts ?? [])
+      setLoading(false)
+    }
+
+    if (sessionId) load()
+  }, [sessionId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground text-sm font-[family-name:var(--font-family-body)]">Loading…</p>
+      </div>
+    )
+  }
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <p className="text-foreground font-[family-name:var(--font-family-body)]">No responses found for this link.</p>
+          <p className="text-sm text-muted-foreground font-[family-name:var(--font-family-body)]">The link may be incorrect or the session has expired.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
