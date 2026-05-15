@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import { motion } from 'motion/react'
+import { useTheme } from 'next-themes'
 import { supabase } from '@/lib/supabase'
 import { Printer, Share2 } from 'lucide-react'
 import Link from 'next/link'
@@ -40,6 +42,9 @@ interface AnswerOption {
 
 export default function SignedPage() {
   const { sessionId } = useParams<{ sessionId: string }>()
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const sigBg = mounted && resolvedTheme === 'dark' ? '#3F384F' : '#D8CDE9'
   const [signature, setSignature] = useState<SignatureRecord | null>(null)
   const [witness, setWitness] = useState<WitnessRecord | null>(null)
   const [responses, setResponses] = useState<Response[]>([])
@@ -47,6 +52,8 @@ export default function SignedPage() {
   const [answerOptions, setAnswerOptions] = useState<AnswerOption[]>([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     async function load() {
@@ -166,7 +173,12 @@ export default function SignedPage() {
 
       {/* Content */}
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
-        <div className="max-w-2xl">
+        <motion.div
+          className="max-w-2xl"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
 
           {/* Title + name */}
           <div className="mb-10">
@@ -201,13 +213,22 @@ export default function SignedPage() {
           )}
 
           {/* Q&A */}
-          <div className="flex flex-col divide-y divide-border mb-12">
+          <motion.div
+            className="flex flex-col divide-y divide-border mb-12"
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04, delayChildren: 0.15 } } }}
+          >
             {questions.map(question => {
               const response = responses.find(r => r.question_id === question.id)
               const selectedOption = answerOptions.find(o => o.id === response?.answer_option_id)
 
               return (
-                <div key={question.id} className="py-6 flex flex-col gap-1.5">
+                <motion.div
+                  key={question.id}
+                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } } }}
+                  className="py-6 flex flex-col gap-1.5"
+                >
                   {question.caption && (
                     <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
                       {question.caption}
@@ -230,10 +251,10 @@ export default function SignedPage() {
                       Note: {response.free_text_note}
                     </p>
                   )}
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </motion.div>
 
           {/* Signatures */}
           <div className="border-t border-border pt-10 flex flex-col gap-10">
@@ -244,7 +265,7 @@ export default function SignedPage() {
                 <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
                   Signed by
                 </p>
-                <div className="h-28 rounded-lg border border-border overflow-hidden bg-muted/30">
+                <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
                   <img
                     src={signature.signature_url}
                     alt={`Signature of ${signature.signed_name}`}
@@ -266,7 +287,7 @@ export default function SignedPage() {
                 <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
                   Witnessed by
                 </p>
-                <div className="h-28 rounded-lg border border-border overflow-hidden bg-muted/30">
+                <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
                   <img
                     src={witness.witness_signature_url}
                     alt={`Signature of ${witness.witness_name}`}
@@ -299,7 +320,7 @@ export default function SignedPage() {
 
           </div>
 
-        </div>
+        </motion.div>
       </div>
     </div>
   )

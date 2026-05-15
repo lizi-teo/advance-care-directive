@@ -14,11 +14,29 @@ import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { useSignature } from '@/features/qa/hooks/useSignature'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Info, Wind, Sun, Moon } from 'lucide-react'
+import { Info, Wind, Sun, Moon, ChevronLeft } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
+
+const questionVariants = {
+  enter: (dir: number) => ({
+    y: dir > 0 ? 48 : -48,
+    opacity: 0,
+  }),
+  center: {
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
+  },
+  exit: (dir: number) => ({
+    y: dir > 0 ? -48 : 48,
+    opacity: 0,
+    transition: { duration: 0.2, ease: [0.55, 0, 1, 0.45] as [number, number, number, number] },
+  }),
+}
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
@@ -29,6 +47,7 @@ export default function QAPage() {
   const { save: saveSignature } = useSignature()
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showTellMeMore, setShowTellMeMore] = useState(false)
   const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
@@ -93,6 +112,7 @@ export default function QAPage() {
       setEditingFromSummary(false)
       setShowSummary(true)
     } else if (currentQuestionIndex < questions.length - 1) {
+      setDirection(1)
       setCurrentQuestionIndex(prev => prev + 1)
     } else {
       setShowSummary(true)
@@ -100,6 +120,7 @@ export default function QAPage() {
   }
 
   const handleEditFromSummary = (questionIndex: number) => {
+    setDirection(-1)
     setShowSummary(false)
     setEditingFromSummary(true)
     setCurrentQuestionIndex(questionIndex)
@@ -117,6 +138,7 @@ export default function QAPage() {
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
+      setDirection(-1)
       setCurrentQuestionIndex(prev => prev - 1)
     }
   }
@@ -265,10 +287,33 @@ export default function QAPage() {
 
   return (
     <div className="h-dvh w-full flex flex-col bg-background overflow-x-hidden">
-      {/* App Bar - Mobile: 48px, Desktop: 56px - Hides on scroll down (mobile only) */}
+      {/* App Bar - Mobile: 48px, Desktop: 56px */}
       <div className="w-full flex items-center justify-between h-12 md:h-14 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-muted">
-        <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
-          {showDone ? 'Signed' : showFinalise ? 'Sign' : showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
+        <div className="flex items-center gap-1">
+          <AnimatePresence initial={false}>
+            {!showDone && !showFinalise && !showSummary && currentQuestionIndex > 0 && !editingFromSummary && (
+              <motion.div
+                key="back-btn"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+              >
+                <Button
+                  variant="ghost-subtle"
+                  size="icon"
+                  onClick={handleBack}
+                  className="-ml-2 w-8 h-8 p-0"
+                  aria-label="Go to previous question"
+                >
+                  <ChevronLeft size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground" />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
+            {showDone ? 'Signed' : showFinalise ? 'Sign' : showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
+          </div>
         </div>
         <div className="flex items-center gap-5 md:gap-6 shrink-0">
           <Button
@@ -308,107 +353,157 @@ export default function QAPage() {
       </div>
 
       {/* Main Content */}
-      {showDone && finaliseSignature ? (
-        <div className="flex-1 w-full overflow-y-auto overscroll-y-none">
-          <SignedScreen
-            signedName={finaliseName}
-            signatureDataUrl={finaliseSignature}
-            signedAt={signedAt}
-            questions={questions}
-            responses={responses}
-            onRevise={handleRevise}
-            sessionId={sessionId ?? undefined}
-          />
-        </div>
-      ) : showFinalise ? (
-        <div className="flex-1 w-full overflow-y-auto overscroll-y-none">
-          <FinaliseScreen
-            name={finaliseName}
-            onNameChange={setFinaliseName}
-            onSignatureChange={setFinaliseSignature}
-            consented={finaliseConsented}
-            onConsentChange={setFinaliseConsented}
-          />
-        </div>
-      ) : showSummary ? (
-        <div ref={summaryScrollRef} className="flex-1 w-full overflow-y-auto overscroll-y-none">
-          <SummaryScreen
-            questions={questions}
-            responses={responses}
-            onEdit={handleEditFromSummary}
-          />
-        </div>
-      ) : (
-        <div ref={questionScrollRef} className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
-          {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
-          <div className="md:hidden w-full">
-            <QuestionHeaderCard
-              caption={currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-              title={currentQuestion.question_text}
-              size="small"
-              showImage={!!currentQuestion.image_url}
-              imageUrl={currentQuestion.image_url || undefined}
-              roundedHeader={false}
-              onLearnMoreClick={currentQuestion.tell_me_more ? () => setShowTellMeMore(true) : undefined}
-            />
-          </div>
-
-          {/* Desktop: Header Question Card with gradient background - extends to edges */}
-          <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
-            <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
-              <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
-                {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-              </p>
-              <h1
-                ref={questionHeadingRef}
-                tabIndex={-1}
-                className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
-              >
-                {currentQuestion.question_text}
-              </h1>
-              {currentQuestion.tell_me_more && (
-                <Button
-                  variant="ghost-subtle"
-                  onClick={() => setShowTellMeMore(true)}
-                  className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
+      <div className="flex-1 relative min-h-0">
+        <AnimatePresence mode="sync">
+          {showDone && finaliseSignature ? (
+            <motion.div
+              key="done"
+              className="absolute inset-0 overflow-y-auto overscroll-y-none"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            >
+              <SignedScreen
+                signedName={finaliseName}
+                signatureDataUrl={finaliseSignature}
+                signedAt={signedAt}
+                questions={questions}
+                responses={responses}
+                onRevise={handleRevise}
+                sessionId={sessionId ?? undefined}
+              />
+            </motion.div>
+          ) : showFinalise ? (
+            <motion.div
+              key="finalise"
+              className="absolute inset-0 overflow-y-auto overscroll-y-none"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            >
+              <FinaliseScreen
+                name={finaliseName}
+                onNameChange={setFinaliseName}
+                onSignatureChange={setFinaliseSignature}
+                consented={finaliseConsented}
+                onConsentChange={setFinaliseConsented}
+              />
+            </motion.div>
+          ) : showSummary ? (
+            <motion.div
+              key="summary"
+              ref={summaryScrollRef}
+              className="absolute inset-0 overflow-y-auto overscroll-y-none"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+            >
+              <SummaryScreen
+                questions={questions}
+                responses={responses}
+                onEdit={handleEditFromSummary}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="question"
+              ref={questionScrollRef}
+              className="absolute inset-0 overflow-y-auto overscroll-y-none pb-24"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <AnimatePresence mode="wait" initial={false} custom={direction}>
+                <motion.div
+                  key={currentQuestionIndex}
+                  custom={direction}
+                  variants={questionVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                 >
-                  <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
-                  <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
-                </Button>
-              )}
-            </div>
-          </div>
+                  {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
+                  <div className="md:hidden w-full">
+                    <QuestionHeaderCard
+                      caption={currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+                      title={currentQuestion.question_text}
+                      size="small"
+                      showImage={!!currentQuestion.image_url}
+                      imageUrl={currentQuestion.image_url || undefined}
+                      roundedHeader={false}
+                      onLearnMoreClick={currentQuestion.tell_me_more ? () => setShowTellMeMore(true) : undefined}
+                    />
+                  </div>
 
-          {/* Question Options and Actions */}
-          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
-            <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
-              {currentQuestion.image_url && (
-                <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
-                  {!desktopImageLoaded && (
-                    <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
-                  )}
-                  <img
-                    src={currentQuestion.image_url}
-                    alt="Question illustration"
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                      desktopImageLoaded ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    onLoad={() => setDesktopImageLoaded(true)}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
-                </div>
-              )}
-              <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
-                <QuestionCard
-                  question={currentQuestion}
-                  onAnswerSelect={handleAnswerSelect}
-                  selectedAnswerId={responses[currentQuestion.id]}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+                  {/* Desktop: Header Question Card with gradient background - extends to edges */}
+                  <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
+                    <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
+                      <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
+                        {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+                      </p>
+                      <h1
+                        ref={questionHeadingRef}
+                        tabIndex={-1}
+                        className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
+                      >
+                        {currentQuestion.question_text}
+                      </h1>
+                      {currentQuestion.tell_me_more && (
+                        <Button
+                          variant="ghost-subtle"
+                          onClick={() => setShowTellMeMore(true)}
+                          className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
+                        >
+                          <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
+                          <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Question Options and Actions */}
+                  <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
+                    <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
+                      {currentQuestion.image_url && (
+                        <motion.div
+                          className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0"
+                          initial={{ opacity: 0, scale: 1.04 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.5, delay: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
+                        >
+                          {!desktopImageLoaded && (
+                            <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
+                          )}
+                          <img
+                            src={currentQuestion.image_url}
+                            alt="Question illustration"
+                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                              desktopImageLoaded ? 'opacity-100' : 'opacity-0'
+                            }`}
+                            onLoad={() => setDesktopImageLoaded(true)}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
+                        </motion.div>
+                      )}
+                      <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
+                        <QuestionCard
+                          question={currentQuestion}
+                          onAnswerSelect={handleAnswerSelect}
+                          selectedAnswerId={responses[currentQuestion.id]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Footer */}
       {showDone ? (
@@ -432,25 +527,16 @@ export default function QAPage() {
           onFinalise={handleFinalise}
         />
       ) : (
-        <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">
-          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
+        <div className="w-full border-t border-border-emphasis py-4 shrink-0 fixed bottom-0 left-0 right-0 z-40 bg-background">
+          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex md:justify-end">
             <Button
               size="lg"
               onClick={handleContinue}
               disabled={!hasSelectedAnswer}
-              className="w-full md:w-auto md:order-2 h-12 md:h-11"
+              className="w-full md:w-auto h-12 md:h-11"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>
-            {currentQuestionIndex > 0 && !editingFromSummary && (
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-                className="w-full md:w-auto md:order-1 h-12 md:h-11 text-muted-foreground"
-              >
-                Back
-              </Button>
-            )}
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { motion } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { SignaturePad } from '@/features/qa/components/SignaturePad'
 import { Button } from '@/components/ui/button'
@@ -102,7 +103,12 @@ export default function WitnessPage() {
 
       {/* Content */}
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
-        <div className="max-w-xl">
+        <motion.div
+          className="max-w-xl"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
 
           <div className="mb-8">
             <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-4">
@@ -187,7 +193,7 @@ export default function WitnessPage() {
             </button>
           </div>
 
-        </div>
+        </motion.div>
       </div>
     </div>
   )

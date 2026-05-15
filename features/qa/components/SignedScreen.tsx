@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'motion/react'
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -31,10 +32,18 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
 
   return (
     <div className="w-full">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
+      <motion.div
+        className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12"
+        initial="hidden"
+        animate="show"
+        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+      >
 
         {/* Title + Name */}
-        <div className="mb-8 md:mb-10">
+        <motion.div
+          className="mb-8 md:mb-10"
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+        >
           <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-6 md:mb-8">
             NSW Advance Care Directive
           </h1>
@@ -44,10 +53,13 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
           <p className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
             {signedName}
           </p>
-        </div>
+        </motion.div>
 
         {/* Microcopy */}
-        <div className="flex flex-col gap-4 max-w-xl mb-8">
+        <motion.div
+          className="flex flex-col gap-4 max-w-xl mb-8"
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+        >
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
             {firstName} has prepared this advance care directive to make their values and medical wishes known. It sets out the care they want to receive — and the care they don't — if they are ever unable to speak for themselves.
           </p>
@@ -57,10 +69,13 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
             This document was completed on {formattedDate}.
           </p>
-        </div>
+        </motion.div>
 
         {/* Witnessing callout */}
-        <div className="flex flex-col md:flex-row gap-3 rounded-lg border border-border bg-muted/40 p-4 max-w-xl mb-4">
+        <motion.div
+          className="flex flex-col md:flex-row gap-3 rounded-lg border border-border bg-muted/40 p-4 max-w-xl mb-4"
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+        >
           <Info size={20} strokeWidth={ICON_STROKE_WIDTH} className="shrink-0 md:mt-0.5 text-muted-foreground" />
           <div className="flex flex-col gap-2">
             <h6 className="[font-size:var(--text-sm)] font-medium text-foreground font-[family-name:var(--font-family-body)]">
@@ -81,22 +96,28 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
               </a>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Revise link */}
         {onRevise && (
-          <div className="max-w-xl mb-10 md:mb-14">
+          <motion.div
+            className="max-w-xl mb-10 md:mb-14"
+            variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+          >
             <button
               onClick={onRevise}
               className="[font-size:var(--text-sm)] text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)] underline underline-offset-2"
             >
               Changed your mind? Revise your answers
             </button>
-          </div>
+          </motion.div>
         )}
 
         {/* Q&A answers */}
-        <div className="flex flex-col divide-y divide-border-emphasis mb-12 md:mb-16">
+        <motion.div
+          className="flex flex-col divide-y divide-border-emphasis mb-12 md:mb-16"
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+        >
           {questions.map(question => {
             const selectedOption = question.answer_options.find(o => o.id === responses[question.id])
             return (
@@ -121,10 +142,13 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
               </div>
             )
           })}
-        </div>
+        </motion.div>
 
         {/* Signature block */}
-        <div className="border-t border-border-emphasis pt-10 flex flex-col gap-2 max-w-xs">
+        <motion.div
+          className="border-t border-border-emphasis pt-10 flex flex-col gap-2 max-w-xs"
+          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+        >
           <div
             className="h-28 rounded-lg border border-border overflow-hidden"
             style={{ background: sigBg }}
@@ -141,9 +165,9 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
           <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
             {formattedDate}
           </p>
-        </div>
+        </motion.div>
 
-      </div>
+      </motion.div>
     </div>
   )
 }

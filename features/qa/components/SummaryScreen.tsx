@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'motion/react'
 import { QuestionWithOptions } from '../types'
 import { Button } from '@/components/ui/button'
 import { Pencil, Share2, Printer, CheckCircle2 } from 'lucide-react'
@@ -32,7 +33,12 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
 
         {/* Completion header */}
-        <div className="flex flex-col gap-3 mb-10 md:mb-12">
+        <motion.div
+          className="flex flex-col gap-3 mb-10 md:mb-12"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+        >
           <CheckCircle2 size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-primary" />
           <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
             You've done something meaningful
@@ -43,16 +49,25 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
             Review your answers below, and share or print your directive when you're ready.
           </p>
-        </div>
+        </motion.div>
 
         {/* Q&A list */}
-        <div className="flex flex-col divide-y divide-border-emphasis">
+        <motion.div
+          className="flex flex-col divide-y divide-border-emphasis"
+          initial="hidden"
+          animate="show"
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: 0.12 } } }}
+        >
           {questions.map((question, index) => {
             const selectedOptionId = responses[question.id]
             const selectedOption = question.answer_options.find(o => o.id === selectedOptionId)
 
             return (
-              <div key={question.id} className="py-8 flex flex-row items-start gap-4 md:gap-8 group">
+              <motion.div
+                key={question.id}
+                variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.2, ease: 'easeOut' } } }}
+                className="py-8 flex flex-row items-start gap-4 md:gap-8 group"
+              >
                 <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                   {question.caption && (
                     <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide mb-2">
@@ -82,10 +97,10 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
                   <Pencil size={14} strokeWidth={ICON_STROKE_WIDTH} />
                   <span className="hidden md:inline">Edit</span>
                 </Button>
-              </div>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

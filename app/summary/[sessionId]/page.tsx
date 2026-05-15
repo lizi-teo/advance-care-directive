@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import { motion } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { Printer } from 'lucide-react'
 
@@ -109,20 +110,35 @@ export default function SummaryPage() {
       {/* Content */}
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
         <div className="max-w-2xl">
-          <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-2">
-            Advance Care Directive
-          </h1>
-          <p className="text-muted-foreground [font-size:var(--text-base)] font-[family-name:var(--font-family-body)] mb-10">
-            A summary of values and treatment preferences.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
+            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-2">
+              Advance Care Directive
+            </h1>
+            <p className="text-muted-foreground [font-size:var(--text-base)] font-[family-name:var(--font-family-body)] mb-10">
+              A summary of values and treatment preferences.
+            </p>
+          </motion.div>
 
-          <div className="flex flex-col divide-y divide-border">
+          <motion.div
+            className="flex flex-col divide-y divide-border"
+            initial="hidden"
+            animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04, delayChildren: 0.1 } } }}
+          >
             {questions.map((question) => {
               const response = responses.find(r => r.question_id === question.id)
               const selectedOption = answerOptions.find(o => o.id === response?.answer_option_id)
 
               return (
-                <div key={question.id} className="py-6 flex flex-col gap-1.5">
+                <motion.div
+                  key={question.id}
+                  variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0, transition: { duration: 0.18, ease: 'easeOut' } } }}
+                  className="py-6 flex flex-col gap-1.5"
+                >
                   {question.caption && (
                     <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
                       {question.caption}
@@ -145,10 +161,10 @@ export default function SummaryPage() {
                       Note: {response.free_text_note}
                     </p>
                   )}
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

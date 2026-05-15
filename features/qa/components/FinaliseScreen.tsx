@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'motion/react'
 import { SignaturePad } from './SignaturePad'
 import { Button } from '@/components/ui/button'
 import { PenLine } from 'lucide-react'
@@ -25,7 +26,12 @@ export function FinaliseScreen({
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
 
         {/* Heading */}
-        <div className="flex flex-col gap-3 mb-10 md:mb-12">
+        <motion.div
+          className="flex flex-col gap-3 mb-10 md:mb-12"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+        >
           <PenLine size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-primary" />
           <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
             Sign your directive
@@ -33,10 +39,15 @@ export function FinaliseScreen({
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
             Add your name and signature to complete your advance care directive.
           </p>
-        </div>
+        </motion.div>
 
         {/* Form */}
-        <div className="flex flex-col gap-8 max-w-xl">
+        <motion.div
+          className="flex flex-col gap-8 max-w-xl"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: 'easeOut', delay: 0.1 }}
+        >
 
           {/* Full name */}
           <div className="flex flex-col gap-2">
@@ -77,7 +88,7 @@ export function FinaliseScreen({
               I confirm this signature and name represent my intentions in this advance care directive.
             </span>
           </label>
-        </div>
+        </motion.div>
       </div>
     </div>
   )
