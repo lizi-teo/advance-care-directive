@@ -4,9 +4,10 @@ import { motion } from 'motion/react'
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { Download, Printer, Share2, Info } from 'lucide-react'
+import { Download, Printer, Share2, Link2, Mail, Copy, Check } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { QuestionWithOptions } from '../types'
+import { toast } from 'sonner'
 
 interface SignedScreenProps {
   signedName: string
@@ -22,13 +23,35 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
   const firstName = signedName.split(' ')[0]
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [copied, setCopied] = useState(false)
   useEffect(() => setMounted(true), [])
   const sigBg = mounted && resolvedTheme === 'dark' ? '#3F384F' : '#D8CDE9'
+  const directiveUrl = mounted && sessionId ? `${window.location.origin}/signed/${sessionId}` : ''
   const formattedDate = new Date(signedAt).toLocaleDateString('en-AU', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   })
+
+  const handleCopyDirective = async () => {
+    await navigator.clipboard.writeText(directiveUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleShareWitness = async () => {
+    const url = `${window.location.origin}/signed/${sessionId}/witness`
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `Witness ${signedName}'s advance care directive`, url })
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return
+      }
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success('Witness link copied to clipboard')
+    }
+  }
 
   return (
     <div className="w-full">
@@ -69,33 +92,6 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
             This document was completed on {formattedDate}.
           </p>
-        </motion.div>
-
-        {/* Witnessing callout */}
-        <motion.div
-          className="flex flex-col md:flex-row gap-3 rounded-lg border border-border bg-muted/40 p-4 max-w-xl mb-4"
-          variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
-        >
-          <Info size={20} strokeWidth={ICON_STROKE_WIDTH} className="shrink-0 md:mt-0.5 text-muted-foreground" />
-          <div className="flex flex-col gap-2">
-            <h6 className="[font-size:var(--text-sm)] font-medium text-foreground font-[family-name:var(--font-family-body)]">
-              Witnessing is recommended
-            </h6>
-            <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
-              Your directive is legally valid in NSW without a witness.
-            </p>
-            <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
-              NSW Health strongly recommends having someone witness your signature — it helps confirm you had decision-making capacity and signed freely.
-            </p>
-            {sessionId && (
-              <a
-                href={`/signed/${sessionId}/witness`}
-                className="[font-size:var(--text-sm)] font-medium text-primary underline underline-offset-2 hover:no-underline w-fit font-[family-name:var(--font-family-body)]"
-              >
-                Add witness signature →
-              </a>
-            )}
-          </div>
         </motion.div>
 
         {/* Revise link */}
@@ -144,28 +140,104 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
           })}
         </motion.div>
 
-        {/* Signature block */}
+        {/* Signatures section */}
         <motion.div
-          className="border-t border-border-emphasis pt-10 flex flex-col gap-2 max-w-xs"
+          className="border-t border-border-emphasis pt-10 flex flex-col gap-10"
           variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
         >
-          <div
-            className="h-28 rounded-lg border border-border overflow-hidden"
-            style={{ background: sigBg }}
-          >
-            <img
-              src={signatureDataUrl}
-              alt="Your signature"
-              className="w-full h-full object-contain"
-            />
+          {/* Signer */}
+          <div className="flex flex-col gap-2 max-w-xs">
+            <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+              Signed by
+            </p>
+            <div
+              className="h-28 rounded-lg border border-border overflow-hidden"
+              style={{ background: sigBg }}
+            >
+              <img
+                src={signatureDataUrl}
+                alt="Your signature"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <p className="[font-size:var(--text-base)] text-foreground font-[family-name:var(--font-family-body)] font-medium mt-1">
+              {signedName}
+            </p>
+            <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+              {formattedDate}
+            </p>
           </div>
-          <p className="[font-size:var(--text-base)] text-foreground font-[family-name:var(--font-family-body)] font-medium mt-1">
-            {signedName}
-          </p>
-          <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
-            {formattedDate}
-          </p>
+
+          {/* Witness */}
+          {sessionId && (
+            <div className="flex flex-col gap-2 max-w-xs">
+              <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+                Witnessed by
+              </p>
+              <div className="h-28 rounded-lg border-2 border-dashed border-border flex items-center justify-center">
+                <p className="[font-size:var(--text-xs)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+                  No witness yet
+                </p>
+              </div>
+              <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed mt-1">
+                Share a link for your witness to sign on their own device, or open it together now.
+              </p>
+              <div className="flex flex-col gap-2 mt-1">
+                <Button
+                  variant="outline"
+                  onClick={handleShareWitness}
+                  className="w-full gap-2 h-11 text-foreground font-[family-name:var(--font-family-body)]"
+                >
+                  <Link2 size={16} strokeWidth={ICON_STROKE_WIDTH} />
+                  Share witness link
+                </Button>
+                <a
+                  href={`/signed/${sessionId}/witness`}
+                  className="[font-size:var(--text-sm)] text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)] text-center py-1"
+                >
+                  Open now →
+                </a>
+              </div>
+            </div>
+          )}
         </motion.div>
+
+        {/* Share directive */}
+        {sessionId && directiveUrl && (
+          <motion.div
+            className="flex flex-col gap-3 pt-10 border-t border-border max-w-xl"
+            variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } } }}
+          >
+            <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
+              Share your directive
+            </p>
+            <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
+              Send this link to your doctor, family, or healthcare team. Keep it somewhere safe — it's the only way to return to this directive.
+            </p>
+            <div className="flex gap-2 mt-1">
+              <div className="flex-1 flex items-center h-11 px-3 rounded-lg border border-border bg-muted/40 min-w-0">
+                <span className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] truncate">
+                  {directiveUrl}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleCopyDirective}
+                className="h-11 shrink-0 gap-1.5 font-[family-name:var(--font-family-body)]"
+              >
+                {copied ? <Check size={15} strokeWidth={ICON_STROKE_WIDTH} /> : <Copy size={15} strokeWidth={ICON_STROKE_WIDTH} />}
+                {copied ? 'Copied' : 'Copy'}
+              </Button>
+              <a
+                href={`mailto:?subject=My NSW Advance Care Directive&body=Here is a link to my advance care directive:%0A%0A${encodeURIComponent(directiveUrl)}`}
+                className="h-11 shrink-0 flex items-center gap-1.5 px-4 rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)]"
+              >
+                <Mail size={15} strokeWidth={ICON_STROKE_WIDTH} />
+                Email
+              </a>
+            </div>
+          </motion.div>
+        )}
 
       </motion.div>
     </div>

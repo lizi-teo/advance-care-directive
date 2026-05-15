@@ -101,6 +101,27 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
             )
           })}
         </motion.div>
+
+        {/* Footer note */}
+        <motion.div
+          className="mt-10 md:mt-12 pt-8 border-t border-border max-w-xl"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: 'easeOut', delay: 0.3 }}
+        >
+          <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
+            This tool was made to help you record your values and healthcare wishes — clearly, and in your own words. It follows the NSW Health framework for advance care planning.{' '}
+            <a
+              href="https://www.health.nsw.gov.au/patients/acp/Pages/default.aspx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-link underline underline-offset-2 hover:no-underline whitespace-nowrap"
+            >
+              Learn more at NSW Health →
+            </a>
+          </p>
+        </motion.div>
+
       </div>
     </div>
   )

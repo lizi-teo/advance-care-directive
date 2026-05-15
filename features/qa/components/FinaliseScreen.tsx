@@ -3,7 +3,7 @@
 import { motion } from 'motion/react'
 import { SignaturePad } from './SignaturePad'
 import { Button } from '@/components/ui/button'
-import { PenLine } from 'lucide-react'
+import { PenLine, Info } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 
 interface FinaliseScreenProps {
@@ -88,6 +88,31 @@ export function FinaliseScreen({
               I confirm this signature and name represent my intentions in this advance care directive.
             </span>
           </label>
+
+          {/* Witnessing callout */}
+          <div className="flex flex-col md:flex-row gap-3 rounded-lg border border-border bg-muted/40 p-4">
+            <Info size={20} strokeWidth={ICON_STROKE_WIDTH} className="shrink-0 md:mt-1 text-muted-foreground" />
+            <div className="flex flex-col gap-3">
+              <h6 className="[font-size:var(--text-base)] font-semibold text-foreground font-[family-name:var(--font-family-body)]">
+                About witnessing
+              </h6>
+              <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
+                NSW Health recommends having your directive witnessed by someone who can confirm you had full decision-making capacity and signed freely.
+              </p>
+              <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
+                Witnessing is not legally required in NSW, but it strengthens the validity of your directive.
+              </p>
+              <a
+                href="https://www.health.nsw.gov.au/patients/acp/Pages/default.aspx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="[font-size:var(--text-base)] font-medium text-link underline underline-offset-2 hover:no-underline w-fit font-[family-name:var(--font-family-body)]"
+              >
+                Learn more at NSW Health →
+              </a>
+            </div>
+          </div>
+
         </motion.div>
       </div>
     </div>

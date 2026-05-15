@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { motion } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
 import { supabase } from '@/lib/supabase'
 import { Printer, Share2 } from 'lucide-react'
@@ -112,10 +112,30 @@ export default function SignedPage() {
     if (sessionId) load()
   }, [sessionId])
 
+  // Live witness notification — subscribe until a witness is recorded
+  useEffect(() => {
+    if (!sessionId || witness) return
+
+    const channel = supabase
+      .channel(`witness-${sessionId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'witness_signatures', filter: `session_id=eq.${sessionId}` },
+        (payload) => {
+          const incoming = payload.new as WitnessRecord
+          setWitness(incoming)
+          toast.success(`${incoming.witness_name} has witnessed your directive`)
+        }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [sessionId, witness])
+
   const handleShare = async () => {
     const url = window.location.href
     if (navigator.share) {
-      await navigator.share({ title: 'My Advance Care Directive', url })
+      try { await navigator.share({ title: 'My Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
     } else {
       await navigator.clipboard.writeText(url)
       toast.success('Link copied to clipboard')
@@ -282,41 +302,54 @@ export default function SignedPage() {
             )}
 
             {/* Witness block or CTA */}
-            {witness ? (
-              <div className="flex flex-col gap-2 max-w-xs">
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
-                  Witnessed by
-                </p>
-                <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
-                  <img
-                    src={witness.witness_signature_url}
-                    alt={`Signature of ${witness.witness_name}`}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)] mt-1">
-                  {witness.witness_name}
-                </p>
-                <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
-                  {witnessedDate}
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
-                  Witness
-                </p>
-                <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed max-w-sm">
-                  This directive has not yet been witnessed. Witnessing is not legally required in NSW, but is strongly recommended.
-                </p>
-                <Link
-                  href={`/signed/${sessionId}/witness`}
-                  className="[font-size:var(--text-sm)] font-medium text-primary underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)] w-fit"
+            <AnimatePresence mode="wait" initial={false}>
+              {witness ? (
+                <motion.div
+                  key="witnessed"
+                  className="flex flex-col gap-2 max-w-xs"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                 >
-                  Witness this directive →
-                </Link>
-              </div>
-            )}
+                  <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+                    Witnessed by
+                  </p>
+                  <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
+                    <img
+                      src={witness.witness_signature_url}
+                      alt={`Signature of ${witness.witness_name}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)] mt-1">
+                    {witness.witness_name}
+                  </p>
+                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+                    {witnessedDate}
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="not-witnessed"
+                  className="flex flex-col gap-3"
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
+                    Witness
+                  </p>
+                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed max-w-sm">
+                    This directive has not yet been witnessed. Witnessing is not legally required in NSW, but is strongly recommended.
+                  </p>
+                  <Link
+                    href={`/signed/${sessionId}/witness`}
+                    className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)] w-fit"
+                  >
+                    Witness this directive →
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
           </div>
 

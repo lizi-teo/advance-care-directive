@@ -122,7 +122,7 @@ export default function QAPage() {
   const handleShare = async () => {
     const url = `${window.location.origin}/summary/${sessionId}`
     if (navigator.share) {
-      await navigator.share({ title: 'My Advance Care Directive', url })
+      try { await navigator.share({ title: 'My Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
     } else {
       await navigator.clipboard.writeText(url)
       toast.success('Link copied to clipboard')
@@ -219,7 +219,7 @@ export default function QAPage() {
   const handleDoneShare = async () => {
     const url = `${window.location.origin}/signed/${sessionId}`
     if (navigator.share) {
-      await navigator.share({ title: 'My Advance Care Directive', url })
+      try { await navigator.share({ title: 'My Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
     } else {
       await navigator.clipboard.writeText(url)
       toast.success('Link copied to clipboard')
