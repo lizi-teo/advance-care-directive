@@ -15,7 +15,6 @@ import { Info, Wind, Sun, Moon } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { useTheme } from 'next-themes'
-import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
 import { toast } from 'sonner'
 
 export default function QAPage() {
@@ -32,7 +31,6 @@ export default function QAPage() {
   const [breathePulse, setBreathePulse] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
   const [editingFromSummary, setEditingFromSummary] = useState(false)
-  const scrollDirection = useScrollDirection(10)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
 
   // Define currentQuestion early so it can be used in useEffect hooks
@@ -157,11 +155,9 @@ export default function QAPage() {
   const hasSelectedAnswer = !!responses[currentQuestion.id]
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-background overflow-x-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-background overflow-x-clip overscroll-y-none">
       {/* App Bar - Mobile: 48px, Desktop: 56px - Hides on scroll down (mobile only) */}
-      <div className={`w-full flex items-center justify-between h-12 md:h-14 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-muted transition-transform duration-300 ease-in-out ${
-        scrollDirection === 'down' ? '-translate-y-full md:translate-y-0' : 'translate-y-0'
-      }`}>
+      <div className="w-full flex items-center justify-between h-12 md:h-14 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-muted">
         <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
           {showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
         </div>
@@ -210,7 +206,7 @@ export default function QAPage() {
           onEdit={handleEditFromSummary}
         />
       ) : (
-        <div className="flex-1 w-full overflow-y-auto md:pb-24">
+        <div className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
           {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
           <div className="md:hidden w-full">
             <QuestionHeaderCard

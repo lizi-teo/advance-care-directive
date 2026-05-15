@@ -28,7 +28,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
   }
 
   return (
-    <div className="flex-1 w-full overflow-y-auto pb-24">
+    <div className="w-full">
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
 
         {/* Completion header */}
@@ -90,7 +90,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
 
 export function SummaryFooter({ onShare, onPrint }: { onShare: () => void; onPrint: () => void }) {
   return (
-    <div className="w-full border-t border-border-emphasis py-5 shrink-0 sticky bottom-0 z-40 bg-background">
+    <div className="w-full border-t border-border-emphasis py-5 shrink-0 bg-background">
       <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
         <Button
           variant="outline"
