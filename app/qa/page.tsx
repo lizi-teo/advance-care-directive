@@ -81,6 +81,17 @@ export default function QAPage() {
     if (showSummary && summaryScrollRef.current) summaryScrollRef.current.scrollTop = 0
   }, [showSummary])
 
+  // Preload adjacent question images so they're cached before the user navigates
+  useEffect(() => {
+    const preload = (url: string | null | undefined) => {
+      if (!url) return
+      const img = new window.Image()
+      img.src = url
+    }
+    preload(questions[currentQuestionIndex + 1]?.image_url)
+    preload(questions[currentQuestionIndex - 1]?.image_url)
+  }, [currentQuestionIndex, questions])
+
   // Reset image loading state when question changes
   useEffect(() => {
     if (currentQuestion?.image_url) {
