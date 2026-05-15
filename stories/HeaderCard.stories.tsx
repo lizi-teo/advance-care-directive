@@ -209,6 +209,10 @@ export const SectionIntroExample: Story = {
 
 // All Variants Showcase
 export const AllVariants: Story = {
+  args: {
+    title: 'All Variants',
+    body: 'Showcase of all HeaderCard variants.',
+  },
   render: () => (
     <div className="space-y-12 max-w-[900px]">
       <div>
