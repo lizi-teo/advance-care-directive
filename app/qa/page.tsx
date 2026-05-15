@@ -21,22 +21,6 @@ import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 
-const questionVariants = {
-  enter: (dir: number) => ({
-    y: dir > 0 ? 48 : -48,
-    opacity: 0,
-  }),
-  center: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] },
-  },
-  exit: (dir: number) => ({
-    y: dir > 0 ? -48 : 48,
-    opacity: 0,
-    transition: { duration: 0.2, ease: [0.55, 0, 1, 0.45] as [number, number, number, number] },
-  }),
-}
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
@@ -47,7 +31,6 @@ export default function QAPage() {
   const { save: saveSignature } = useSignature()
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [direction, setDirection] = useState(1)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showTellMeMore, setShowTellMeMore] = useState(false)
   const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
@@ -123,7 +106,6 @@ export default function QAPage() {
       setEditingFromSummary(false)
       setShowSummary(true)
     } else if (currentQuestionIndex < questions.length - 1) {
-      setDirection(1)
       setCurrentQuestionIndex(prev => prev + 1)
     } else {
       setShowSummary(true)
@@ -131,7 +113,6 @@ export default function QAPage() {
   }
 
   const handleEditFromSummary = (questionIndex: number) => {
-    setDirection(-1)
     setShowSummary(false)
     setEditingFromSummary(true)
     setCurrentQuestionIndex(questionIndex)
@@ -149,7 +130,6 @@ export default function QAPage() {
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
-      setDirection(-1)
       setCurrentQuestionIndex(prev => prev - 1)
     }
   }
@@ -428,14 +408,13 @@ export default function QAPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <AnimatePresence mode="wait" initial={false} custom={direction}>
+              <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={currentQuestionIndex}
-                  custom={direction}
-                  variants={questionVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.97 }}
+                  transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
                 >
                   {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
                   <div className="md:hidden w-full">
