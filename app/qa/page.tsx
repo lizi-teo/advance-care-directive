@@ -48,6 +48,7 @@ export default function QAPage() {
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
   const summaryScrollRef = useRef<HTMLDivElement>(null)
+  const swipeRef = useRef({ handleContinue: () => {}, handleBack: () => {}, hasSelected: false })
 
   // Define currentQuestion early so it can be used in useEffect hooks
   const currentQuestion = questions[currentQuestionIndex]
@@ -64,16 +65,14 @@ export default function QAPage() {
     if (showSummary && summaryScrollRef.current) summaryScrollRef.current.scrollTop = 0
   }, [showSummary])
 
-  // Preload adjacent question images so they're cached before the user navigates
+  // Preload all question images as soon as questions load
   useEffect(() => {
-    const preload = (url: string | null | undefined) => {
-      if (!url) return
+    questions.forEach(q => {
+      if (!q.image_url) return
       const img = new window.Image()
-      img.src = url
-    }
-    preload(questions[currentQuestionIndex + 1]?.image_url)
-    preload(questions[currentQuestionIndex - 1]?.image_url)
-  }, [currentQuestionIndex, questions])
+      img.src = q.image_url
+    })
+  }, [questions])
 
   // Reset image loading state when question changes
   useEffect(() => {
@@ -234,6 +233,40 @@ export default function QAPage() {
     setShowBreathing(true)
   }
 
+  // Keep swipe ref current so the event handler always reads fresh values
+  swipeRef.current.handleContinue = handleContinue
+  swipeRef.current.handleBack = handleBack
+  swipeRef.current.hasSelected = !!responses[questions[currentQuestionIndex]?.id ?? '']
+
+  // Swipe left/right to navigate questions on touch devices
+  useEffect(() => {
+    if (showDone || showFinalise || showSummary) return
+    const el = questionScrollRef.current
+    if (!el) return
+
+    let startX = 0
+    let startY = 0
+
+    const onTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
+    }
+
+    const onTouchEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = e.changedTouches[0].clientY - startY
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return
+      if (dx < 0 && swipeRef.current.hasSelected) swipeRef.current.handleContinue()
+      else if (dx > 0) swipeRef.current.handleBack()
+    }
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [showDone, showFinalise, showSummary])
 
   if (loading) {
     return (
@@ -408,14 +441,7 @@ export default function QAPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={currentQuestionIndex}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
-                >
+              <div>
                   {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
                   <div className="md:hidden w-full">
                     <QuestionHeaderCard
@@ -459,12 +485,7 @@ export default function QAPage() {
                   <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
                     <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
                       {currentQuestion.image_url && (
-                        <motion.div
-                          className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0"
-                          initial={{ opacity: 0, scale: 1.04 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.5, delay: 0.22, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
-                        >
+                        <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
                           {!desktopImageLoaded && (
                             <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
                           )}
@@ -477,7 +498,7 @@ export default function QAPage() {
                             onLoad={() => setDesktopImageLoaded(true)}
                           />
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
-                        </motion.div>
+                        </div>
                       )}
                       <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
                         <QuestionCard
@@ -488,8 +509,7 @@ export default function QAPage() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
