@@ -45,6 +45,7 @@ export default function QAPage() {
   const [showDone, setShowDone] = useState(false)
   const [signedAt, setSignedAt] = useState('')
   const [downloading, setDownloading] = useState(false)
+  const [direction, setDirection] = useState(1)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
   const summaryScrollRef = useRef<HTMLDivElement>(null)
@@ -101,6 +102,7 @@ export default function QAPage() {
   }
 
   const handleContinue = () => {
+    setDirection(1)
     if (editingFromSummary) {
       setEditingFromSummary(false)
       setShowSummary(true)
@@ -128,6 +130,7 @@ export default function QAPage() {
   }
 
   const handleBack = () => {
+    setDirection(-1)
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1)
     }
@@ -439,7 +442,20 @@ export default function QAPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
             >
-              <div>
+              <AnimatePresence mode="wait" custom={direction} initial={false}>
+                <motion.div
+                  key={currentQuestionIndex}
+                  custom={direction}
+                  variants={{
+                    enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 28 : -28 }),
+                    center: { opacity: 1, x: 0 },
+                    exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -28 : 28 }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
+                >
                   {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
                   <div className="md:hidden w-full">
                     <QuestionHeaderCard
@@ -507,7 +523,8 @@ export default function QAPage() {
                       </div>
                     </div>
                   </div>
-              </div>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
