@@ -350,6 +350,17 @@
   }
 }
 
+@keyframes breathe-pulse {
+  0% { box-shadow: 0 0 0 0 hsl(var(--purple-400) / 0.5); }
+  70% { box-shadow: 0 0 0 10px hsl(var(--purple-400) / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--purple-400) / 0); }
+}
+
+.animate-breathe-pulse {
+  animation: breathe-pulse 1.8s ease-out infinite;
+  border-radius: 9999px;
+}
+
 @layer components {
   /* Icon accent color - auto-switches with theme */
   .text-icon-accent {

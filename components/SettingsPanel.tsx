@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { useTheme } from 'next-themes'
 import { useSettings, type FontSize } from '@/lib/contexts/SettingsContext'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle, DrawerDescription } from '@/components/ui/drawer'
@@ -15,7 +14,6 @@ interface SettingsPanelProps {
 
 function SettingsContent() {
   const { fontSize, setFontSize } = useSettings()
-  const { theme, setTheme } = useTheme()
 
   const fontSizes: { value: FontSize; label: string }[] = [
     { value: 'small', label: 'A⁻' },
@@ -23,17 +21,10 @@ function SettingsContent() {
     { value: 'large', label: 'A⁺' },
   ]
 
-  const themes: { value: string; label: string }[] = [
-    { value: 'system', label: 'Auto' },
-    { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-  ]
-
   return (
-    <div className="w-full p-6 space-y-6">
-      {/* Font Size Section */}
+    <div className="w-full p-6">
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-foreground">Font Size</h3>
+        <h3 className="text-sm font-medium text-foreground">Text size</h3>
         <div className="grid grid-cols-3 gap-2">
           {fontSizes.map((size) => (
             <Button
@@ -47,27 +38,6 @@ function SettingsContent() {
               }`}
             >
               {size.label}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      {/* Theme Section */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-foreground">Theme</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {themes.map((themeOption) => (
-            <Button
-              key={themeOption.value}
-              variant="outline"
-              onClick={() => setTheme(themeOption.value)}
-              className={`h-12 rounded-lg text-sm ${
-                theme === themeOption.value
-                  ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20'
-                  : 'hover:border-primary/50'
-              }`}
-            >
-              {themeOption.label}
             </Button>
           ))}
         </div>

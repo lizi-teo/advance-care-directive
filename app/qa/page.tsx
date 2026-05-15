@@ -9,22 +9,24 @@ import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Info, Wind, X } from 'lucide-react'
+import { Info, Wind, X, Sun, Moon } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
-import { SettingsPanel } from '@/components/SettingsPanel'
 import { toast } from 'sonner'
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
   const { submitResponse, submitting, error: submitError } = useResponseSubmit()
+  const { resolvedTheme, setTheme } = useTheme()
   const { saveProgress } = useProgressAutoSave()
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showTellMeMore, setShowTellMeMore] = useState(false)
   const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
+  const [breathePulse, setBreathePulse] = useState(false)
   const scrollDirection = useScrollDirection(10)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
 
@@ -44,6 +46,13 @@ export default function QAPage() {
       setDesktopImageLoaded(false)
     }
   }, [currentQuestion?.image_url])
+
+  // Pulse the breathe button after 10s idle on a question
+  useEffect(() => {
+    setBreathePulse(false)
+    const timer = setTimeout(() => setBreathePulse(true), 10000)
+    return () => clearTimeout(timer)
+  }, [currentQuestionIndex])
 
   const handleAnswerSelect = async (questionId: string, answerOptionId: string, note?: string) => {
     // Update local state
@@ -70,13 +79,12 @@ export default function QAPage() {
   }
 
   const handlePause = () => {
-    // Save progress to localStorage
+    setBreathePulse(false)
     saveProgress({
       currentQuestionIndex,
       responses,
       timestamp: new Date().toISOString()
     })
-    // Open breathing overlay
     setShowBreathing(true)
   }
 
@@ -141,27 +149,40 @@ export default function QAPage() {
         <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
           {currentQuestionIndex + 1} of {questions.length}
         </div>
-        <div className="flex items-center gap-5 md:gap-8 shrink-0">
+        <div className="flex items-center gap-5 md:gap-6 shrink-0">
           <Button
             variant="ghost-subtle"
             size="icon"
             onClick={handlePause}
-            className="w-8 h-8 p-0"
+            className={`w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5 ${breathePulse ? 'animate-breathe-pulse' : ''}`}
             aria-label="Breathe"
           >
             <Wind size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
-            <Wind size={32} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+            <Wind size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+            <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">Breathe</span>
           </Button>
-          <SettingsPanel>
-            <Button
-              variant="ghost-subtle"
-              size="icon"
-              className="w-8 h-8 p-0 font-[family-name:var(--font-family-display)] text-xl font-medium"
-              aria-label="Settings"
-            >
-              Aa
-            </Button>
-          </SettingsPanel>
+<Button
+            variant="ghost-subtle"
+            size="icon"
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className="w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5"
+            aria-label="Toggle theme"
+          >
+            {resolvedTheme === 'dark' ? (
+              <>
+                <Sun size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+                <Sun size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+              </>
+            ) : (
+              <>
+                <Moon size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+                <Moon size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+              </>
+            )}
+            <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">
+              {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+            </span>
+          </Button>
           <Button
             variant="ghost-subtle"
             size="icon"
@@ -170,7 +191,7 @@ export default function QAPage() {
             aria-label="Close"
           >
             <X size={24} className="text-foreground md:hidden" strokeWidth={ICON_STROKE_WIDTH} />
-            <X size={32} className="text-foreground hidden md:block" strokeWidth={ICON_STROKE_WIDTH} />
+            <X size={20} className="text-foreground hidden md:block" strokeWidth={ICON_STROKE_WIDTH} />
           </Button>
         </div>
       </div>
