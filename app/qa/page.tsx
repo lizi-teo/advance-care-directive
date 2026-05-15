@@ -222,7 +222,7 @@ export default function QAPage() {
             <h1
               ref={questionHeadingRef}
               tabIndex={-1}
-              className="w-full [font-size:var(--text-h1-lg)] [line-height:var(--leading-h1-lg)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
+              className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
             >
               {currentQuestion.question_text}
             </h1>
@@ -234,7 +234,7 @@ export default function QAPage() {
                 className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
               >
                 <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
-                <span className="font-[family-name:var(--font-family-body)]">Tell me more</span>
+                <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
               </Button>
             )}
           </div>

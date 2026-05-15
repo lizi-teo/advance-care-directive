@@ -89,10 +89,10 @@ export function TellMeMoreModal({
           'flex flex-col items-stretch p-0 border-none bg-background',
           'md:rounded-lg overflow-hidden'
         )}
-        aria-label="Tell me more"
+        aria-label="Learn more"
       >
         {/* Visually hidden title for accessibility */}
-        <DialogTitle className="sr-only">Tell me more</DialogTitle>
+        <DialogTitle className="sr-only">Learn more</DialogTitle>
 
         {/* Custom Header - Responsive padding */}
         <div className="flex items-center justify-between bg-muted h-14 md:h-16 px-5 md:px-6 lg:px-8 shrink-0">
@@ -100,7 +100,7 @@ export function TellMeMoreModal({
             <Info size={20} className="md:hidden text-foreground" />
             <Info size={24} className="hidden md:block text-foreground" />
             <p className="text-base md:text-lg text-foreground font-[family-name:var(--font-family-body)]">
-              Tell me more
+              Learn more
             </p>
           </div>
           <DialogClose asChild>

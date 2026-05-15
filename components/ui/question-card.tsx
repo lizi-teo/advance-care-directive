@@ -139,7 +139,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
               )}
             />
             <span className="font-[family-name:var(--font-family-body)]">
-              Tell me more
+              Learn more
             </span>
           </Button>
         )}
