@@ -49,7 +49,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
             const selectedOption = question.answer_options.find(o => o.id === selectedOptionId)
 
             return (
-              <div key={question.id} className="py-8 flex flex-col gap-2 md:flex-row md:items-start md:gap-8 group">
+              <div key={question.id} className="py-8 flex flex-row items-start gap-4 md:gap-8 group">
                 <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                   {question.caption && (
                     <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide mb-2">
@@ -73,11 +73,11 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
                   variant="ghost"
                   size="sm"
                   onClick={() => onEdit(index)}
-                  className="self-start shrink-0 gap-1.5 text-muted-foreground hover:text-foreground"
+                  className="shrink-0 gap-1.5 text-muted-foreground hover:text-foreground px-2 md:px-3"
                   aria-label={`Edit answer to: ${question.question_text}`}
                 >
                   <Pencil size={14} strokeWidth={ICON_STROKE_WIDTH} />
-                  Edit
+                  <span className="hidden md:inline">Edit</span>
                 </Button>
               </div>
             )

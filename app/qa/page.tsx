@@ -44,6 +44,10 @@ export default function QAPage() {
     }
   }, [currentQuestionIndex])
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [showSummary])
+
   // Reset image loading state when question changes
   useEffect(() => {
     if (currentQuestion?.image_url) {
