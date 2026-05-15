@@ -32,14 +32,13 @@ export default function QAPage() {
   const [showSummary, setShowSummary] = useState(false)
   const [editingFromSummary, setEditingFromSummary] = useState(false)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Define currentQuestion early so it can be used in useEffect hooks
   const currentQuestion = questions[currentQuestionIndex]
 
   // Scroll to top and focus heading when question changes
   useEffect(() => {
-    scrollContainerRef.current?.scrollTo({ top: 0 })
+    window.scrollTo({ top: 0, behavior: 'instant' })
     if (questionHeadingRef.current) {
       questionHeadingRef.current.focus()
     }
@@ -208,7 +207,7 @@ export default function QAPage() {
           onEdit={handleEditFromSummary}
         />
       ) : (
-        <div ref={scrollContainerRef} className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
+        <div className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
           {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
           <div className="md:hidden w-full">
             <QuestionHeaderCard
