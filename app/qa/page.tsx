@@ -7,6 +7,8 @@ import { useResponseSubmit } from '@/features/qa/hooks/useResponseSubmit'
 import { useProgressAutoSave } from '@/features/qa/hooks/useProgressAutoSave'
 import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
+import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummaryScreen'
+import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Info, Wind, X, Sun, Moon } from 'lucide-react'
@@ -20,6 +22,7 @@ export default function QAPage() {
   const { questions, loading, error } = useQuestions()
   const { submitResponse, submitting, error: submitError } = useResponseSubmit()
   const { resolvedTheme, setTheme } = useTheme()
+  const sessionId = useSessionId()
   const { saveProgress } = useProgressAutoSave()
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -27,6 +30,8 @@ export default function QAPage() {
   const [showTellMeMore, setShowTellMeMore] = useState(false)
   const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
   const [breathePulse, setBreathePulse] = useState(false)
+  const [showSummary, setShowSummary] = useState(false)
+  const [editingFromSummary, setEditingFromSummary] = useState(false)
   const scrollDirection = useScrollDirection(10)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
 
@@ -59,7 +64,7 @@ export default function QAPage() {
     setResponses(prev => ({ ...prev, [questionId]: answerOptionId }))
 
     // Submit to database
-    const success = await submitResponse(questionId, answerOptionId, note)
+    const success = await submitResponse(questionId, answerOptionId, note, sessionId)
 
     if (success) {
       toast.success('Response saved!')
@@ -67,8 +72,29 @@ export default function QAPage() {
   }
 
   const handleContinue = () => {
-    if (currentQuestionIndex < questions.length - 1) {
+    if (editingFromSummary) {
+      setEditingFromSummary(false)
+      setShowSummary(true)
+    } else if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1)
+    } else {
+      setShowSummary(true)
+    }
+  }
+
+  const handleEditFromSummary = (questionIndex: number) => {
+    setShowSummary(false)
+    setEditingFromSummary(true)
+    setCurrentQuestionIndex(questionIndex)
+  }
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/summary/${sessionId}`
+    if (navigator.share) {
+      await navigator.share({ title: 'My Advance Care Directive', url })
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success('Link copied to clipboard')
     }
   }
 
@@ -147,7 +173,7 @@ export default function QAPage() {
         scrollDirection === 'down' ? '-translate-y-full md:translate-y-0' : 'translate-y-0'
       }`}>
         <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
-          {currentQuestionIndex + 1} of {questions.length}
+          {showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
         </div>
         <div className="flex items-center gap-5 md:gap-6 shrink-0">
           <Button
@@ -197,107 +223,114 @@ export default function QAPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 w-full overflow-y-auto md:pb-24">
-        {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
-        <div className="md:hidden w-full">
-          <QuestionHeaderCard
-            caption={currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-            title={currentQuestion.question_text}
-            size="small"
-            showImage={!!currentQuestion.image_url}
-            imageUrl={currentQuestion.image_url || undefined}
-            roundedHeader={false}
-            onLearnMoreClick={currentQuestion.tell_me_more ? () => setShowTellMeMore(true) : undefined}
-          />
-        </div>
-
-        {/* Desktop: Header Question Card with gradient background - extends to edges */}
-        <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
-          <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
-            {/* Caption */}
-            <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
-              {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-            </p>
-
-            <h1
-              ref={questionHeadingRef}
-              tabIndex={-1}
-              className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
-            >
-              {currentQuestion.question_text}
-            </h1>
-
-            {currentQuestion.tell_me_more && (
-              <Button
-                variant="ghost-subtle"
-                onClick={() => setShowTellMeMore(true)}
-                className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
-              >
-                <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
-                <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
-              </Button>
-            )}
+      {showSummary ? (
+        <SummaryScreen
+          questions={questions}
+          responses={responses}
+          onEdit={handleEditFromSummary}
+        />
+      ) : (
+        <div className="flex-1 w-full overflow-y-auto md:pb-24">
+          {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
+          <div className="md:hidden w-full">
+            <QuestionHeaderCard
+              caption={currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+              title={currentQuestion.question_text}
+              size="small"
+              showImage={!!currentQuestion.image_url}
+              imageUrl={currentQuestion.image_url || undefined}
+              roundedHeader={false}
+              onLearnMoreClick={currentQuestion.tell_me_more ? () => setShowTellMeMore(true) : undefined}
+            />
           </div>
-        </div>
 
-        {/* Question Options and Actions */}
-        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
-          {/* Desktop: two-column layout (image + content), Mobile: single column */}
-          <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
-            {/* Desktop Image - Left sidebar, scales responsively */}
-            {currentQuestion.image_url && (
-              <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
-                {!desktopImageLoaded && (
-                  <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
-                )}
-                <img
-                  src={currentQuestion.image_url}
-                  alt="Question illustration"
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-                    desktopImageLoaded ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  onLoad={() => setDesktopImageLoaded(true)}
+          {/* Desktop: Header Question Card with gradient background - extends to edges */}
+          <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
+            <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
+              <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
+                {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+              </p>
+              <h1
+                ref={questionHeadingRef}
+                tabIndex={-1}
+                className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
+              >
+                {currentQuestion.question_text}
+              </h1>
+              {currentQuestion.tell_me_more && (
+                <Button
+                  variant="ghost-subtle"
+                  onClick={() => setShowTellMeMore(true)}
+                  className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
+                >
+                  <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
+                  <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Question Options and Actions */}
+          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
+            <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
+              {currentQuestion.image_url && (
+                <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
+                  {!desktopImageLoaded && (
+                    <Skeleton className="absolute inset-0 w-full h-full rounded-b-full" />
+                  )}
+                  <img
+                    src={currentQuestion.image_url}
+                    alt="Question illustration"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                      desktopImageLoaded ? 'opacity-100' : 'opacity-0'
+                    }`}
+                    onLoad={() => setDesktopImageLoaded(true)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
+                </div>
+              )}
+              <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
+                <QuestionCard
+                  question={currentQuestion}
+                  onAnswerSelect={handleAnswerSelect}
+                  selectedAnswerId={responses[currentQuestion.id]}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
               </div>
-            )}
-
-            {/* Question Card and Actions */}
-            <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
-              <QuestionCard
-                question={currentQuestion}
-                onAnswerSelect={handleAnswerSelect}
-                selectedAnswerId={responses[currentQuestion.id]}
-              />
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Footer - Mobile: padding 20px, Desktop: padding 32px, Fixed on desktop */}
-      <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">
-        {/* Mobile: Full width equal buttons, Desktop: standard */}
-        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
-          {currentQuestionIndex > 0 && (
+      {/* Footer */}
+      {showSummary ? (
+        <SummaryFooter
+          onShare={handleShare}
+          onPrint={() => window.print()}
+        />
+      ) : (
+        <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">
+          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
+            {currentQuestionIndex > 0 && !editingFromSummary && (
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={handleBack}
+                className="flex-1 md:flex-none"
+              >
+                Back
+              </Button>
+            )}
             <Button
-              variant="ghost"
               size="lg"
-              onClick={handleBack}
+              onClick={handleContinue}
+              disabled={!hasSelectedAnswer}
               className="flex-1 md:flex-none"
             >
-              Back
+              {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>
-          )}
-          <Button
-            size="lg"
-            onClick={handleContinue}
-            disabled={!hasSelectedAnswer}
-            className="flex-1 md:flex-none"
-          >
-            Continue
-          </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Breathing Exercise Overlay */}
       <BreathingOverlay

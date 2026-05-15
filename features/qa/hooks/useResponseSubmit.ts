@@ -10,13 +10,13 @@ export function useResponseSubmit() {
   const submitResponse = async (
     questionId: string,
     answerOptionId: string,
-    freeTextNote?: string
+    freeTextNote?: string,
+    sessionId?: string | null
   ) => {
     try {
       setSubmitting(true)
       setError(null)
 
-      // Get current user session (will be null for anonymous users)
       const { data: { user } } = await supabase.auth.getUser()
 
       const { error: submitError } = await supabase
@@ -26,6 +26,7 @@ export function useResponseSubmit() {
           question_id: questionId,
           answer_option_id: answerOptionId,
           free_text_note: freeTextNote || null,
+          session_id: sessionId || null,
           created_at: new Date().toISOString()
         })
 
