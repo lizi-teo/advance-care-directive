@@ -38,7 +38,7 @@ export function useSignature(): UseSignatureReturn {
 
       const { error: insertError } = await supabase
         .from('signatures')
-        .insert({ session_id: sessionId, signed_name: signedName, signature_url: signatureUrl })
+        .insert({ session_id: sessionId, signed_name: signedName, signature_url: signatureUrl, signed_at: new Date().toISOString() })
 
       if (insertError) {
         console.error('[useSignature] db insert failed:', insertError.message, insertError)

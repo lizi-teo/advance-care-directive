@@ -68,6 +68,7 @@ export default function WitnessPage() {
           session_id: sessionId,
           witness_name: witnessName.trim(),
           witness_signature_url: urlData.publicUrl,
+          witnessed_at: new Date().toISOString(),
         })
 
       if (insertError) throw insertError

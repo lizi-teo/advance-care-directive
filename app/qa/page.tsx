@@ -179,12 +179,12 @@ export default function QAPage() {
     setFinalising(true)
     const timestamp = new Date().toISOString()
 
-    if (sessionId) {
-      saveSignature({ sessionId, signedName: finaliseName, signatureDataUrl: finaliseSignature })
-    }
-
     try {
-      await downloadPDF(finaliseName, finaliseSignature, timestamp)
+      const tasks: Promise<unknown>[] = [downloadPDF(finaliseName, finaliseSignature, timestamp)]
+      if (sessionId) {
+        tasks.push(saveSignature({ sessionId, signedName: finaliseName, signatureDataUrl: finaliseSignature }))
+      }
+      await Promise.all(tasks)
       setSignedAt(timestamp)
       setShowFinalise(false)
       setShowDone(true)
