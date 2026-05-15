@@ -11,7 +11,7 @@ import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummarySc
 import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Info, Wind, X, Sun, Moon } from 'lucide-react'
+import { Info, Wind, Sun, Moon } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { useTheme } from 'next-themes'
@@ -114,16 +114,6 @@ export default function QAPage() {
     setShowBreathing(true)
   }
 
-  const handleClose = () => {
-    // Save progress before closing
-    saveProgress({
-      currentQuestionIndex,
-      responses,
-      timestamp: new Date().toISOString()
-    })
-    // Navigate back or to home page
-    window.history.back()
-  }
 
   if (loading) {
     return (
@@ -208,16 +198,6 @@ export default function QAPage() {
             <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">
               {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
             </span>
-          </Button>
-          <Button
-            variant="ghost-subtle"
-            size="icon"
-            onClick={handleClose}
-            className="w-8 h-8 p-0"
-            aria-label="Close"
-          >
-            <X size={24} className="text-foreground md:hidden" strokeWidth={ICON_STROKE_WIDTH} />
-            <X size={20} className="text-foreground hidden md:block" strokeWidth={ICON_STROKE_WIDTH} />
           </Button>
         </div>
       </div>
