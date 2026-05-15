@@ -35,10 +35,10 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
         <div className="flex flex-col gap-3 mb-10 md:mb-12">
           <CheckCircle2 size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-primary" />
           <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
-            You're done
+            You've done something meaningful
           </h1>
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
-            Review your answers below. You can edit any response before sharing or printing your directive.
+            It takes courage to think about these things. Review your answers below, and share or print your directive when you're ready.
           </p>
         </div>
 
@@ -91,23 +91,22 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
 export function SummaryFooter({ onShare, onPrint }: { onShare: () => void; onPrint: () => void }) {
   return (
     <div className="w-full border-t border-border-emphasis py-5 shrink-0 bg-background">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={onPrint}
-          className="flex-1 md:flex-none gap-2"
-        >
-          <Printer size={20} strokeWidth={ICON_STROKE_WIDTH} />
-          Print
-        </Button>
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
         <Button
           size="lg"
           onClick={onShare}
-          className="flex-1 md:flex-none gap-2"
+          className="w-full md:w-auto md:order-2 gap-2"
         >
           <Share2 size={20} strokeWidth={ICON_STROKE_WIDTH} />
           Share
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onPrint}
+          className="w-full md:w-auto md:order-1 h-9 md:h-11 text-sm md:text-base gap-2"
+        >
+          <Printer size={18} strokeWidth={ICON_STROKE_WIDTH} />
+          Print
         </Button>
       </div>
     </div>
