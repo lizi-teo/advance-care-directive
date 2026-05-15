@@ -38,7 +38,10 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
             You've done something meaningful
           </h1>
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
-            It takes courage to think about these things. Review your answers below, and share or print your directive when you're ready.
+            It takes courage to think about these things.
+          </p>
+          <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
+            Review your answers below, and share or print your directive when you're ready.
           </p>
         </div>
 
@@ -88,26 +91,48 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
   )
 }
 
-export function SummaryFooter({ onShare, onPrint }: { onShare: () => void; onPrint: () => void }) {
+export function SummaryFooter({
+  onShare,
+  onPrint,
+  onFinalise,
+}: {
+  onShare: () => void
+  onPrint: () => void
+  onFinalise: () => void
+}) {
   return (
-    <div className="w-full border-t border-border-emphasis py-5 shrink-0 bg-background">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
+    <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
+      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+
+        {/* Primary CTA */}
         <Button
           size="lg"
-          onClick={onShare}
-          className="w-full md:w-auto md:order-2 h-12 md:h-11 gap-2"
+          onClick={onFinalise}
+          className="w-full md:w-auto md:order-2 h-12 md:h-11"
         >
-          <Share2 size={20} strokeWidth={ICON_STROKE_WIDTH} />
-          Share
+          Sign my directive
         </Button>
-        <Button
-          variant="outline"
-          onClick={onPrint}
-          className="w-full md:w-auto md:order-1 h-12 md:h-11 gap-2"
-        >
-          <Printer size={20} strokeWidth={ICON_STROKE_WIDTH} />
-          Print
-        </Button>
+
+        {/* Print + Share */}
+        <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-2 md:order-1">
+          <Button
+            variant="outline"
+            onClick={onPrint}
+            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+          >
+            <Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />
+            Print
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onShare}
+            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+          >
+            <Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />
+            Share
+          </Button>
+        </div>
+
       </div>
     </div>
   )

@@ -8,7 +8,10 @@ import { useProgressAutoSave } from '@/features/qa/hooks/useProgressAutoSave'
 import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummaryScreen'
+import { FinaliseScreen, FinaliseFooter } from '@/features/qa/components/FinaliseScreen'
+import { SignedScreen, SignedFooter } from '@/features/qa/components/SignedScreen'
 import { useSessionId } from '@/features/qa/hooks/useSessionId'
+import { useSignature } from '@/features/qa/hooks/useSignature'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Info, Wind, Sun, Moon } from 'lucide-react'
@@ -23,6 +26,7 @@ export default function QAPage() {
   const { resolvedTheme, setTheme } = useTheme()
   const sessionId = useSessionId()
   const { saveProgress } = useProgressAutoSave()
+  const { save: saveSignature } = useSignature()
   const [responses, setResponses] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [showBreathing, setShowBreathing] = useState(false)
@@ -30,22 +34,32 @@ export default function QAPage() {
   const [desktopImageLoaded, setDesktopImageLoaded] = useState(false)
   const [breathePulse, setBreathePulse] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
+  const [showFinalise, setShowFinalise] = useState(false)
   const [editingFromSummary, setEditingFromSummary] = useState(false)
+  const [finaliseName, setFinaliseName] = useState('')
+  const [finaliseSignature, setFinaliseSignature] = useState<string | null>(null)
+  const [finaliseConsented, setFinaliseConsented] = useState(false)
+  const [finalising, setFinalising] = useState(false)
+  const [showDone, setShowDone] = useState(false)
+  const [signedAt, setSignedAt] = useState('')
+  const [downloading, setDownloading] = useState(false)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
+  const questionScrollRef = useRef<HTMLDivElement>(null)
+  const summaryScrollRef = useRef<HTMLDivElement>(null)
 
   // Define currentQuestion early so it can be used in useEffect hooks
   const currentQuestion = questions[currentQuestionIndex]
 
   // Scroll to top and focus heading when question changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    if (questionScrollRef.current) questionScrollRef.current.scrollTop = 0
     if (questionHeadingRef.current) {
       questionHeadingRef.current.focus()
     }
   }, [currentQuestionIndex])
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    if (showSummary && summaryScrollRef.current) summaryScrollRef.current.scrollTop = 0
   }, [showSummary])
 
   // Reset image loading state when question changes
@@ -107,6 +121,96 @@ export default function QAPage() {
     }
   }
 
+  const handleFinalise = () => {
+    setShowSummary(false)
+    setShowFinalise(true)
+  }
+
+  const handleFinaliseBack = () => {
+    setShowFinalise(false)
+    setShowSummary(true)
+  }
+
+  const buildAnswers = () =>
+    questions.map(q => ({
+      caption: q.caption,
+      question: q.question_text,
+      answer: q.answer_options.find(o => o.id === responses[q.id])?.option_text ?? 'Not answered',
+    }))
+
+  const downloadPDF = async (name: string, signature: string, timestamp: string) => {
+    const res = await fetch('/api/generate-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        answers: buildAnswers(),
+        signedName: name,
+        signatureDataUrl: signature,
+        signedAt: timestamp,
+      }),
+    })
+    if (!res.ok) throw new Error('PDF generation failed')
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `advance-care-directive-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleFinaliseComplete = async () => {
+    if (!finaliseSignature) return
+    setFinalising(true)
+    const timestamp = new Date().toISOString()
+
+    if (sessionId) {
+      saveSignature({ sessionId, signedName: finaliseName, signatureDataUrl: finaliseSignature })
+    }
+
+    try {
+      await downloadPDF(finaliseName, finaliseSignature, timestamp)
+      setSignedAt(timestamp)
+      setShowFinalise(false)
+      setShowDone(true)
+    } catch {
+      toast.error('Could not generate your PDF. Please try again.')
+    } finally {
+      setFinalising(false)
+    }
+  }
+
+  const handleDoneDownload = async () => {
+    if (!finaliseSignature) return
+    setDownloading(true)
+    try {
+      await downloadPDF(finaliseName, finaliseSignature, signedAt)
+    } catch {
+      toast.error('Could not download your PDF. Please try again.')
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  const handleRevise = () => {
+    setShowDone(false)
+    setShowSummary(true)
+    setFinaliseName('')
+    setFinaliseSignature(null)
+    setFinaliseConsented(false)
+    setSignedAt('')
+  }
+
+  const handleDoneShare = async () => {
+    const url = `${window.location.origin}/signed/${sessionId}`
+    if (navigator.share) {
+      await navigator.share({ title: 'My Advance Care Directive', url })
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success('Link copied to clipboard')
+    }
+  }
+
   const handlePause = () => {
     setBreathePulse(false)
     saveProgress({
@@ -160,11 +264,11 @@ export default function QAPage() {
   const hasSelectedAnswer = !!responses[currentQuestion.id]
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-background overflow-x-clip overscroll-y-none">
+    <div className="h-screen w-full flex flex-col bg-background overflow-x-hidden">
       {/* App Bar - Mobile: 48px, Desktop: 56px - Hides on scroll down (mobile only) */}
       <div className="w-full flex items-center justify-between h-12 md:h-14 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-muted">
         <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
-          {showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
+          {showDone ? 'Signed' : showFinalise ? 'Sign' : showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
         </div>
         <div className="flex items-center gap-5 md:gap-6 shrink-0">
           <Button
@@ -204,14 +308,38 @@ export default function QAPage() {
       </div>
 
       {/* Main Content */}
-      {showSummary ? (
-        <SummaryScreen
-          questions={questions}
-          responses={responses}
-          onEdit={handleEditFromSummary}
-        />
+      {showDone && finaliseSignature ? (
+        <div className="flex-1 w-full overflow-y-auto overscroll-y-none">
+          <SignedScreen
+            signedName={finaliseName}
+            signatureDataUrl={finaliseSignature}
+            signedAt={signedAt}
+            questions={questions}
+            responses={responses}
+            onRevise={handleRevise}
+            sessionId={sessionId ?? undefined}
+          />
+        </div>
+      ) : showFinalise ? (
+        <div className="flex-1 w-full overflow-y-auto overscroll-y-none">
+          <FinaliseScreen
+            name={finaliseName}
+            onNameChange={setFinaliseName}
+            onSignatureChange={setFinaliseSignature}
+            consented={finaliseConsented}
+            onConsentChange={setFinaliseConsented}
+          />
+        </div>
+      ) : showSummary ? (
+        <div ref={summaryScrollRef} className="flex-1 w-full overflow-y-auto overscroll-y-none">
+          <SummaryScreen
+            questions={questions}
+            responses={responses}
+            onEdit={handleEditFromSummary}
+          />
+        </div>
       ) : (
-        <div className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
+        <div ref={questionScrollRef} className="flex-1 w-full overflow-y-auto overscroll-y-none md:pb-24">
           {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
           <div className="md:hidden w-full">
             <QuestionHeaderCard
@@ -283,10 +411,25 @@ export default function QAPage() {
       )}
 
       {/* Footer */}
-      {showSummary ? (
+      {showDone ? (
+        <SignedFooter
+          onDownload={handleDoneDownload}
+          onPrint={() => window.print()}
+          onShare={handleDoneShare}
+          downloading={downloading}
+        />
+      ) : showFinalise ? (
+        <FinaliseFooter
+          onBack={handleFinaliseBack}
+          onSubmit={handleFinaliseComplete}
+          canSubmit={finaliseName.trim().length > 0 && finaliseSignature !== null && finaliseConsented}
+          loading={finalising}
+        />
+      ) : showSummary ? (
         <SummaryFooter
           onShare={handleShare}
           onPrint={() => window.print()}
+          onFinalise={handleFinalise}
         />
       ) : (
         <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">

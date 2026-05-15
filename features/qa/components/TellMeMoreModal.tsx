@@ -4,13 +4,11 @@ import * as React from 'react'
 import {
   Dialog,
   DialogContent,
-  DialogClose,
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { X, Info } from 'lucide-react'
+import { Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 
 interface TellMeMoreModalProps {
   open: boolean
@@ -93,24 +91,12 @@ export function TellMeMoreModal({
         <DialogTitle className="sr-only">Learn more</DialogTitle>
 
         {/* Custom Header - Responsive padding */}
-        <div className="flex items-center justify-between bg-muted h-14 md:h-16 px-5 md:px-6 lg:px-8 shrink-0">
-          <div className="flex items-center gap-2">
-            <Info size={20} className="md:hidden text-foreground" />
-            <Info size={24} className="hidden md:block text-foreground" />
-            <p className="text-base md:text-lg text-foreground font-[family-name:var(--font-family-body)]">
-              Learn more
-            </p>
-          </div>
-          <DialogClose asChild>
-            <Button
-              variant="ghost-subtle"
-              size="icon"
-              className="h-auto w-auto p-0"
-              aria-label="Close"
-            >
-              <X size={32} strokeWidth={ICON_STROKE_WIDTH} />
-            </Button>
-          </DialogClose>
+        <div className="flex items-center bg-muted h-14 md:h-16 px-5 md:px-6 lg:px-8 shrink-0 gap-2">
+          <Info size={20} className="md:hidden text-foreground" />
+          <Info size={24} className="hidden md:block text-foreground" />
+          <p className="text-base md:text-lg text-foreground font-[family-name:var(--font-family-body)]">
+            Learn more
+          </p>
         </div>
 
         {/* Content - Responsive padding and spacing */}
