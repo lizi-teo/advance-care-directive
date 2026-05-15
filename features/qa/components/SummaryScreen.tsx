@@ -43,16 +43,16 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
         </div>
 
         {/* Q&A list */}
-        <div className="flex flex-col divide-y divide-border">
+        <div className="flex flex-col divide-y divide-border-emphasis">
           {questions.map((question, index) => {
             const selectedOptionId = responses[question.id]
             const selectedOption = question.answer_options.find(o => o.id === selectedOptionId)
 
             return (
-              <div key={question.id} className="py-6 flex flex-col gap-2 md:flex-row md:items-start md:gap-8 group">
+              <div key={question.id} className="py-8 flex flex-col gap-2 md:flex-row md:items-start md:gap-8 group">
                 <div className="flex-1 flex flex-col gap-1.5 min-w-0">
                   {question.caption && (
-                    <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
+                    <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide mb-2">
                       {question.caption}
                     </p>
                   )}
