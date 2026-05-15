@@ -1,0 +1,13 @@
+## Create component from Figma using #f workflow
+
+Reference the [ComponentName] Figma link in #cl, follow instructions in #f to create the component and add it to Storybook with light/dark mode examples.
+
+
+## Create page using existing components
+
+Type 1:
+Reference the [OrganismName] Figma link in #cl, follow instructions in #f to create the component and add it to Storybook with light/dark mode examples.
+
+Type: 2
+Reference this figma link https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=36-3078&m=dev, follow instructions in #f to create the page 
+

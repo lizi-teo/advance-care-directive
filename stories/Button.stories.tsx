@@ -1,6 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '@/components/ui/button';
-import { Mic } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  Mic, Play, Pause, Heart, FileText, X, Check,
+  ChevronLeft, ChevronRight, Volume2, Search, Settings,
+  User, Home, Plus, Edit, Trash2, Info, AlertCircle,
+} from 'lucide-react';
+
+const iconMap: Record<string, LucideIcon> = {
+  Mic, Play, Pause, Heart, FileText, X, Check,
+  ChevronLeft, ChevronRight, Volume2, Search, Settings,
+  User, Home, Plus, Edit, Trash2, Info, AlertCircle,
+};
+
+type ButtonArgs = React.ComponentProps<typeof Button> & { iconName?: string };
 
 const meta = {
   title: 'UI/Button',
@@ -16,13 +29,18 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['default', 'sm', 'lg', 'icon'],
+      options: ['default', 'sm', 'lg', 'icon', 'icon-sm', 'icon-lg'],
     },
     disabled: {
       control: 'boolean',
     },
+    iconName: {
+      control: 'select',
+      options: Object.keys(iconMap),
+      description: 'Icon to display (icon button sizes only)',
+    },
   },
-} satisfies Meta<typeof Button>;
+} satisfies Meta<ButtonArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -214,12 +232,40 @@ export const DestructiveWithIcon: Story = {
   },
 };
 
-// Icon Button
+// Icon Buttons
 export const Icon: Story = {
   args: {
     variant: 'outline',
     size: 'icon',
-    children: <Mic />,
+    iconName: 'Mic',
+  },
+  render: ({ iconName, ...args }) => {
+    const IconComponent = iconMap[iconName ?? 'Mic'];
+    return <Button {...args} aria-label={iconName ?? 'icon'}><IconComponent /></Button>;
+  },
+};
+
+export const IconSmall: Story = {
+  args: {
+    variant: 'outline',
+    size: 'icon-sm',
+    iconName: 'Mic',
+  },
+  render: ({ iconName, ...args }) => {
+    const IconComponent = iconMap[iconName ?? 'Mic'];
+    return <Button {...args} aria-label={iconName ?? 'icon'}><IconComponent /></Button>;
+  },
+};
+
+export const IconLarge: Story = {
+  args: {
+    variant: 'default',
+    size: 'icon-lg',
+    iconName: 'Play',
+  },
+  render: ({ iconName, ...args }) => {
+    const IconComponent = iconMap[iconName ?? 'Play'];
+    return <Button {...args} aria-label={iconName ?? 'icon'}><IconComponent /></Button>;
   },
 };
 
@@ -304,10 +350,34 @@ export const AllVariants: Story = {
 
       <div>
         <h3 className="mb-4 text-lg font-semibold">Icon Buttons</h3>
-        <div className="flex gap-4 flex-wrap items-center">
-          <Button variant="outline" size="icon"><Mic /></Button>
-          <Button variant="ghost" size="icon"><Mic /></Button>
-          <Button size="icon"><Mic /></Button>
+        <div className="flex gap-4 flex-wrap items-end">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-muted-foreground">icon-sm (32px)</span>
+            <div className="flex gap-2 items-center">
+              <Button variant="default" size="icon-sm" aria-label="Microphone"><Mic /></Button>
+              <Button variant="outline" size="icon-sm" aria-label="Microphone"><Mic /></Button>
+              <Button variant="ghost" size="icon-sm" aria-label="Microphone"><Mic /></Button>
+              <Button variant="secondary" size="icon-sm" aria-label="Microphone"><Mic /></Button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-muted-foreground">icon (40px)</span>
+            <div className="flex gap-2 items-center">
+              <Button variant="default" size="icon" aria-label="Microphone"><Mic /></Button>
+              <Button variant="outline" size="icon" aria-label="Microphone"><Mic /></Button>
+              <Button variant="ghost" size="icon" aria-label="Microphone"><Mic /></Button>
+              <Button variant="secondary" size="icon" aria-label="Microphone"><Mic /></Button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-muted-foreground">icon-lg (64px)</span>
+            <div className="flex gap-2 items-center">
+              <Button variant="default" size="icon-lg" aria-label="Microphone"><Mic /></Button>
+              <Button variant="outline" size="icon-lg" aria-label="Microphone"><Mic /></Button>
+              <Button variant="ghost" size="icon-lg" aria-label="Microphone"><Mic /></Button>
+              <Button variant="secondary" size="icon-lg" aria-label="Microphone"><Mic /></Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

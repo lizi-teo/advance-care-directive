@@ -9,7 +9,7 @@ import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Info, Feather, Wind, X } from 'lucide-react'
+import { Info, Wind, X } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { useScrollDirection } from '@/lib/hooks/useScrollDirection'
@@ -139,9 +139,19 @@ export default function QAPage() {
         scrollDirection === 'down' ? '-translate-y-full md:translate-y-0' : 'translate-y-0'
       }`}>
         <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
-          Question {currentQuestionIndex + 1} of {questions.length}
+          {currentQuestionIndex + 1} of {questions.length}
         </div>
         <div className="flex items-center gap-5 md:gap-8 shrink-0">
+          <Button
+            variant="ghost-subtle"
+            size="icon"
+            onClick={handlePause}
+            className="w-8 h-8 p-0"
+            aria-label="Breathe"
+          >
+            <Wind size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+            <Wind size={32} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+          </Button>
           <SettingsPanel>
             <Button
               variant="ghost-subtle"
@@ -166,7 +176,7 @@ export default function QAPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 w-full overflow-y-auto">
+      <div className="flex-1 w-full overflow-y-auto md:pb-24">
         {/* Mobile: Use QuestionHeaderCard component - extends to edges */}
         <div className="md:hidden w-full">
           <QuestionHeaderCard
@@ -182,9 +192,9 @@ export default function QAPage() {
 
         {/* Desktop: Header Question Card with gradient background - extends to edges */}
         <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
-          <div className="w-full flex flex-col gap-6 px-8 lg:px-32 xl:px-60">
+          <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
             {/* Caption */}
-            <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)]">
+            <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
               {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
             </p>
 
@@ -200,17 +210,17 @@ export default function QAPage() {
               <Button
                 variant="ghost-subtle"
                 onClick={() => setShowTellMeMore(true)}
-                className="self-start h-auto px-0 py-0 [font-size:var(--text-base)]"
+                className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
               >
-                <Info size={24} />
+                <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
                 <span className="font-[family-name:var(--font-family-body)]">Tell me more</span>
               </Button>
             )}
           </div>
         </div>
 
-        {/* Question Options and Actions - Responsive margins: 20px → 32px → 128px → 240px */}
-        <div className="w-full px-5 md:px-8 lg:px-32 xl:px-60 py-5 md:py-8">
+        {/* Question Options and Actions */}
+        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
           {/* Desktop: two-column layout (image + content), Mobile: single column */}
           <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
             {/* Desktop Image - Left sidebar, scales responsively */}
@@ -238,47 +248,25 @@ export default function QAPage() {
                 onAnswerSelect={handleAnswerSelect}
                 selectedAnswerId={responses[currentQuestion.id]}
               />
-
-              {/* Journal and Breathe Buttons - Responsive gap */}
-              <div className="w-full flex gap-4 md:gap-5 lg:gap-6">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="flex-1 min-w-0"
-                  aria-label="Journal"
-                >
-                  <Feather strokeWidth={ICON_STROKE_WIDTH} />
-                  <span className="hidden sm:inline">Journal</span>
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="flex-1 min-w-0"
-                  onClick={handlePause}
-                  aria-label="Breathe"
-                >
-                  <Wind strokeWidth={ICON_STROKE_WIDTH} />
-                  <span className="hidden sm:inline">Breathe</span>
-                </Button>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer - Mobile: padding 20px, Desktop: padding 32px */}
-      <div className="w-full border-t border-border px-5 md:px-8 py-5 shrink-0">
+      {/* Footer - Mobile: padding 20px, Desktop: padding 32px, Fixed on desktop */}
+      <div className="w-full border-t border-border-emphasis py-5 shrink-0 md:fixed md:bottom-0 md:left-0 md:right-0 md:z-40 bg-background">
         {/* Mobile: Full width equal buttons, Desktop: standard */}
-        <div className="w-full flex items-center gap-3 md:justify-end md:gap-4">
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={handleBack}
-            disabled={currentQuestionIndex === 0}
-            className="flex-1 md:flex-none"
-          >
-            Back
-          </Button>
+        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex items-center gap-3 md:justify-end md:gap-4">
+          {currentQuestionIndex > 0 && (
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handleBack}
+              className="flex-1 md:flex-none"
+            >
+              Back
+            </Button>
+          )}
           <Button
             size="lg"
             onClick={handleContinue}

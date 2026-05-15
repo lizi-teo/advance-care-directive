@@ -127,6 +127,7 @@
     --destructive: var(--rose-100);
     --destructive-foreground: var(--lavender-700);
     --border: var(--gray-200);
+    --border-emphasis: var(--gray-300);
     --input: var(--gray-200);
     --ring: var(--purple-500);
     --outline-border: var(--purple-500);
@@ -176,6 +177,9 @@
     /* Border Radius */
     --radius: 0.5rem;
 
+    /* Icons */
+    --icon-stroke-width: 0.75;
+
     /* Gradients - Light Mode */
     --gradient-light-1: linear-gradient(-54.59deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
     --gradient-light-2: linear-gradient(-36.48deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
@@ -207,6 +211,7 @@
     --destructive: var(--rose-500);
     --destructive-foreground: var(--gray-50);
     --border: var(--gray-900);
+    --border-emphasis: var(--gray-800);
     --input: var(--gray-900);
     --ring: var(--purple-500);
     --outline-border: var(--lavender-500);
@@ -260,6 +265,7 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-border-emphasis: var(--border-emphasis);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-outline-border: var(--outline-border);
@@ -305,6 +311,9 @@
   --line-height-display-2-sm: var(--leading-display-2-sm);
   --line-height-display-1-lg: var(--leading-display-1-lg);
   --line-height-display-2-lg: var(--leading-display-2-lg);
+
+  /* Icons */
+  --icon-stroke-width: var(--icon-stroke-width);
 
   /* Gradients */
   --gradient-light-1: var(--gradient-light-1);

@@ -67,7 +67,7 @@
    ```
 
 3. **Handle New Design Tokens**
-   - Find new tokens? → **NOTIFY USER** (don't create)
+   - Find new tokens? → **NOTIFY USER** (don't creat component)
    - Wait for approval
    - Add to `app/globals.css` first
    - Map Figma → CSS var → Tailwind class

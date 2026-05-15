@@ -9,6 +9,33 @@ ComponentName: Link
 Description: Description
 "
 
+---
+## Layout Rules
+
+### Container Max-Width
+For extra large desktop screens, use a max-width container to prevent content from stretching too wide:
+
+```tsx
+// Standard content container
+<div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12">
+  {/* content */}
+</div>
+```
+
+- `max-w-[1440px]` - Content never exceeds 1440px wide
+- `mx-auto` - Centers the container, creating natural side margins on wider screens
+- `px-5 md:px-8 lg:px-12` - Internal padding (20px → 32px → 48px)
+
+For full-width backgrounds with contained content:
+```tsx
+<div className="w-full bg-gradient"> {/* Full-width background */}
+  <div className="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12">
+    {/* Contained content */}
+  </div>
+</div>
+```
+
+---
 ## Components
 
 ## Atoms
