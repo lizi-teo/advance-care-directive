@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Play, Pause, ChevronLeft } from 'lucide-react'
+import { X, Play, Pause } from 'lucide-react'
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { BreathingAnimation } from './BreathingAnimation'
@@ -62,11 +62,6 @@ export function BreathingOverlay({ open, onClose }: BreathingOverlayProps) {
     onClose()
   }
 
-  const handleBack = () => {
-    setViewMode('selection')
-    reset()
-  }
-
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
@@ -79,20 +74,7 @@ export function BreathingOverlay({ open, onClose }: BreathingOverlayProps) {
         <DialogTitle className="sr-only">Breathing Exercise</DialogTitle>
 
         {/* App bar */}
-        <div className="flex h-14 items-center justify-between px-5 py-0 shrink-0">
-          <div className="flex gap-0 items-center">
-            {viewMode === 'exercise' && (
-              <Button
-                variant="ghost-subtle"
-                onClick={handleBack}
-                className="h-auto px-0 py-2 text-sm"
-                aria-label="Back to exercise selection"
-              >
-                <ChevronLeft className="h-5 w-5" />
-                <span>Back</span>
-              </Button>
-            )}
-          </div>
+        <div className="flex h-14 items-center justify-end px-5 py-0 shrink-0">
           <DialogClose
             className="rounded-sm transition-all hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
             aria-label="Close breathing exercise"
