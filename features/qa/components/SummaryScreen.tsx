@@ -95,7 +95,7 @@ export function SummaryFooter({ onShare, onPrint }: { onShare: () => void; onPri
         <Button
           size="lg"
           onClick={onShare}
-          className="w-full md:w-auto md:order-2 gap-2"
+          className="w-full md:w-auto md:order-2 h-12 md:h-11 gap-2"
         >
           <Share2 size={20} strokeWidth={ICON_STROKE_WIDTH} />
           Share
@@ -103,9 +103,9 @@ export function SummaryFooter({ onShare, onPrint }: { onShare: () => void; onPri
         <Button
           variant="outline"
           onClick={onPrint}
-          className="w-full md:w-auto md:order-1 h-9 md:h-11 text-sm md:text-base gap-2"
+          className="w-full md:w-auto md:order-1 h-12 md:h-11 gap-2"
         >
-          <Printer size={18} strokeWidth={ICON_STROKE_WIDTH} />
+          <Printer size={20} strokeWidth={ICON_STROKE_WIDTH} />
           Print
         </Button>
       </div>

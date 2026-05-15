@@ -295,7 +295,7 @@ export default function QAPage() {
               size="lg"
               onClick={handleContinue}
               disabled={!hasSelectedAnswer}
-              className="w-full md:w-auto md:order-2"
+              className="w-full md:w-auto md:order-2 h-12 md:h-11"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>
@@ -303,7 +303,7 @@ export default function QAPage() {
               <Button
                 variant="ghost"
                 onClick={handleBack}
-                className="w-full md:w-auto md:order-1 h-9 md:h-11 text-sm md:text-base text-muted-foreground"
+                className="w-full md:w-auto md:order-1 h-12 md:h-11 text-muted-foreground"
               >
                 Back
               </Button>
