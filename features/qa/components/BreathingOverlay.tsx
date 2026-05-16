@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Play, Pause } from 'lucide-react'
 import { Dialog, DialogContent, DialogClose, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Button, OutlineButton } from '@/components/ui/button'
 import { BreathingAnimation } from './BreathingAnimation'
 import { BreathingSelectionCard } from './BreathingSelectionCard'
 import { useBreathingExercise } from '../hooks/useBreathingExercise'
@@ -125,16 +125,15 @@ export function BreathingOverlay({ open, onClose }: BreathingOverlayProps) {
                     {isPaused ? 'Resume' : 'Start'}
                   </Button>
                 ) : (
-                  <Button
-                    variant="outline"
+                  <OutlineButton
                     size="lg"
                     onClick={pause}
+                    icon={<Pause className="h-5 w-5" />}
                     className="min-w-[120px]"
                     aria-label="Pause breathing exercise"
                   >
-                    <Pause className="h-5 w-5 mr-2" />
                     Pause
-                  </Button>
+                  </OutlineButton>
                 )}
               </div>
 

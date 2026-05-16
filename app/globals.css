@@ -27,6 +27,7 @@
     --lavender-950: #1B1724;
     --lavender-900: #1E192C;
     --lavender-800: #292337;
+    --lavender-750: #2F283D;
     --lavender-700: #342D43;
     --lavender-600: #3F384F;
     --lavender-500: #4A445B;
@@ -131,7 +132,7 @@
     --input: var(--gray-300);
     --ring: var(--purple-500);
     --outline-border: var(--purple-500);
-    --outline-foreground: var(--lavender-700);
+    --outline-foreground: var(--purple-500);
     --outline-hover: var(--purple-50);
     --outline-focus: var(--purple-500);
     --card-hover-active: var(--purple-50);
@@ -148,6 +149,8 @@
     --text-sm: calc(0.875rem * var(--font-scale)); /* 14px */
     --text-base: calc(1rem * var(--font-scale)); /* 16px */
     --text-lg: calc(1.125rem * var(--font-scale)); /* 18px */
+    --text-xl: calc(1.25rem * var(--font-scale)); /* 20px - card titles, sub-headings */
+    --text-2xl: calc(1.5rem * var(--font-scale)); /* 24px - card titles desktop */
     --text-h1-sm: calc(1.875rem * var(--font-scale)); /* 30px - small H1 for question cards */
     --text-h1-lg: calc(2.25rem * var(--font-scale)); /* 36px - large H1 for question cards */
     --text-display-2-sm: calc(2.25rem * var(--font-scale)); /* 36px */
@@ -162,18 +165,31 @@
     --font-weight-semibold: 600;
     --font-weight-display: 300; /* Lighter weight for display/heading fonts */
 
-    /* Typography - Line Heights (scaled by --font-scale for fixed values) */
-    --leading-tight: 1; /* 100% - used for captions and compact text */
-    --leading-normal: 1.5;
-    --leading-relaxed: 1.625;
-    --leading-body-sm: calc(1.5rem * var(--font-scale)); /* 24px - small body text */
-    --leading-body-lg: calc(1.875rem * var(--font-scale)); /* 30px - large body text */
-    --leading-h1-sm: calc(2.5rem * var(--font-scale)); /* 40px - small H1 for question cards */
-    --leading-h1-lg: calc(2.625rem * var(--font-scale)); /* 42px - large H1 for question cards */
-    --leading-display-1-sm: calc(3.625rem * var(--font-scale)); /* 58px */
-    --leading-display-2-sm: calc(3.125rem * var(--font-scale)); /* 50px */
-    --leading-display-1-lg: calc(5rem * var(--font-scale)); /* 80px */
-    --leading-display-2-lg: calc(4.125rem * var(--font-scale)); /* 66px */
+    /* Typography - Line Heights (scaled by --font-scale for fixed values)
+       Targets WCAG 2.1 SC 1.4.12 and Australian Government GOLD Design System:
+       - Body text: ≥1.6× font size
+       - Headings: ≥1.2× font size
+       - Display: ≥1.15× font size (large sizes tolerate tighter leading) */
+    --leading-tight: 1;       /* 100% — captions, compact labels */
+    --leading-body: 1.5;      /* 150% — WCAG standard body text */
+    --leading-normal: 1.5;    /* 150% — default ratio for inline use */
+    --leading-relaxed: 1.625; /* 162.5% — generous body prose */
+    --leading-body-sm: calc(1.625rem * var(--font-scale)); /* 26px — 16px × 1.625 ✓ */
+    --leading-body-lg: calc(1.875rem * var(--font-scale)); /* 30px — 18px × 1.667 ✓ */
+    --leading-xl: calc(1.75rem * var(--font-scale));       /* 28px — 20px × 1.4 ✓ */
+    --leading-2xl: calc(2rem * var(--font-scale));         /* 32px — 24px × 1.333 ✓ */
+    --leading-h1-sm: calc(2.5rem * var(--font-scale));     /* 40px — 30px × 1.333 ✓ */
+    --leading-h1-lg: calc(2.75rem * var(--font-scale));    /* 44px — 36px × 1.222 ✓ */
+    --leading-display-1-sm: calc(3.75rem * var(--font-scale));  /* 60px — 48px × 1.25 ✓ */
+    --leading-display-2-sm: calc(3.125rem * var(--font-scale)); /* 50px — 36px × 1.389 ✓ */
+    --leading-display-1-lg: calc(5.375rem * var(--font-scale)); /* 86px — 72px × 1.194 ✓ */
+    --leading-display-2-lg: calc(4.5rem * var(--font-scale));   /* 72px — 60px × 1.200 ✓ */
+
+    /* Paragraph spacing — WCAG 2.1 SC 1.4.12 requires content to support
+       paragraph spacing of at least 2× font size without loss of content.
+       Default spacing sits at a comfortable 1.75em; large at 2em. */
+    --paragraph-spacing: 1.75em;
+    --paragraph-spacing-lg: 2em;
 
     /* Border Radius */
     --radius: 0.5rem;
@@ -188,6 +204,8 @@
     --gradient-light-4: linear-gradient(251.79deg, var(--purple-200) 4.14%, rgb(255, 195, 203) 20.67%, rgb(250, 247, 255) 80.80%);
     --gradient-light-question-sm: linear-gradient(-61.26deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
     --gradient-light-question-lg: linear-gradient(-31.25deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
+    --gradient-brand: linear-gradient(-13.9deg, rgb(119, 88, 176) 4%, rgb(134, 78, 107) 29%, rgb(63, 34, 116) 84%);
+    --gradient-question: radial-gradient(ellipse at 0% 100%, rgb(89, 38, 64) 0%, rgb(56, 38, 89) 55%);
     --gradient-breathing-light: linear-gradient(-27.23deg, rgba(119, 88, 176, 1) 0.28%, rgba(134, 78, 107, 1) 30.04%, rgba(63, 34, 116, 1) 100%);
   }
 
@@ -215,10 +233,10 @@
     --border-emphasis: var(--lavender-400);
     --input: var(--lavender-600);
     --ring: var(--purple-500);
-    --outline-border: var(--lavender-500);
-    --outline-foreground: var(--gray-50);
+    --outline-border: var(--purple-200);
+    --outline-foreground: var(--purple-200);
     --outline-hover: var(--lavender-800);
-    --outline-focus: var(--lavender-500);
+    --outline-focus: var(--purple-200);
     --card-hover-active: var(--lavender-700);
     --background-2: var(--lavender-800);
     --icon-accent: var(--purple-200);
@@ -288,6 +306,8 @@
   --font-size-sm: var(--text-sm);
   --font-size-base: var(--text-base);
   --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
   --font-size-h1-sm: var(--text-h1-sm);
   --font-size-h1-lg: var(--text-h1-lg);
   --font-size-display-2-sm: var(--text-display-2-sm);
@@ -304,16 +324,21 @@
 
   /* Typography - Line Heights */
   --line-height-tight: var(--leading-tight);
+  --line-height-body: var(--leading-body);
   --line-height-normal: var(--leading-normal);
   --line-height-relaxed: var(--leading-relaxed);
   --line-height-body-sm: var(--leading-body-sm);
   --line-height-body-lg: var(--leading-body-lg);
+  --line-height-xl: var(--leading-xl);
+  --line-height-2xl: var(--leading-2xl);
   --line-height-h1-sm: var(--leading-h1-sm);
   --line-height-h1-lg: var(--leading-h1-lg);
   --line-height-display-1-sm: var(--leading-display-1-sm);
   --line-height-display-2-sm: var(--leading-display-2-sm);
   --line-height-display-1-lg: var(--leading-display-1-lg);
   --line-height-display-2-lg: var(--leading-display-2-lg);
+  --paragraph-spacing: var(--paragraph-spacing);
+  --paragraph-spacing-lg: var(--paragraph-spacing-lg);
 
   /* Icons */
   --icon-stroke-width: var(--icon-stroke-width);
@@ -365,6 +390,57 @@
 }
 
 @layer components {
+  /* Standard page content wrapper — max-width + responsive horizontal padding */
+  .page-container {
+    width: 100%;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    @media (min-width: 768px) {
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+
+    @media (min-width: 1024px) {
+      padding-left: 8rem;
+      padding-right: 8rem;
+    }
+  }
+
+  /* Button group — standard 12px gap between adjacent buttons (WCAG 2.5.8, AU Gov Design System) */
+  .btn-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* Primary brand gradient — purple → rose → deep violet */
+  .gradient-brand {
+    background: var(--gradient-brand);
+  }
+
+  /* Section heading — responsive type scale for marketing/page h2s */
+  .section-heading {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-regular);
+    font-size: var(--text-2xl);
+    line-height: var(--leading-2xl);
+
+    @media (min-width: 768px) {
+      font-size: var(--text-h1-sm);
+      line-height: var(--leading-h1-sm);
+    }
+
+    @media (min-width: 1024px) {
+      font-size: var(--text-h1-lg);
+      line-height: var(--leading-h1-lg);
+    }
+  }
+
   /* Icon accent color - auto-switches with theme */
   .text-icon-accent {
     color: hsl(var(--icon-accent));

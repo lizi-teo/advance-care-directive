@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react'
 import { QuestionWithOptions } from '../types'
-import { Button } from '@/components/ui/button'
+import { Button, OutlineButton } from '@/components/ui/button'
 import { Pencil, Share2, Printer, CheckCircle2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { toast } from 'sonner'
@@ -30,7 +30,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
 
   return (
     <div className="w-full">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
+      <div className="page-container py-8 md:py-12">
 
         {/* Completion header */}
         <motion.div
@@ -138,7 +138,7 @@ export function SummaryFooter({
 }) {
   return (
     <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+      <div className="page-container flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
 
         {/* Primary CTA */}
         <Button
@@ -150,23 +150,21 @@ export function SummaryFooter({
         </Button>
 
         {/* Print + Share */}
-        <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-2 md:order-1">
-          <Button
-            variant="outline"
+        <div className="grid grid-cols-2 gap-3 md:btn-group md:order-1">
+          <OutlineButton
             onClick={onPrint}
-            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+            icon={<Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />}
+            className="h-11 font-[family-name:var(--font-family-body)]"
           >
-            <Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />
             Print
-          </Button>
-          <Button
-            variant="outline"
+          </OutlineButton>
+          <OutlineButton
             onClick={onShare}
-            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+            icon={<Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />}
+            className="h-11 font-[family-name:var(--font-family-body)]"
           >
-            <Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />
             Share
-          </Button>
+          </OutlineButton>
         </div>
 
       </div>

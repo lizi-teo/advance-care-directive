@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { SignaturePad } from '@/features/qa/components/SignaturePad'
-import { Button } from '@/components/ui/button'
+import { Button, OutlineButton } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Copy, Check, Mail, CheckCircle2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
@@ -108,7 +108,7 @@ export default function WitnessPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="w-full border-b border-border bg-muted">
-        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 h-14 flex items-center">
+        <div className="page-container h-14 flex items-center">
           <p className="text-sm text-muted-foreground font-[family-name:var(--font-family-body)]">
             NSW Advance Care Directive — Witness signature
           </p>
@@ -116,7 +116,7 @@ export default function WitnessPage() {
       </div>
 
       {/* Content */}
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
+      <div className="page-container py-10 md:py-16">
         <AnimatePresence mode="wait" initial={false}>
           {done ? (
             <motion.div
@@ -144,20 +144,19 @@ export default function WitnessPage() {
                 <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
                   Share the completed directive
                 </p>
-                <div className="flex gap-2">
+                <div className="btn-group">
                   <div className="flex-1 flex items-center h-11 px-3 rounded-lg border border-border bg-muted/40 min-w-0">
                     <span className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] truncate">
                       {directiveUrl}
                     </span>
                   </div>
-                  <Button
-                    variant="outline"
+                  <OutlineButton
                     onClick={handleCopy}
-                    className="h-11 shrink-0 gap-1.5 font-[family-name:var(--font-family-body)]"
+                    icon={copied ? <Check size={15} strokeWidth={ICON_STROKE_WIDTH} /> : <Copy size={15} strokeWidth={ICON_STROKE_WIDTH} />}
+                    className="h-11 shrink-0 font-[family-name:var(--font-family-body)]"
                   >
-                    {copied ? <Check size={15} strokeWidth={ICON_STROKE_WIDTH} /> : <Copy size={15} strokeWidth={ICON_STROKE_WIDTH} />}
                     {copied ? 'Copied' : 'Copy'}
-                  </Button>
+                  </OutlineButton>
                   <a
                     href={`mailto:?subject=${encodeURIComponent(`${signerName ?? 'Your'} advance care directive is now witnessed`)}&body=${encodeURIComponent(`Hi,\n\nI have witnessed ${signerName ?? 'your'} advance care directive. You can view the completed document here:\n\n${directiveUrl}`)}`}
                     className="h-11 shrink-0 flex items-center gap-1.5 px-4 rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)]"

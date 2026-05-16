@@ -3,7 +3,7 @@
 import { motion } from 'motion/react'
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
-import { Button } from '@/components/ui/button'
+import { Button, OutlineButton } from '@/components/ui/button'
 import { Download, Printer, Share2, Link2, Mail, Copy, Check } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { QuestionWithOptions } from '../types'
@@ -56,7 +56,7 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
   return (
     <div className="w-full">
       <motion.div
-        className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12"
+        className="page-container py-8 md:py-12"
         initial="hidden"
         animate="show"
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
@@ -183,14 +183,13 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
                 Share a link for your witness to sign on their own device, or open it together now.
               </p>
               <div className="flex flex-col gap-2 mt-1">
-                <Button
-                  variant="outline"
+                <OutlineButton
                   onClick={handleShareWitness}
-                  className="w-full gap-2 h-11 text-foreground font-[family-name:var(--font-family-body)]"
+                  icon={<Link2 size={16} strokeWidth={ICON_STROKE_WIDTH} />}
+                  className="w-full h-11 font-[family-name:var(--font-family-body)]"
                 >
-                  <Link2 size={16} strokeWidth={ICON_STROKE_WIDTH} />
                   Share witness link
-                </Button>
+                </OutlineButton>
                 <a
                   href={`/signed/${sessionId}/witness`}
                   className="[font-size:var(--text-sm)] text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)] text-center py-1"
@@ -214,20 +213,19 @@ export function SignedScreen({ signedName, signatureDataUrl, signedAt, questions
             <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
               Send this link to your doctor, family, or healthcare team. Keep it somewhere safe — it's the only way to return to this directive.
             </p>
-            <div className="flex gap-2 mt-1">
+            <div className="btn-group mt-1">
               <div className="flex-1 flex items-center h-11 px-3 rounded-lg border border-border bg-muted/40 min-w-0">
                 <span className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] truncate">
                   {directiveUrl}
                 </span>
               </div>
-              <Button
-                variant="outline"
+              <OutlineButton
                 onClick={handleCopyDirective}
-                className="h-11 shrink-0 gap-1.5 font-[family-name:var(--font-family-body)]"
+                icon={copied ? <Check size={15} strokeWidth={ICON_STROKE_WIDTH} /> : <Copy size={15} strokeWidth={ICON_STROKE_WIDTH} />}
+                className="h-11 shrink-0 font-[family-name:var(--font-family-body)]"
               >
-                {copied ? <Check size={15} strokeWidth={ICON_STROKE_WIDTH} /> : <Copy size={15} strokeWidth={ICON_STROKE_WIDTH} />}
                 {copied ? 'Copied' : 'Copy'}
-              </Button>
+              </OutlineButton>
               <a
                 href={`mailto:?subject=My NSW Advance Care Directive&body=Here is a link to my advance care directive:%0A%0A${encodeURIComponent(directiveUrl)}`}
                 className="h-11 shrink-0 flex items-center gap-1.5 px-4 rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)]"
@@ -257,7 +255,7 @@ export function SignedFooter({
 }) {
   return (
     <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
+      <div className="page-container flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
 
         {/* Primary CTA */}
         <Button
@@ -271,23 +269,21 @@ export function SignedFooter({
         </Button>
 
         {/* Print + Share */}
-        <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-2 md:order-1">
-          <Button
-            variant="outline"
+        <div className="grid grid-cols-2 gap-3 md:btn-group md:order-1">
+          <OutlineButton
             onClick={onPrint}
-            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+            icon={<Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />}
+            className="h-11 font-[family-name:var(--font-family-body)]"
           >
-            <Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />
             Print
-          </Button>
-          <Button
-            variant="outline"
+          </OutlineButton>
+          <OutlineButton
             onClick={onShare}
-            className="h-11 gap-2 text-muted-foreground font-[family-name:var(--font-family-body)]"
+            icon={<Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />}
+            className="h-11 font-[family-name:var(--font-family-body)]"
           >
-            <Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />
             Share
-          </Button>
+          </OutlineButton>
         </div>
 
       </div>
