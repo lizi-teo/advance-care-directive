@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     /* ========================================
@@ -140,6 +142,11 @@
     --icon-accent: var(--purple-500);
     --link: var(--purple-500);
 
+    /* Marketing page alternating section backgrounds */
+    --mkt-section-1: var(--gray-100);
+    --mkt-section-1-card: var(--basics-white);
+    --mkt-section-2: var(--purple-50);
+
     /* Typography - Font Families */
     --font-family-body: var(--font-poppins);
     --font-family-display: var(--font-poppins);
@@ -238,6 +245,11 @@
     --background-2: var(--lavender-800);
     --icon-accent: var(--purple-200);
     --link: var(--purple-200);
+
+    /* Marketing page alternating section backgrounds */
+    --mkt-section-1: #1B1724;
+    --mkt-section-1-card: #292337;
+    --mkt-section-2: #292337;
 
     /* Gradients - Dark Mode */
     --gradient-dark-1: linear-gradient(-65.99deg, rgb(119, 88, 176) 7.45%, rgb(134, 78, 107) 20.65%, rgb(63, 34, 116) 81.64%);
