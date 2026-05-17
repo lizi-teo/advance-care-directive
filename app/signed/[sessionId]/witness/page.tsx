@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { SignaturePad } from '@/features/qa/components/SignaturePad'
-import { Button, OutlineButton } from '@/components/ui/button'
+import { OutlineButton } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Copy, Check, Mail, CheckCircle2 } from 'lucide-react'
+import { InfoBox } from '@/components/ui/info-box'
+import { Copy, Check, CheckCircle2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 
 export default function WitnessPage() {
@@ -157,13 +158,6 @@ export default function WitnessPage() {
                   >
                     {copied ? 'Copied' : 'Copy'}
                   </OutlineButton>
-                  <a
-                    href={`mailto:?subject=${encodeURIComponent(`${signerName ?? 'Your'} advance care directive is now witnessed`)}&body=${encodeURIComponent(`Hi,\n\nI have witnessed ${signerName ?? 'your'} advance care directive. You can view the completed document here:\n\n${directiveUrl}`)}`}
-                    className="h-11 shrink-0 flex items-center gap-1.5 px-4 rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)]"
-                  >
-                    <Mail size={15} strokeWidth={ICON_STROKE_WIDTH} />
-                    Email
-                  </a>
                 </div>
               </div>
 
@@ -197,8 +191,8 @@ export default function WitnessPage() {
               </div>
 
               {/* What witnessing means */}
-              <div className="bg-muted/40 rounded-lg border border-border p-5 mb-10 flex flex-col gap-3">
-                <p className="[font-size:var(--text-sm)] font-medium text-foreground font-[family-name:var(--font-family-body)]">
+              <InfoBox className="mb-10 flex flex-col gap-3">
+                <p className="font-medium text-foreground">
                   By signing as a witness, you confirm that:
                 </p>
                 <ul className="flex flex-col gap-2">
@@ -207,18 +201,16 @@ export default function WitnessPage() {
                     'They signed freely, without pressure or coercion from anyone',
                     'You are not named in the directive as a substitute decision-maker',
                   ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 [font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+                    <li key={i} className="flex items-start gap-2">
                       <span className="shrink-0 mt-0.5">—</span>
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="border-t border-border pt-3">
-                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
-                    Witnessing is not legally required in NSW but is strongly recommended by NSW Health to support the validity of the directive.
-                  </p>
+                  Witnessing is not legally required in NSW but is strongly recommended by NSW Health to support the validity of the directive.
                 </div>
-              </div>
+              </InfoBox>
 
               {/* Form */}
               <div className="flex flex-col gap-8">

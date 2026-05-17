@@ -142,6 +142,16 @@ export default function SignedPage() {
     }
   }
 
+  const handleShareWitnessLink = async () => {
+    const url = `${window.location.origin}/signed/${sessionId}/witness`
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Witness my Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success('Witness link copied to clipboard')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -173,7 +183,7 @@ export default function SignedPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="w-full border-b border-border bg-muted print:hidden">
-        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 h-14 flex items-center justify-end gap-3">
+        <div className="page-container h-14 flex items-center justify-end gap-3">
           <button
             onClick={() => window.print()}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)]"
@@ -192,34 +202,34 @@ export default function SignedPage() {
       </div>
 
       {/* Content */}
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
+      <div className="page-container py-10 md:py-16">
         <motion.div
-          className="max-w-2xl"
+          className="max-w-2xl flex flex-col gap-10"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
         >
 
           {/* Title + name */}
-          <div className="mb-10">
-            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-6">
+          <div className="flex flex-col gap-6">
+            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
               NSW Advance Care Directive
             </h1>
             {signature && (
-              <>
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+              <div className="flex flex-col gap-1">
+                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
                   Full name
                 </p>
                 <p className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
                   {signature.signed_name}
                 </p>
-              </>
+              </div>
             )}
           </div>
 
           {/* Microcopy */}
           {signature && (
-            <div className="flex flex-col gap-4 mb-10">
+            <div className="flex flex-col gap-4">
               <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
                 {firstName} has prepared this advance care directive to make their values and medical wishes known. It sets out the care they want to receive — and the care they don't — if they are ever unable to speak for themselves.
               </p>
@@ -234,7 +244,7 @@ export default function SignedPage() {
 
           {/* Q&A */}
           <motion.div
-            className="flex flex-col divide-y divide-border mb-12"
+            className="flex flex-col divide-y divide-border"
             initial="hidden"
             animate="show"
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04, delayChildren: 0.15 } } }}
@@ -277,12 +287,12 @@ export default function SignedPage() {
           </motion.div>
 
           {/* Signatures */}
-          <div className="border-t border-border pt-10 flex flex-col gap-10">
+          <div className="border-t border-border pt-10 grid grid-cols-1 md:grid-cols-2 gap-10">
 
             {/* Signer */}
             {signature && (
-              <div className="flex flex-col gap-2 max-w-xs">
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+              <div className="flex flex-col gap-3 max-w-xs">
+                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
                   Signed by
                 </p>
                 <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
@@ -292,26 +302,28 @@ export default function SignedPage() {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)] mt-1">
-                  {signature.signed_name}
-                </p>
-                <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
-                  {signedDate}
-                </p>
+                <div className="flex flex-col gap-1">
+                  <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)]">
+                    {signature.signed_name}
+                  </p>
+                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+                    {signedDate}
+                  </p>
+                </div>
               </div>
             )}
 
             {/* Witness block or CTA */}
-            <AnimatePresence mode="wait" initial={false}>
-              {witness ? (
+            {witness ? (
+              <AnimatePresence>
                 <motion.div
                   key="witnessed"
-                  className="flex flex-col gap-2 max-w-xs"
+                  className="flex flex-col gap-3 max-w-xs"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                 >
-                  <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] mb-1">
+                  <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
                     Witnessed by
                   </p>
                   <div className="h-28 rounded-lg border border-border overflow-hidden" style={{ background: sigBg }}>
@@ -321,35 +333,47 @@ export default function SignedPage() {
                       className="w-full h-full object-contain"
                     />
                   </div>
-                  <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)] mt-1">
-                    {witness.witness_name}
-                  </p>
-                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
-                    {witnessedDate}
-                  </p>
+                  <div className="flex flex-col gap-1">
+                    <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)]">
+                      {witness.witness_name}
+                    </p>
+                    <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)]">
+                      {witnessedDate}
+                    </p>
+                  </div>
                 </motion.div>
-              ) : (
-                <motion.div
-                  key="not-witnessed"
-                  className="flex flex-col gap-3"
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
-                    Witness
-                  </p>
-                  <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed max-w-sm">
-                    This directive has not yet been witnessed. Witnessing is not legally required in NSW, but is strongly recommended.
-                  </p>
-                  <Link
-                    href={`/signed/${sessionId}/witness`}
-                    className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)] w-fit"
-                  >
-                    Witness this directive →
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              </AnimatePresence>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
+                  Witnessed by
+                </p>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)]">
+                      No witness yet
+                    </p>
+                    <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
+                      Share a link for your witness to sign on their own device, or open it together now.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 pt-2 pb-2">
+                    <button
+                      onClick={handleShareWitnessLink}
+                      className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)] text-left"
+                    >
+                      Share witness link
+                    </button>
+                    <Link
+                      href={`/signed/${sessionId}/witness`}
+                      className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)]"
+                    >
+                      Open now
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
 
