@@ -142,7 +142,8 @@
     --icon-accent: var(--purple-500);
     --link: var(--purple-500);
 
-    /* Marketing page alternating section backgrounds */
+    /* Marketing page section backgrounds */
+    --mkt-hero-bg: var(--gradient-light-1);
     --mkt-section-1: var(--gray-100);
     --mkt-section-1-card: var(--basics-white);
     --mkt-section-2: var(--purple-50);
@@ -246,7 +247,8 @@
     --icon-accent: var(--purple-200);
     --link: var(--purple-200);
 
-    /* Marketing page alternating section backgrounds */
+    /* Marketing page section backgrounds */
+    --mkt-hero-bg: var(--gradient-brand);
     --mkt-section-1: #1B1724;
     --mkt-section-1-card: #292337;
     --mkt-section-2: #292337;

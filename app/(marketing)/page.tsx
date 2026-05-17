@@ -20,7 +20,7 @@ export default function HomePage() {
       <AppBar />
 
       {/* Hero banner */}
-      <section className="w-full shrink-0" style={{ background: 'var(--gradient-brand)' }}>
+      <section className="w-full shrink-0" style={{ background: 'var(--mkt-hero-bg)' }}>
         <motion.div
           className="page-container py-8 md:py-14 lg:py-16 flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12"
           initial="hidden"
@@ -32,18 +32,18 @@ export default function HomePage() {
             <motion.h1
               custom={1}
               variants={fadeUp}
-              className="[font-size:var(--text-display-1-sm)] md:[font-size:var(--text-display-1-sm)] lg:[font-size:var(--text-display-1-lg)] [line-height:var(--leading-display-1-sm)] lg:[line-height:var(--leading-display-1-lg)] font-[family-name:var(--font-family-display)] font-light text-white"
+              className="[font-size:var(--text-display-1-sm)] md:[font-size:var(--text-display-1-sm)] lg:[font-size:var(--text-display-1-lg)] [line-height:var(--leading-display-1-sm)] lg:[line-height:var(--leading-display-1-lg)] font-[family-name:var(--font-family-display)] font-light text-foreground"
             >
               Make your wishes known
             </motion.h1>
             <motion.div custom={2} variants={fadeUp} className="flex flex-col gap-5 max-w-lg">
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 An Advance Care Directive lets you share what matters to you about medical care, in case you're ever seriously ill and can't communicate.
               </p>
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 It helps the people who care about you make decisions you'd be comfortable with.
               </p>
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 This takes around <span className="font-semibold">15–20 minutes</span>. Completely free.
               </p>
             </motion.div>
@@ -78,8 +78,8 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* What you'll get — full-bleed dark section */}
-      <section className="w-full shrink-0" style={{ background: '#1B1724' }}>
+      {/* What you'll get — full-bleed alternate section */}
+      <section className="w-full shrink-0" style={{ background: 'var(--mkt-section-1)' }}>
         <motion.div
           className="page-container py-10 md:py-20 flex flex-col gap-8 md:gap-10"
           initial="hidden"
@@ -88,7 +88,7 @@ export default function HomePage() {
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
         >
           <motion.div custom={0} variants={fadeUp}>
-            <h2 className="section-heading text-white">
+            <h2 className="section-heading text-foreground">
               What you'll get
             </h2>
           </motion.div>
@@ -116,13 +116,13 @@ export default function HomePage() {
                 custom={i + 1}
                 variants={fadeUp}
                 className="flex flex-col gap-4 p-5 rounded-3xl"
-                style={{ background: '#292337' }}
+                style={{ background: 'var(--mkt-section-1-card)' }}
               >
-                <Icon size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-white/80" />
-                <h3 className="[font-size:var(--text-lg)] md:[font-size:var(--text-xl)] lg:[font-size:var(--text-2xl)] [line-height:var(--leading-body-lg)] md:[line-height:var(--leading-xl)] lg:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-white">
+                <Icon size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground/70" />
+                <h3 className="[font-size:var(--text-lg)] md:[font-size:var(--text-xl)] lg:[font-size:var(--text-2xl)] [line-height:var(--leading-body-lg)] md:[line-height:var(--leading-xl)] lg:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-foreground">
                   {title}
                 </h3>
-                <p className="[font-size:var(--text-base)] text-white/70 font-[family-name:var(--font-family-body)] leading-relaxed">
+                <p className="[font-size:var(--text-base)] text-foreground/60 font-[family-name:var(--font-family-body)] leading-relaxed">
                   {body}
                 </p>
               </motion.div>
@@ -131,8 +131,8 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* About + Privacy — full-bleed dark section */}
-      <section className="w-full shrink-0" style={{ background: '#292337' }}>
+      {/* About + Privacy — full-bleed alternate section */}
+      <section className="w-full shrink-0" style={{ background: 'var(--mkt-section-2)' }}>
         <motion.div
           className="page-container py-10 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24"
           initial="hidden"
@@ -142,16 +142,16 @@ export default function HomePage() {
         >
           {/* Left: About */}
           <motion.div custom={0} variants={fadeUp} className="flex flex-col gap-6">
-            <HeartHandshake size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-white/80" />
+            <HeartHandshake size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground/70" />
             <div className="flex flex-col gap-5">
-              <h3 className="[font-size:var(--text-xl)] md:[font-size:var(--text-2xl)] [line-height:var(--leading-xl)] md:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-white">
+              <h3 className="[font-size:var(--text-xl)] md:[font-size:var(--text-2xl)] [line-height:var(--leading-xl)] md:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-foreground">
                 Independent. Transparent. Free.
               </h3>
               <div className="flex flex-col gap-6">
-                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/70 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                   Preparing an advance care directive can feel overwhelming — especially when time is short. This tool was built out of goodwill to make that process simpler and more accessible for anyone who needs it.
                 </p>
-                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/70 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                   It is an independent tool, not affiliated with or endorsed by NSW Health, and follows NSW Health's advance care planning framework.
                 </p>
               </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)] underline underline-offset-2 hover:no-underline w-fit"
-              style={{ color: '#D0B9FB' }}
+              style={{ color: 'var(--link)' }}
             >
               Visit NSW Health
               <ChevronRight size={16} strokeWidth={ICON_STROKE_WIDTH} />
@@ -170,16 +170,16 @@ export default function HomePage() {
 
           {/* Right: Privacy */}
           <motion.div custom={1} variants={fadeUp} className="flex flex-col gap-6">
-            <FileKey size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-white/80" />
+            <FileKey size={40} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground/70" />
             <div className="flex flex-col gap-5">
-              <h3 className="[font-size:var(--text-xl)] md:[font-size:var(--text-2xl)] [line-height:var(--leading-xl)] md:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-white">
+              <h3 className="[font-size:var(--text-xl)] md:[font-size:var(--text-2xl)] [line-height:var(--leading-xl)] md:[line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] font-light text-foreground">
                 Your privacy
               </h3>
               <div className="flex flex-col gap-6">
-                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/70 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                   Your answers are saved to a secure cloud database linked to your session — no account or login required. We do not sell or share your data with third parties.
                 </p>
-                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-white/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+                <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/70 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                   We recommend downloading your PDF as your permanent record. Keep your session link somewhere safe so you can return to update or share your directive.
                 </p>
               </div>
