@@ -14,18 +14,17 @@ import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { useSignature } from '@/features/qa/hooks/useSignature'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Info, Wind, Sun, Moon, ChevronLeft } from 'lucide-react'
+import { AppBar } from '@/components/ui/app-bar'
+import { Info, Wind, ChevronLeft } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
   const { submitResponse, submitting, error: submitError } = useResponseSubmit()
-  const { resolvedTheme, setTheme } = useTheme()
   const sessionId = useSessionId()
   const { saveProgress } = useProgressAutoSave()
   const { save: saveSignature } = useSignature()
@@ -312,35 +311,8 @@ export default function QAPage() {
 
   return (
     <div className="h-dvh w-full flex flex-col bg-background overflow-x-hidden">
-      {/* App Bar - Mobile: 48px, Desktop: 56px */}
-      <div className="w-full flex items-center justify-between h-12 md:h-14 px-5 md:px-8 border-b border-border shrink-0 sticky top-0 z-50 bg-muted">
-        <div className="flex items-center gap-1">
-          <AnimatePresence initial={false}>
-            {!showDone && !showFinalise && !showSummary && currentQuestionIndex > 0 && !editingFromSummary && (
-              <motion.div
-                key="back-btn"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.15, ease: 'easeOut' }}
-              >
-                <Button
-                  variant="ghost-subtle"
-                  size="icon"
-                  onClick={() => handleBack()}
-                  className="-ml-2 w-8 h-8 p-0"
-                  aria-label="Go to previous question"
-                >
-                  <ChevronLeft size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground" />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="text-sm md:text-base text-foreground" aria-live="polite" aria-atomic="true">
-            {showDone ? 'Signed' : showFinalise ? 'Sign' : showSummary ? 'Complete' : `${currentQuestionIndex + 1} of ${questions.length}`}
-          </div>
-        </div>
-        <div className="flex items-center gap-5 md:gap-6 shrink-0">
+      <AppBar
+        actions={
           <Button
             variant="ghost-subtle"
             size="icon"
@@ -352,30 +324,9 @@ export default function QAPage() {
             <Wind size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
             <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">Breathe</span>
           </Button>
-<Button
-            variant="ghost-subtle"
-            size="icon"
-            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            className="w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5"
-            aria-label="Toggle theme"
-          >
-            {resolvedTheme === 'dark' ? (
-              <>
-                <Sun size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
-                <Sun size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
-              </>
-            ) : (
-              <>
-                <Moon size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
-                <Moon size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
-              </>
-            )}
-            <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">
-              {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
-            </span>
-          </Button>
-        </div>
-      </div>
+        }
+      />
+
 
       {/* Main Content */}
       <div className="flex-1 relative min-h-0">
@@ -470,15 +421,20 @@ export default function QAPage() {
                   </div>
 
                   {/* Desktop: Header Question Card with gradient background - extends to edges */}
-                  <div className="hidden md:block w-full question-card-gradient py-6" data-size="small">
-                    <div className="w-full max-w-[1440px] mx-auto flex flex-col px-8 lg:px-12">
-                      <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground font-[family-name:var(--font-family-body)] mb-6">
-                        {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
-                      </p>
+                  <div className="hidden md:block w-full py-6 question-card-gradient" data-size="large">
+                    <div className="w-full max-w-[1440px] mx-auto flex flex-col px-16 lg:px-32">
+                      <div className="flex items-center justify-between mb-6">
+                        <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground/70 font-[family-name:var(--font-family-body)]">
+                          {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
+                        </p>
+                        <span className="[font-size:var(--text-sm)] text-foreground/50 font-[family-name:var(--font-family-body)]">
+                          {currentQuestionIndex + 1} of {questions.length}
+                        </span>
+                      </div>
                       <h1
                         ref={questionHeadingRef}
                         tabIndex={-1}
-                        className="w-full [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
+                        className="w-full max-w-[45ch] [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)] focus:outline-none"
                       >
                         {currentQuestion.question_text}
                       </h1>
@@ -486,7 +442,7 @@ export default function QAPage() {
                         <Button
                           variant="ghost-subtle"
                           onClick={() => setShowTellMeMore(true)}
-                          className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6"
+                          className="self-start h-auto px-0 py-0 [font-size:var(--text-base)] mt-6 text-foreground/80 hover:text-foreground"
                         >
                           <Info size={24} strokeWidth={ICON_STROKE_WIDTH} />
                           <span className="font-[family-name:var(--font-family-body)]">Learn more</span>
@@ -496,7 +452,7 @@ export default function QAPage() {
                   </div>
 
                   {/* Question Options and Actions */}
-                  <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 md:py-8">
+                  <div className="page-container py-5 md:py-8">
                     <div className="w-full flex flex-col md:flex-row gap-0 md:gap-6 lg:gap-8 xl:gap-10">
                       {currentQuestion.image_url && (
                         <div className="hidden md:block md:w-[280px] md:h-[280px] lg:w-[360px] lg:h-[360px] xl:w-[428px] xl:h-[428px] rounded-b-full overflow-hidden relative shrink-0">
@@ -514,7 +470,7 @@ export default function QAPage() {
                           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50" />
                         </div>
                       )}
-                      <div className="w-full flex-1 space-y-6 lg:space-y-8 min-w-0">
+                      <div className="w-full flex-1 max-w-2xl space-y-6 lg:space-y-8 min-w-0">
                         <QuestionCard
                           question={currentQuestion}
                           onAnswerSelect={handleAnswerSelect}
@@ -553,12 +509,35 @@ export default function QAPage() {
         />
       ) : (
         <div className="w-full border-t border-border-emphasis py-4 shrink-0 fixed bottom-0 left-0 right-0 z-40 bg-background">
-          <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex md:justify-end">
+          <div className="page-container flex items-center gap-3 md:justify-end">
+            <AnimatePresence initial={false}>
+              {currentQuestionIndex > 0 && !editingFromSummary && (
+                <motion.div
+                  key="back-footer"
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.15, ease: 'easeOut' }}
+                  className="shrink-0"
+                >
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={() => handleBack()}
+                    className="h-12 md:h-11 gap-1 px-3"
+                    aria-label="Go to previous question"
+                  >
+                    <ChevronLeft size={18} strokeWidth={ICON_STROKE_WIDTH} />
+                    Back
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <Button
               size="lg"
               onClick={() => handleContinue()}
               disabled={!hasSelectedAnswer}
-              className="w-full md:w-auto h-12 md:h-11"
+              className="flex-1 md:flex-none h-12 md:h-11"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>

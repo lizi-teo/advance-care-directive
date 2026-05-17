@@ -1,223 +1,60 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { ALargeSmall, ChevronLeft, Menu, X } from "lucide-react"
+'use client'
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ICON_STROKE_WIDTH } from "@/lib/theme-config"
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Flower2, Sun, Moon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
+import { useTheme } from 'next-themes'
 
-const appBarVariants = cva(
-  "flex items-center justify-between bg-muted w-full",
-  {
-    variants: {
-      size: {
-        small: "h-12 px-5", // 48px height, 20px padding (mobile)
-        large: "h-14 px-8", // 56px height, 32px padding (desktop)
-      },
-    },
-    defaultVariants: {
-      size: "small",
-    },
-  }
-)
-
-export interface AppBarProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof appBarVariants> {
-  type?: "back" | "progression" | "login" | "close"
-  onBack?: () => void
-  onClose?: () => void
-  onFontSize?: () => void
-  onLogin?: () => void
-  onGetStarted?: () => void
-  onMenu?: () => void
-  progressText?: string
-  nextText?: string
-  avatarLabel?: string
-  brandText?: string
+interface AppBarProps {
+  actions?: React.ReactNode
 }
 
-const AppBar = React.forwardRef<HTMLDivElement, AppBarProps>(
-  (
-    {
-      className,
-      type = "back",
-      size = "small",
-      onBack,
-      onClose,
-      onFontSize,
-      onLogin,
-      onGetStarted,
-      onMenu,
-      progressText = "1 of 3",
-      nextText = "Next: Connection",
-      avatarLabel = "L",
-      brandText = "AU ACD",
-      ...props
-    },
-    ref
-  ) => {
-    const isSmall = size === "small"
-    const buttonSize = isSmall ? "sm" : "default"
-    const iconSize = isSmall ? 24 : 32
-    const avatarSize = isSmall ? "size-8" : "size-12"
+export function AppBar({ actions }: AppBarProps) {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
-    return (
-      <div
-        ref={ref}
-        className={cn(appBarVariants({ size }), className)}
-        {...props}
-      >
-        {/* Back Variant */}
-        {type === "back" && (
-          <>
-            <Button
-              variant="ghost"
-              size={buttonSize}
-              onClick={onBack}
-              className="gap-2 h-12"
-            >
-              <ChevronLeft size={iconSize} strokeWidth={ICON_STROKE_WIDTH} />
-              <span className="text-lg font-medium">Back</span>
-            </Button>
-            <div /> {/* Empty spacer for layout */}
-          </>
-        )}
-
-        {/* Progression Variant */}
-        {type === "progression" && (
-          <>
-            <div className="flex items-center gap-5 md:gap-8">
-              <div className="flex flex-col justify-center text-sm md:text-base text-primary-foreground">
-                <p className="leading-none">{progressText}</p>
-              </div>
-              {isSmall && (
-                <div className="flex flex-col justify-center text-sm text-primary-foreground text-right">
-                  <p className="leading-none">{nextText}</p>
-                </div>
-              )}
-              {!isSmall && (
-                <div className="flex flex-col justify-center text-base text-primary-foreground text-right">
-                  <p className="leading-none">{nextText}</p>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-4 md:gap-6">
-              {!isSmall && (
-                <>
-                  <Button
-                    variant="ghost-subtle"
-                    size="icon"
-                    onClick={onFontSize}
-                    className="h-auto w-auto p-0"
-                    aria-label="Change font size"
-                  >
-                    <ALargeSmall size={iconSize + 8} strokeWidth={ICON_STROKE_WIDTH} />
-                  </Button>
-                  <Button
-                    variant="ghost-subtle"
-                    size="icon"
-                    onClick={onClose}
-                    className="h-auto w-auto p-0"
-                    aria-label="Close"
-                  >
-                    <X size={iconSize + 8} strokeWidth={ICON_STROKE_WIDTH} />
-                  </Button>
-                </>
-              )}
-              {isSmall && (
-                <>
-                  <Button
-                    variant="ghost-subtle"
-                    size="icon"
-                    onClick={onFontSize}
-                    className="h-auto w-auto p-0"
-                    aria-label="Change font size"
-                  >
-                    <ALargeSmall size={iconSize + 12} strokeWidth={ICON_STROKE_WIDTH} />
-                  </Button>
-                  <Button
-                    variant="ghost-subtle"
-                    size="icon"
-                    onClick={onClose}
-                    className="h-auto w-auto p-0"
-                    aria-label="Close"
-                  >
-                    <X size={iconSize + 12} strokeWidth={ICON_STROKE_WIDTH} />
-                  </Button>
-                </>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Login Variant */}
-        {type === "login" && (
-          <>
-            <div className="flex items-center gap-2">
-              <p className="text-sm md:text-base text-primary-foreground">
-                {brandText}
-              </p>
-              <Button
-                variant="ghost-subtle"
-                size="icon"
-                onClick={onMenu}
-                className="h-auto w-auto p-0"
-                aria-label="Menu"
-              >
-                <Menu size={iconSize} strokeWidth={ICON_STROKE_WIDTH} />
-              </Button>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size={buttonSize}
-                onClick={onLogin}
-                className={isSmall ? "h-10" : "h-12"}
-              >
-                Log in
-              </Button>
-              <Button
-                variant="secondary"
-                size={buttonSize}
-                onClick={onGetStarted}
-                className={isSmall ? "h-10 px-5" : "h-12 px-8"}
-              >
-                Get started
-              </Button>
-            </div>
-          </>
-        )}
-
-        {/* Close Variant */}
-        {type === "close" && (
-          <>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost-subtle"
-                size="icon"
-                onClick={onMenu}
-                className="h-auto w-auto p-0"
-                aria-label="Menu"
-              >
-                <Menu size={iconSize} strokeWidth={ICON_STROKE_WIDTH} />
-              </Button>
-              <p className="text-sm md:text-base text-primary-foreground">
-                {brandText}
-              </p>
-            </div>
-            <Avatar className={cn(avatarSize)}>
-              <AvatarFallback className="bg-primary text-primary-foreground font-medium font-[family-name:var(--font-family-display)]">
-                {avatarLabel}
-              </AvatarFallback>
-            </Avatar>
-          </>
-        )}
+  return (
+    <div className="w-full h-14 border-b border-border shrink-0 sticky top-0 z-50 bg-muted">
+      <div className="w-full max-w-[1440px] mx-auto h-full px-6 md:px-16 lg:px-32 flex items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-foreground hover:opacity-70 transition-opacity"
+          aria-label="My Care Wishes — go to home"
+        >
+          <Flower2 size={20} strokeWidth={1.25} />
+          <span className="text-sm font-[family-name:var(--font-family-body)]">My Care Wishes</span>
+        </Link>
+        <div className="flex items-center gap-1">
+          {actions}
+          <Button
+            variant="ghost-subtle"
+            size="icon"
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            className="w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5"
+            aria-label="Toggle theme"
+          >
+            {mounted && resolvedTheme === 'dark' ? (
+              <>
+                <Sun size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+                <Sun size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+              </>
+            ) : (
+              <>
+                <Moon size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+                <Moon size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+              </>
+            )}
+            {mounted && (
+              <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">
+                {resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
-    )
-  }
-)
-AppBar.displayName = "AppBar"
-
-export { AppBar, appBarVariants }
+    </div>
+  )
+}

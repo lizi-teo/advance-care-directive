@@ -131,7 +131,7 @@
     --border-emphasis: var(--gray-400);
     --input: var(--gray-300);
     --ring: var(--purple-500);
-    --outline-border: var(--purple-500);
+    --outline-border: var(--lavender-50);
     --outline-foreground: var(--purple-500);
     --outline-hover: var(--purple-50);
     --outline-focus: var(--purple-500);
@@ -195,18 +195,15 @@
     --radius: 0.5rem;
 
     /* Icons */
-    --icon-stroke-width: 0.75;
+    --icon-stroke-width: 1.5;
+    --icon-stroke-width-sm: 2;
 
     /* Gradients - Light Mode */
     --gradient-light-1: linear-gradient(-54.59deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-2: linear-gradient(-36.48deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
-    --gradient-light-3: linear-gradient(-42.31deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
     --gradient-light-4: linear-gradient(251.79deg, var(--purple-200) 4.14%, rgb(255, 195, 203) 20.67%, rgb(250, 247, 255) 80.80%);
     --gradient-light-question-sm: linear-gradient(-61.26deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
     --gradient-light-question-lg: linear-gradient(-31.25deg, var(--purple-100) 5.78%, rgb(255, 209, 215) 23.89%, rgb(242, 229, 255) 100.05%);
     --gradient-brand: linear-gradient(-13.9deg, rgb(119, 88, 176) 4%, rgb(134, 78, 107) 29%, rgb(63, 34, 116) 84%);
-    --gradient-question: radial-gradient(ellipse at 0% 100%, rgb(89, 38, 64) 0%, rgb(56, 38, 89) 55%);
-    --gradient-breathing-light: linear-gradient(-27.23deg, rgba(119, 88, 176, 1) 0.28%, rgba(134, 78, 107, 1) 30.04%, rgba(63, 34, 116, 1) 100%);
   }
 
   .dark {
@@ -233,7 +230,7 @@
     --border-emphasis: var(--lavender-400);
     --input: var(--lavender-600);
     --ring: var(--purple-500);
-    --outline-border: var(--purple-200);
+    --outline-border: var(--lavender-400);
     --outline-foreground: var(--purple-200);
     --outline-hover: var(--lavender-800);
     --outline-focus: var(--purple-200);
@@ -244,12 +241,9 @@
 
     /* Gradients - Dark Mode */
     --gradient-dark-1: linear-gradient(-65.99deg, rgb(119, 88, 176) 7.45%, rgb(134, 78, 107) 20.65%, rgb(63, 34, 116) 81.64%);
-    --gradient-dark-2: linear-gradient(-28.28deg, rgb(119, 88, 176) 12.52%, rgb(134, 78, 107) 17.15%, rgb(63, 34, 116) 86.19%);
-    --gradient-dark-3: linear-gradient(-16.19deg, rgb(119, 88, 176) 3.90%, rgb(134, 78, 107) 29.10%, rgb(63, 34, 116) 84.50%);
     --gradient-dark-4: linear-gradient(-74.81deg, rgb(119, 88, 176) 5.56%, rgb(134, 78, 107) 21.50%, rgb(63, 34, 116) 95.16%);
-    --gradient-dark-question-sm: linear-gradient(-57.68deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
-    --gradient-dark-question-lg: linear-gradient(-27.75deg, rgb(130, 37, 65) 0%, rgb(135, 52, 89) 33.86%, rgb(110, 24, 106) 99.37%);
-    --gradient-breathing-dark: linear-gradient(-27.23deg, rgba(119, 88, 176, 1) 0.28%, rgba(134, 78, 107, 1) 30.04%, rgba(63, 34, 116, 1) 100%);
+    --gradient-dark-question-sm: radial-gradient(ellipse at 0% 100%, rgb(74, 38, 89) 0%, rgb(63, 43, 99) 55%);
+    --gradient-dark-question-lg: radial-gradient(ellipse at 0% 100%, rgb(74, 38, 89) 0%, rgb(63, 43, 99) 55%);
   }
 
   /* Font Size Scaling Classes */
@@ -342,27 +336,33 @@
 
   /* Icons */
   --icon-stroke-width: var(--icon-stroke-width);
+  --icon-stroke-width-sm: var(--icon-stroke-width-sm);
 
   /* Gradients */
   --gradient-light-1: var(--gradient-light-1);
-  --gradient-light-2: var(--gradient-light-2);
-  --gradient-light-3: var(--gradient-light-3);
   --gradient-light-4: var(--gradient-light-4);
   --gradient-light-question-sm: var(--gradient-light-question-sm);
   --gradient-light-question-lg: var(--gradient-light-question-lg);
   --gradient-dark-1: var(--gradient-dark-1);
-  --gradient-dark-2: var(--gradient-dark-2);
-  --gradient-dark-3: var(--gradient-dark-3);
   --gradient-dark-4: var(--gradient-dark-4);
   --gradient-dark-question-sm: var(--gradient-dark-question-sm);
   --gradient-dark-question-lg: var(--gradient-dark-question-lg);
-  --gradient-breathing-light: var(--gradient-breathing-light);
-  --gradient-breathing-dark: var(--gradient-breathing-dark);
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  /* Global Lucide icon stroke — CSS overrides the SVG presentation attribute */
+  svg.lucide {
+    stroke-width: var(--icon-stroke-width);
+  }
+
+  /* Small Lucide icons (size-3/size-4, 12–16px) get a heavier stroke for legibility */
+  svg.lucide.size-3,
+  svg.lucide.size-4 {
+    stroke-width: var(--icon-stroke-width-sm);
   }
   body {
     @apply bg-background text-foreground;
@@ -375,6 +375,35 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-family-display);
     font-weight: var(--font-weight-display);
+  }
+}
+
+@media print {
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Make all content visible — overrides Framer Motion inline opacity/transform */
+  * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    overflow: visible !important;
+  }
+
+  /* Remove viewport-height constraints */
+  .min-h-screen {
+    min-height: 0 !important;
+  }
+
+  .page-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: none !important;
   }
 }
 

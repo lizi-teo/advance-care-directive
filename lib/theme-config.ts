@@ -6,7 +6,7 @@
 /**
  * Icon Configuration
  */
-export const ICON_STROKE_WIDTH = 0.75;
+export const ICON_STROKE_WIDTH = 1.5;
 
 /**
  * You can add other theme constants here as needed:

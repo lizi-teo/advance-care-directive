@@ -3,6 +3,7 @@
 import { motion } from 'motion/react'
 import { QuestionWithOptions } from '../types'
 import { Button, OutlineButton } from '@/components/ui/button'
+import { InfoBox } from '@/components/ui/info-box'
 import { Pencil, Share2, Printer, CheckCircle2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { toast } from 'sonner'
@@ -104,22 +105,27 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
 
         {/* Footer note */}
         <motion.div
-          className="mt-10 md:mt-12 pt-8 border-t border-border max-w-xl"
+          className="mt-10 md:mt-12 max-w-xl"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: 'easeOut', delay: 0.3 }}
         >
-          <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
-            This tool was made to help you record your values and healthcare wishes — clearly, and in your own words. It follows the NSW Health framework for advance care planning.{' '}
-            <a
-              href="https://www.health.nsw.gov.au/patients/acp/Pages/default.aspx"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-link underline underline-offset-2 hover:no-underline whitespace-nowrap"
-            >
-              Learn more at NSW Health →
-            </a>
-          </p>
+          <InfoBox className="flex flex-col gap-3">
+            <p className="font-medium text-foreground">What to do with your directive</p>
+            <p>Share a copy with your GP and anyone close to you. Store it somewhere easy to find, or carry a note saying where it lives.</p>
+            <p>This follows the NSW Health advance care planning framework. Advance care directives are legally recognised in NSW and should be honoured by your medical team.</p>
+            <p>
+              To learn more, visit{' '}
+              <a
+                href="https://www.health.nsw.gov.au/patients/acp/Pages/default.aspx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link underline underline-offset-2 hover:no-underline"
+              >
+                NSW Health →
+              </a>
+            </p>
+          </InfoBox>
         </motion.div>
 
       </div>

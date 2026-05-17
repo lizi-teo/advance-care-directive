@@ -1,6 +1,6 @@
 export default function DashboardPage() {
   return (
-    <main className="container mx-auto p-8">
+    <main className="page-container py-8">
       <h1 className="text-3xl font-bold mb-4">Your Directives</h1>
       <p className="text-muted-foreground mb-8">
         View and manage your saved advance care directives.

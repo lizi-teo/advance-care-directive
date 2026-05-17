@@ -69,13 +69,13 @@ const RadioCard = React.forwardRef<
       </div>
 
       <div className={cn(
-        "flex-1 text-outline-foreground text-left",
+        "flex-1 text-foreground text-left",
         hasContent && (title || description) ? "space-y-1" : ""
       )}>
         {icon && <div className="mb-2">{icon}</div>}
         {title && (
           <p className={cn(
-            "font-normal leading-normal text-left",
+            "font-normal leading-normal text-left max-w-[65ch]",
             size === "small" ? "[font-size:var(--text-base)]" : "[font-size:var(--text-lg)]"
           )}>
             {title}
@@ -83,7 +83,7 @@ const RadioCard = React.forwardRef<
         )}
         {description && (
           <p className={cn(
-            "font-normal leading-normal text-left",
+            "font-normal leading-normal text-left max-w-[65ch]",
             size === "small" ? "[font-size:var(--text-base)]" : "[font-size:var(--text-lg)]"
           )}>
             {description}

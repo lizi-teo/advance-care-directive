@@ -23,7 +23,7 @@ export function FinaliseScreen({
 }: FinaliseScreenProps) {
   return (
     <div className="w-full">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-8 md:py-12">
+      <div className="page-container py-8 md:py-12">
 
         {/* Heading */}
         <motion.div
@@ -132,7 +132,7 @@ export function FinaliseFooter({
 }) {
   return (
     <div className="w-full border-t border-border-emphasis py-5 shrink-0 bg-background">
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
+      <div className="page-container flex flex-col md:flex-row md:items-center gap-2 md:gap-4 md:justify-end">
         <Button
           size="lg"
           onClick={onSubmit}

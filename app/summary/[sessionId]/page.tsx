@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import { motion } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { Printer } from 'lucide-react'
+import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
+import { InfoBox } from '@/components/ui/info-box'
 
 interface Response {
   question_id: string
@@ -93,35 +95,53 @@ export default function SummaryPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="w-full border-b border-border bg-muted">
-        <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 h-14 flex items-center justify-between">
+        <div className="page-container h-14 flex items-center justify-between">
           <p className="text-sm text-muted-foreground font-[family-name:var(--font-family-body)]">
             Advance Care Directive
           </p>
           <button
-            onClick={() => window.print()}
+            onClick={() => { requestAnimationFrame(() => window.print()) }}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)] print:hidden"
           >
-            <Printer size={16} />
+            <Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />
             Print
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="w-full max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-10 md:py-16">
-        <div className="max-w-2xl">
+      <div className="page-container py-8 md:py-12">
+        <div className="max-w-2xl flex flex-col gap-10">
           <motion.div
+            className="flex flex-col gap-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
           >
-            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground mb-2">
+            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
               Advance Care Directive
             </h1>
-            <p className="text-muted-foreground [font-size:var(--text-base)] font-[family-name:var(--font-family-body)] mb-10">
+            <p className="text-muted-foreground [font-size:var(--text-base)] font-[family-name:var(--font-family-body)]">
               A summary of values and treatment preferences.
             </p>
           </motion.div>
+
+          <InfoBox className="flex flex-col gap-3">
+            <p className="font-medium text-foreground">What to do with your directive</p>
+            <p>Share a copy with your GP and anyone close to you. Store it somewhere easy to find, or carry a note saying where it lives.</p>
+            <p>This follows the NSW Health advance care planning framework. Advance care directives are legally recognised in NSW and should be honoured by your medical team.</p>
+            <p>
+              To learn more, visit{' '}
+              <a
+                href="https://www.health.nsw.gov.au/patients/acp/Pages/default.aspx"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link underline underline-offset-2 hover:opacity-80 transition-opacity"
+              >
+                NSW Health →
+              </a>
+            </p>
+          </InfoBox>
 
           <motion.div
             className="flex flex-col divide-y divide-border"

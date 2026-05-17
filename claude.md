@@ -17,3 +17,7 @@ When I type `#fig`, use Figma MCP commands in this order:
 ### #cl
 When I type `#cl`, reference the file at:
 `/Users/lizzieteo/Development/advance-care-directive/.docs/figma-to-react/components_links.md`
+
+### /style
+When I type `/style`, follow the instructions in:
+`/Users/lizzieteo/Development/advance-care-directive/.docs/figma-to-react/styling-guidelines.md`

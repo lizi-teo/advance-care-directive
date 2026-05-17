@@ -25,6 +25,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
       imageUrl,
       roundedHeader = true,
       className,
+      style,
       ...props
     },
     ref
@@ -44,24 +45,18 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
       <div
         ref={ref}
         data-size={size}
+        style={style}
         className={cn(
           "relative flex flex-col",
-          // Width: mobile 393px max (small) or full width, desktop 868px max (large)
-          // When roundedHeader=false, remove max-width to extend to edges
+          "question-card-gradient",
           isSmall && roundedHeader && "w-full max-w-[393px]",
           isSmall && !roundedHeader && "w-full",
           isLarge && "w-full max-w-[868px]",
-          // Padding: small = 20px (p-5), large = 32px (p-8)
           isSmall && "p-5",
           isLarge && "p-8",
-          // Gap: small = 20px (gap-5), large = 24px (gap-6)
           isSmall && "gap-5",
           isLarge && "gap-6",
-          // Border radius: small = 24px (rounded-3xl), large = none
-          // roundedHeader=false removes rounded corners
           isSmall && roundedHeader && "rounded-3xl overflow-hidden",
-          // Custom class for gradient background (auto-switches via CSS based on theme)
-          "question-card-gradient",
           className
         )}
         {...props}
@@ -89,7 +84,8 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
         {caption && (
           <p
             className={cn(
-              "uppercase leading-tight text-foreground font-[family-name:var(--font-family-body)]",
+              "uppercase leading-tight font-[family-name:var(--font-family-body)]",
+              "text-foreground dark:text-white/70",
               isSmall && "[font-size:var(--text-xs)] md:[font-size:var(--text-sm)]",
               isLarge && "[font-size:var(--text-sm)]"
             )}
@@ -101,9 +97,10 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
         {/* Title - Responsive Typography */}
         <h1
           className={cn(
-            "text-foreground",
+            "text-foreground dark:text-white",
             "font-[family-name:var(--font-family-display)]",
             "font-[var(--font-weight-display)]",
+            "max-w-[45ch]",
             isSmall && [
               // Small H1: mobile 30px, desktop 36px
               "[font-size:var(--text-h1-sm)]",
@@ -128,6 +125,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
             onClick={onLearnMoreClick}
             className={cn(
               "self-start h-auto px-0 py-2",
+              "text-foreground dark:text-white/80 dark:hover:text-white",
               isSmall && "[font-size:var(--text-base)]",
               isLarge && "[font-size:var(--text-lg)]"
             )}
