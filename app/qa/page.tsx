@@ -509,7 +509,7 @@ export default function QAPage() {
         />
       ) : (
         <div className="w-full border-t border-border-emphasis py-4 shrink-0 fixed bottom-0 left-0 right-0 z-40 bg-background">
-          <div className="page-container flex items-center gap-3 md:justify-end">
+          <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:gap-3 md:justify-end">
             <AnimatePresence initial={false}>
               {currentQuestionIndex > 0 && !editingFromSummary && (
                 <motion.div
@@ -518,13 +518,13 @@ export default function QAPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -8 }}
                   transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="shrink-0"
+                  className="shrink-0 w-full md:w-auto"
                 >
                   <Button
                     variant="ghost"
                     size="lg"
                     onClick={() => handleBack()}
-                    className="h-12 md:h-11 gap-1 px-3"
+                    className="w-full md:w-auto h-12 md:h-11 gap-1 px-3"
                     aria-label="Go to previous question"
                   >
                     <ChevronLeft size={18} strokeWidth={ICON_STROKE_WIDTH} />
@@ -537,7 +537,7 @@ export default function QAPage() {
               size="lg"
               onClick={() => handleContinue()}
               disabled={!hasSelectedAnswer}
-              className="flex-1 md:flex-none h-12 md:h-11"
+              className="w-full md:flex-none h-12 md:h-11"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>
