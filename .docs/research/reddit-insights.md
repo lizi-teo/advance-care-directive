@@ -14,3 +14,15 @@ Weekly insights from Australian and condition-specific communities.
 - **Practical friction.** r/dementia: a carer described facilities refusing to accept an emailed ACD — they wanted it on their own forms. The document existed but wasn't usable in the moment.
 - **NSW-specific:** r/australia mentioned public health services offer free Advance Care Planning support — most people don't know this exists. Service SA sells a kit. These low-awareness resources are a clear gap.
 - **Real language people use:** "DNR", "who speaks for you", "advance care plan", "just in case something happens" — not "advance care directive."
+
+**Sources:**
+- https://www.reddit.com/r/AusLegal/comments/1tk7wz9/advanced_care_plans
+- https://www.reddit.com/r/australia/comments/1n18iwg/advance_care_directive
+- https://www.reddit.com/r/australian/comments/1mpr8xm/vad
+- https://www.reddit.com/r/AskAnAustralian/comments/1p17elg/dnr
+- https://www.reddit.com/r/Adelaide/comments/1l13srp/aged_care_assistance
+- https://www.reddit.com/r/aussie/comments/1k3axvb/in_a_medical_crisis_who_will_speak_for_you_heres
+- https://www.reddit.com/r/Alzheimers/comments/1sl8kso/too_late
+- https://www.reddit.com/r/Alzheimers/comments/1lxf4bi/poa_advice
+- https://www.reddit.com/r/dementia/comments/1rrcjte/exit_time
+- https://www.reddit.com/r/dementia/comments/ooqs2v/the_gift_of_an_advance_directive

@@ -29,3 +29,5 @@ Analyse for:
 
 Append a summary (max 200 words) to .docs/research/reddit-insights.md with today's date
 and which topics had activity. Do not overwrite existing entries.
+
+Always include a **Sources** section listing the URLs of every post used, so insights can be verified directly on Reddit.
