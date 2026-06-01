@@ -6,39 +6,45 @@ Two routines power this folder. Set them up at claude.ai/code/routines.
 
 ## Routine 1: Reddit Scraper
 
-**Trigger:** Schedule — one-off at 6pm, then weekly Sunday 6pm
+**Trigger:** Schedule — one-off at 6pm today, then bi-weekly (every other Sunday 6pm)
 **Repositories:** lizi-teo/advance-care-directive (allow unrestricted branch pushes: OFF)
 **Connectors:** Reddit MCP
 
 ### Prompt
 
 ```
-Search Reddit for posts and comments from the past 7 days mentioning any of:
-"advance directive", "advance care directive", "living will", "advance care planning",
-"end of life wishes", "healthcare proxy", "medical power of attorney".
+Search Reddit for posts from the past 14 days mentioning any of:
+"advance directive", "advance care directive", "living will", "advance care planning".
 
-Focus on subreddits where real experiences are shared:
-r/eldercare, r/AgingParents, r/legaladvice, r/endoflife, r/Parenting, r/medicine,
-r/nursing, r/dementia, r/hospice.
+Limit to these 4 subreddits only:
+r/eldercare, r/AgingParents, r/endoflife, r/hospice
 
-For each relevant post or comment, extract:
-- The core pain point or frustration expressed
-- The subreddit and approximate date
-- A short direct quote (anonymised — no usernames)
+Hard limits to control scope:
+- Process a maximum of 15 posts total
+- Only include posts with at least 10 upvotes
+- For each post, read the top 3 comments only
+- Skip posts that are purely legal questions with no personal experience shared
 
-Group findings into these themes:
+For each included post, extract only:
+- The core pain point in one sentence
+- One short anonymised quote (no usernames)
+- The subreddit
+
+Group findings into these themes (maximum 5 entries per theme):
 1. Emotional / psychological barriers
 2. Legal / administrative confusion
 3. Family and communication difficulties
 4. Healthcare system failures
 5. Practical / logistics problems
 
+If a theme has fewer than 2 entries, omit it entirely rather than padding.
+
 Save the raw findings as a markdown file to:
 .docs/user-research/insights-archive/YYYY-MM-DD.md
 
 Then create a new branch named claude/research-YYYY-MM-DD and open a pull request
 titled "Research: Reddit insights YYYY-MM-DD" targeting main.
-The PR body should summarise the number of sources found per theme.
+The PR body should state only: total posts processed, themes found, date range covered.
 ```
 
 ---
