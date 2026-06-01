@@ -39,6 +39,9 @@ export function FinaliseScreen({
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
             Add your name and signature to complete your advance care directive.
           </p>
+          <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
+            If possible, <span className="font-semibold text-foreground">have a witness with you now</span> — they just need to watch you sign.
+          </p>
         </motion.div>
 
         {/* Form */}

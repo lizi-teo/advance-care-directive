@@ -4,7 +4,7 @@ import { QuestionWithOptions } from '../types'
 import { Button } from '@/components/ui/button'
 import { RadioCardGroup, RadioCard } from '@/components/ui/radio-card'
 import { Textarea } from '@/components/ui/textarea'
-import { CirclePlus } from 'lucide-react'
+import { CirclePlus, Pencil } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useEffect } from 'react'
 
@@ -12,43 +12,58 @@ interface QuestionCardProps {
   question: QuestionWithOptions
   onAnswerSelect: (questionId: string, answerOptionId: string, note?: string) => void
   selectedAnswerId?: string
+  initialNote?: string
+  onNoteChange?: (questionId: string, note: string) => void
 }
 
-export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: QuestionCardProps) {
+export function QuestionCard({ question, onAnswerSelect, selectedAnswerId, initialNote, onNoteChange }: QuestionCardProps) {
   const [selected, setSelected] = useState<string | undefined>(selectedAnswerId)
   const [note, setNote] = useState<string>('')
+  const [savedNote, setSavedNote] = useState<string>('')
   const [showNote, setShowNote] = useState<boolean>(false)
+  const [noteSaved, setNoteSaved] = useState<boolean>(false)
   const [announcement, setAnnouncement] = useState<string>('')
 
-  // Sync local state with prop when question changes
   useEffect(() => {
     setSelected(selectedAnswerId)
-    setNote('')
+    const restored = initialNote ?? ''
+    setNote(restored)
+    setSavedNote(restored)
     setShowNote(false)
+    setNoteSaved(!!restored)
   }, [question.id])
 
   const handleSelect = (answerOptionId: string) => {
     setSelected(answerOptionId)
-    onAnswerSelect(question.id, answerOptionId, note)
+    onAnswerSelect(question.id, answerOptionId, savedNote)
 
-    // Find the selected option text for screen reader announcement
     const selectedOption = question.answer_options.find(opt => opt.id === answerOptionId)
     if (selectedOption) {
       setAnnouncement(`Selected: ${selectedOption.option_text}`)
-      // Clear announcement after it's been read
       setTimeout(() => setAnnouncement(''), 1000)
     }
   }
 
+  const handleNoteDone = () => {
+    setSavedNote(note)
+    setShowNote(false)
+    setNoteSaved(true)
+    if (selected) onAnswerSelect(question.id, selected, note)
+  }
+
+  const handleNoteEdit = () => {
+    setNote(savedNote)
+    setShowNote(true)
+  }
+
+  const handleNoteCancel = () => {
+    setNote(savedNote)
+    setShowNote(false)
+  }
+
   return (
     <div className="space-y-5 md:space-y-6">
-      {/* Screen reader announcement for answer selection */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
 
@@ -68,15 +83,7 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
           ))}
       </RadioCardGroup>
 
-      {!showNote ? (
-        <Button
-          variant="ghost"
-          onClick={() => setShowNote(true)}
-        >
-          <CirclePlus size={24} />
-          Add a note
-        </Button>
-      ) : (
+      {showNote ? (
         <div className="flex flex-col gap-2">
           <label htmlFor={`note-${question.id}`} className="text-sm font-medium block">
             Additional notes (optional)
@@ -85,11 +92,36 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId }: Que
             id={`note-${question.id}`}
             placeholder="Add any additional thoughts or notes..."
             value={note}
-            onChange={(e) => setNote(e.target.value)}
-            onBlur={() => { if (selected) onAnswerSelect(question.id, selected, note) }}
+            onChange={(e) => {
+                setNote(e.target.value)
+                onNoteChange?.(question.id, e.target.value)
+              }}
             className="min-h-[100px]"
+            autoFocus
           />
+          <div className="flex gap-2">
+            <Button onClick={handleNoteDone}>Done</Button>
+            <Button variant="ghost" onClick={handleNoteCancel}>Cancel</Button>
+          </div>
         </div>
+      ) : noteSaved ? (
+        <div className="flex items-start gap-3 rounded-lg border border-border px-4 py-3">
+          <p className="text-sm text-foreground/80 flex-1 line-clamp-2">{savedNote}</p>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNoteEdit}
+            aria-label="Edit note"
+            className="shrink-0 -mt-1 -mr-1 h-8 w-8"
+          >
+            <Pencil size={16} strokeWidth={ICON_STROKE_WIDTH} />
+          </Button>
+        </div>
+      ) : (
+        <Button variant="ghost" onClick={() => setShowNote(true)}>
+          <CirclePlus size={24} />
+          Add a note
+        </Button>
       )}
     </div>
   )

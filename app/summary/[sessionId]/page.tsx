@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { motion } from 'motion/react'
 import { supabase } from '@/lib/supabase'
-import { Printer } from 'lucide-react'
-import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { InfoBox } from '@/components/ui/info-box'
 
 interface Response {
@@ -95,17 +93,10 @@ export default function SummaryPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="w-full border-b border-border bg-muted">
-        <div className="page-container h-14 flex items-center justify-between">
+        <div className="page-container h-14 flex items-center">
           <p className="text-sm text-muted-foreground font-[family-name:var(--font-family-body)]">
             Advance Care Directive
           </p>
-          <button
-            onClick={() => { requestAnimationFrame(() => window.print()) }}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)] print:hidden"
-          >
-            <Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />
-            Print
-          </button>
         </div>
       </div>
 

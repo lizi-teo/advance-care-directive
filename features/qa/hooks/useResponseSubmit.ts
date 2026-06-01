@@ -36,7 +36,6 @@ export function useResponseSubmit() {
 
       return true
     } catch (err) {
-      console.error('Error submitting response:', err)
       setError(err instanceof Error ? err.message : 'Failed to save response')
       return false
     } finally {

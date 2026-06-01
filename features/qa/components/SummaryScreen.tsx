@@ -2,33 +2,19 @@
 
 import { motion } from 'motion/react'
 import { QuestionWithOptions } from '../types'
-import { Button, OutlineButton } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { InfoBox } from '@/components/ui/info-box'
-import { Pencil, Share2, Printer, CheckCircle2 } from 'lucide-react'
+import { Pencil, CheckCircle2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
-import { toast } from 'sonner'
 
 interface SummaryScreenProps {
   questions: QuestionWithOptions[]
   responses: Record<string, string>
+  notes?: Record<string, string>
   onEdit: (questionIndex: number) => void
 }
 
-export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenProps) {
-  const handleShare = async () => {
-    const url = window.location.href
-    if (navigator.share) {
-      await navigator.share({ title: 'My Advance Care Directive', url })
-    } else {
-      await navigator.clipboard.writeText(url)
-      toast.success('Link copied to clipboard')
-    }
-  }
-
-  const handlePrint = () => {
-    window.print()
-  }
-
+export function SummaryScreen({ questions, responses, notes = {}, onEdit }: SummaryScreenProps) {
   return (
     <div className="w-full">
       <div className="page-container py-8 md:py-12">
@@ -48,7 +34,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
             It takes courage to think about these things.
           </p>
           <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] max-w-xl">
-            Review your answers below, and share or print your directive when you're ready.
+            Review your answers below, then sign your directive when you're ready.
           </p>
         </motion.div>
 
@@ -62,6 +48,7 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
           {questions.map((question, index) => {
             const selectedOptionId = responses[question.id]
             const selectedOption = question.answer_options.find(o => o.id === selectedOptionId)
+            const note = notes[question.id]
 
             return (
               <motion.div
@@ -85,6 +72,11 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
                   ) : (
                     <p className="[font-size:var(--text-base)] text-muted-foreground italic font-[family-name:var(--font-family-body)]">
                       Not answered
+                    </p>
+                  )}
+                  {note && (
+                    <p className="[font-size:var(--text-sm)] text-muted-foreground font-[family-name:var(--font-family-body)] mt-1">
+                      {note}
                     </p>
                   )}
                 </div>
@@ -133,46 +125,17 @@ export function SummaryScreen({ questions, responses, onEdit }: SummaryScreenPro
   )
 }
 
-export function SummaryFooter({
-  onShare,
-  onPrint,
-  onFinalise,
-}: {
-  onShare: () => void
-  onPrint: () => void
-  onFinalise: () => void
-}) {
+export function SummaryFooter({ onFinalise }: { onFinalise: () => void }) {
   return (
     <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
-      <div className="page-container flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4">
-
-        {/* Primary CTA */}
+      <div className="page-container flex justify-end">
         <Button
           size="lg"
           onClick={onFinalise}
-          className="w-full md:w-auto md:order-2 h-12 md:h-11"
+          className="w-full md:w-auto h-12 md:h-11"
         >
           Sign my directive
         </Button>
-
-        {/* Print + Share */}
-        <div className="grid grid-cols-2 gap-3 md:btn-group md:order-1">
-          <OutlineButton
-            onClick={onPrint}
-            icon={<Printer size={16} strokeWidth={ICON_STROKE_WIDTH} />}
-            className="h-11 font-[family-name:var(--font-family-body)]"
-          >
-            Print
-          </OutlineButton>
-          <OutlineButton
-            onClick={onShare}
-            icon={<Share2 size={16} strokeWidth={ICON_STROKE_WIDTH} />}
-            className="h-11 font-[family-name:var(--font-family-body)]"
-          >
-            Share
-          </OutlineButton>
-        </div>
-
       </div>
     </div>
   )

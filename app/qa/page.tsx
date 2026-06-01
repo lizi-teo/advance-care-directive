@@ -9,13 +9,14 @@ import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummaryScreen'
 import { FinaliseScreen, FinaliseFooter } from '@/features/qa/components/FinaliseScreen'
-import { SignedScreen, SignedFooter } from '@/features/qa/components/SignedScreen'
-import { useSessionId } from '@/features/qa/hooks/useSessionId'
+import { WitnessFlow } from '@/features/witness/WitnessFlow'
+import { useSessionId, resetSessionId } from '@/features/qa/hooks/useSessionId'
 import { useSignature } from '@/features/qa/hooks/useSignature'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AppBar } from '@/components/ui/app-bar'
-import { Info, Wind, ChevronLeft } from 'lucide-react'
+import { Info, Wind } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
@@ -24,11 +25,13 @@ import { toast } from 'sonner'
 
 export default function QAPage() {
   const { questions, loading, error } = useQuestions()
-  const { submitResponse, submitting, error: submitError } = useResponseSubmit()
+  const { submitResponse, submitting } = useResponseSubmit()
   const sessionId = useSessionId()
   const { saveProgress } = useProgressAutoSave()
   const { save: saveSignature } = useSignature()
+  const router = useRouter()
   const [responses, setResponses] = useState<Record<string, string>>({})
+  const [notes, setNotes] = useState<Record<string, string>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [showBreathing, setShowBreathing] = useState(false)
   const [showTellMeMore, setShowTellMeMore] = useState(false)
@@ -41,9 +44,9 @@ export default function QAPage() {
   const [finaliseSignature, setFinaliseSignature] = useState<string | null>(null)
   const [finaliseConsented, setFinaliseConsented] = useState(false)
   const [finalising, setFinalising] = useState(false)
-  const [showDone, setShowDone] = useState(false)
-  const [signedAt, setSignedAt] = useState('')
-  const [downloading, setDownloading] = useState(false)
+  const [showWitnessFlow, setShowWitnessFlow] = useState(false)
+  const [signedSessionId, setSignedSessionId] = useState<string | null>(null)
+  const [signingTimestamp, setSigningTimestamp] = useState<string | null>(null)
   const [direction, setDirection] = useState(0)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
@@ -89,10 +92,9 @@ export default function QAPage() {
   }, [currentQuestionIndex])
 
   const handleAnswerSelect = async (questionId: string, answerOptionId: string, note?: string) => {
-    // Update local state
     setResponses(prev => ({ ...prev, [questionId]: answerOptionId }))
+    if (note !== undefined) setNotes(prev => ({ ...prev, [questionId]: note }))
 
-    // Submit to database
     const success = await submitResponse(questionId, answerOptionId, note, sessionId)
 
     if (!success) {
@@ -118,16 +120,6 @@ export default function QAPage() {
     setCurrentQuestionIndex(questionIndex)
   }
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/summary/${sessionId}`
-    if (navigator.share) {
-      try { await navigator.share({ title: 'My Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
-    } else {
-      await navigator.clipboard.writeText(url)
-      toast.success('Link copied to clipboard')
-    }
-  }
-
   const handleBack = (fromSwipe = false) => {
     setDirection(fromSwipe ? -1 : 0)
     if (currentQuestionIndex > 0) {
@@ -150,9 +142,10 @@ export default function QAPage() {
       caption: q.caption,
       question: q.question_text,
       answer: q.answer_options.find(o => o.id === responses[q.id])?.option_text ?? 'Not answered',
+      note: notes[q.id] || undefined,
     }))
 
-  const downloadPDF = async (name: string, signature: string, timestamp: string) => {
+  const downloadPDF = async (name: string, signature: string, timestamp: string, witness?: { name: string; signatureUrl: string }) => {
     const res = await fetch('/api/generate-pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -161,6 +154,8 @@ export default function QAPage() {
         signedName: name,
         signatureDataUrl: signature,
         signedAt: timestamp,
+        witnessName: witness?.name,
+        witnessSignatureUrl: witness?.signatureUrl,
       }),
     })
     if (!res.ok) throw new Error('PDF generation failed')
@@ -179,49 +174,18 @@ export default function QAPage() {
     const timestamp = new Date().toISOString()
 
     try {
-      const tasks: Promise<unknown>[] = [downloadPDF(finaliseName, finaliseSignature, timestamp)]
       if (sessionId) {
-        tasks.push(saveSignature({ sessionId, signedName: finaliseName, signatureDataUrl: finaliseSignature }))
+        await saveSignature({ sessionId, signedName: finaliseName, signatureDataUrl: finaliseSignature })
       }
-      await Promise.all(tasks)
-      setSignedAt(timestamp)
-      setShowFinalise(false)
-      setShowDone(true)
-    } catch {
-      toast.error('Could not generate your PDF. Please try again.')
-    } finally {
+      const completedSessionId = sessionId
+      resetSessionId()
+      setSignedSessionId(completedSessionId)
+      setSigningTimestamp(timestamp)
       setFinalising(false)
-    }
-  }
-
-  const handleDoneDownload = async () => {
-    if (!finaliseSignature) return
-    setDownloading(true)
-    try {
-      await downloadPDF(finaliseName, finaliseSignature, signedAt)
+      setShowWitnessFlow(true)
     } catch {
-      toast.error('Could not download your PDF. Please try again.')
-    } finally {
-      setDownloading(false)
-    }
-  }
-
-  const handleRevise = () => {
-    setShowDone(false)
-    setShowSummary(true)
-    setFinaliseName('')
-    setFinaliseSignature(null)
-    setFinaliseConsented(false)
-    setSignedAt('')
-  }
-
-  const handleDoneShare = async () => {
-    const url = `${window.location.origin}/signed/${sessionId}`
-    if (navigator.share) {
-      try { await navigator.share({ title: 'My Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
-    } else {
-      await navigator.clipboard.writeText(url)
-      toast.success('Link copied to clipboard')
+      toast.error('Something went wrong. Please try again.')
+      setFinalising(false)
     }
   }
 
@@ -242,7 +206,7 @@ export default function QAPage() {
 
   // Swipe left/right to navigate questions on touch devices
   useEffect(() => {
-    if (showDone || showFinalise || showSummary || showBreathing || showTellMeMore) return
+    if (showFinalise || showSummary || showBreathing || showTellMeMore) return
 
     let startX = 0
     let startY = 0
@@ -266,7 +230,7 @@ export default function QAPage() {
       document.removeEventListener('touchstart', onTouchStart)
       document.removeEventListener('touchend', onTouchEnd)
     }
-  }, [showDone, showFinalise, showSummary, showBreathing, showTellMeMore])
+  }, [showFinalise, showSummary, showBreathing, showTellMeMore])
 
   if (loading) {
     return (
@@ -331,23 +295,24 @@ export default function QAPage() {
       {/* Main Content */}
       <div className="flex-1 relative min-h-0">
         <AnimatePresence mode="sync">
-          {showDone && finaliseSignature ? (
+          {showWitnessFlow && signedSessionId ? (
             <motion.div
-              key="done"
-              className="absolute inset-0 overflow-y-auto overscroll-y-none"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
+              key="witness"
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
             >
-              <SignedScreen
-                signedName={finaliseName}
-                signatureDataUrl={finaliseSignature}
-                signedAt={signedAt}
-                questions={questions}
-                responses={responses}
-                onRevise={handleRevise}
-                sessionId={sessionId ?? undefined}
+              <WitnessFlow
+                sessionId={signedSessionId}
+                signerName={finaliseName}
+                onDone={async (witness) => {
+                  if (finaliseSignature && signingTimestamp) {
+                    try { await downloadPDF(finaliseName, finaliseSignature, signingTimestamp, witness) } catch { toast.error('Could not generate your PDF. Please try again.') }
+                  }
+                  router.push(`/signed/${signedSessionId}`)
+                }}
               />
             </motion.div>
           ) : showFinalise ? (
@@ -380,6 +345,7 @@ export default function QAPage() {
               <SummaryScreen
                 questions={questions}
                 responses={responses}
+                notes={notes}
                 onEdit={handleEditFromSummary}
               />
             </motion.div>
@@ -387,7 +353,7 @@ export default function QAPage() {
             <motion.div
               key="question"
               ref={questionScrollRef}
-              className="absolute inset-0 overflow-y-auto overscroll-y-none pb-24"
+              className="absolute inset-0 overflow-y-auto overscroll-y-none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -475,6 +441,10 @@ export default function QAPage() {
                           question={currentQuestion}
                           onAnswerSelect={handleAnswerSelect}
                           selectedAnswerId={responses[currentQuestion.id]}
+                          initialNote={notes[currentQuestion.id]}
+                          onNoteChange={(questionId, note) =>
+                            setNotes(prev => ({ ...prev, [questionId]: note }))
+                          }
                         />
                       </div>
                     </div>
@@ -487,14 +457,7 @@ export default function QAPage() {
       </div>
 
       {/* Footer */}
-      {showDone ? (
-        <SignedFooter
-          onDownload={handleDoneDownload}
-          onPrint={() => window.print()}
-          onShare={handleDoneShare}
-          downloading={downloading}
-        />
-      ) : showFinalise ? (
+      {showWitnessFlow ? null : showFinalise ? (
         <FinaliseFooter
           onBack={handleFinaliseBack}
           onSubmit={handleFinaliseComplete}
@@ -502,13 +465,9 @@ export default function QAPage() {
           loading={finalising}
         />
       ) : showSummary ? (
-        <SummaryFooter
-          onShare={handleShare}
-          onPrint={() => window.print()}
-          onFinalise={handleFinalise}
-        />
+        <SummaryFooter onFinalise={handleFinalise} />
       ) : (
-        <div className="w-full border-t border-border-emphasis py-4 shrink-0 fixed bottom-0 left-0 right-0 z-40 bg-background">
+        <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
           <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:gap-3 md:justify-end">
             <AnimatePresence initial={false}>
               {currentQuestionIndex > 0 && !editingFromSummary && (
@@ -527,7 +486,6 @@ export default function QAPage() {
                     className="w-full md:w-auto h-12 md:h-11 gap-1 px-3"
                     aria-label="Go to previous question"
                   >
-                    <ChevronLeft size={18} strokeWidth={ICON_STROKE_WIDTH} />
                     Back
                   </Button>
                 </motion.div>
@@ -537,7 +495,7 @@ export default function QAPage() {
               size="lg"
               onClick={() => handleContinue()}
               disabled={!hasSelectedAnswer}
-              className="w-full md:flex-none h-12 md:h-11"
+              className="w-full md:w-auto h-12 md:h-11"
             >
               {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
             </Button>

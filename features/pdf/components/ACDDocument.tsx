@@ -6,10 +6,13 @@ export interface ACDDocumentProps {
     caption: string | null
     question: string
     answer: string
+    note?: string
   }>
   signedName: string
   signatureDataUrl: string
   signedAt: string
+  witnessName?: string
+  witnessSignatureUrl?: string
 }
 
 const c = {
@@ -93,12 +96,23 @@ const styles = StyleSheet.create({
     color: c.black,
     lineHeight: 1.4,
   },
+  answerNote: {
+    fontSize: 8,
+    color: c.mid,
+    lineHeight: 1.4,
+    marginTop: 3,
+  },
   signatureSection: {
     marginTop: 20,
+    flexDirection: 'row',
+    gap: 24,
+  },
+  signatureCol: {
+    flex: 1,
   },
   sigImgWrapper: {
-    width: 200,
-    height: 90,
+    width: 180,
+    height: 80,
     borderWidth: 1,
     borderColor: c.border,
     backgroundColor: c.bg,
@@ -106,8 +120,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sigImg: {
-    width: 200,
-    height: 90,
+    width: 180,
+    height: 80,
     objectFit: 'contain' as const,
   },
   signedName: {
@@ -143,7 +157,7 @@ function formatDate(iso: string): string {
   })
 }
 
-export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt }: ACDDocumentProps) {
+export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, witnessName, witnessSignatureUrl }: ACDDocumentProps) {
   return (
     <Document title="Advance Care Directive" author={signedName}>
       <Page size="A4" style={styles.page}>
@@ -168,20 +182,37 @@ export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt }:
             ) : null}
             <Text style={styles.answerQuestion}>{item.question}</Text>
             <Text style={styles.answerText}>{item.answer}</Text>
+            {item.note ? (
+              <Text style={styles.answerNote}>Note: {item.note}</Text>
+            ) : null}
           </View>
         ))}
 
         <View style={styles.divider} />
 
         <View style={styles.signatureSection}>
-          <Text style={styles.label}>SIGNATURE</Text>
-          <View style={styles.sigImgWrapper}>
-            <Image src={signatureDataUrl} style={styles.sigImg} />
+          <View style={styles.signatureCol}>
+            <Text style={styles.label}>SIGNED BY</Text>
+            <View style={styles.sigImgWrapper}>
+              <Image src={signatureDataUrl} style={styles.sigImg} />
+            </View>
+            <Text style={styles.signedName}>{signedName}</Text>
+            <Text style={styles.signatureNote}>
+              I confirm this signature and name represent my intentions in this advance care directive.
+            </Text>
           </View>
-          <Text style={styles.signedName}>{signedName}</Text>
-          <Text style={styles.signatureNote}>
-            I confirm this signature and name represent my intentions in this advance care directive.
-          </Text>
+          {witnessName && witnessSignatureUrl ? (
+            <View style={styles.signatureCol}>
+              <Text style={styles.label}>WITNESSED BY</Text>
+              <View style={styles.sigImgWrapper}>
+                <Image src={witnessSignatureUrl} style={styles.sigImg} />
+              </View>
+              <Text style={styles.signedName}>{witnessName}</Text>
+              <Text style={styles.signatureNote}>
+                Witnessed in accordance with NSW Health guidelines.
+              </Text>
+            </View>
+          ) : null}
         </View>
 
         <View style={styles.footer} fixed>

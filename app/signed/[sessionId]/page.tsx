@@ -6,19 +6,13 @@ import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
 import { supabase } from '@/lib/supabase'
 import { Printer, Share2 } from 'lucide-react'
-import Link from 'next/link'
 import { toast } from 'sonner'
+import { WitnessMode, type WitnessRecord } from '@/features/witness/WitnessMode'
 
 interface SignatureRecord {
   signed_name: string
   signature_url: string
   signed_at: string
-}
-
-interface WitnessRecord {
-  witness_name: string
-  witness_signature_url: string
-  witnessed_at: string
 }
 
 interface Response {
@@ -139,16 +133,6 @@ export default function SignedPage() {
     } else {
       await navigator.clipboard.writeText(url)
       toast.success('Link copied to clipboard')
-    }
-  }
-
-  const handleShareWitnessLink = async () => {
-    const url = `${window.location.origin}/signed/${sessionId}/witness`
-    if (navigator.share) {
-      try { await navigator.share({ title: 'Witness my Advance Care Directive', url }) } catch (err) { if (err instanceof Error && err.name === 'AbortError') return }
-    } else {
-      await navigator.clipboard.writeText(url)
-      toast.success('Witness link copied to clipboard')
     }
   }
 
@@ -313,7 +297,7 @@ export default function SignedPage() {
               </div>
             )}
 
-            {/* Witness block or CTA */}
+            {/* Witness block or inline mode */}
             {witness ? (
               <AnimatePresence>
                 <motion.div
@@ -343,37 +327,13 @@ export default function SignedPage() {
                   </div>
                 </motion.div>
               </AnimatePresence>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
-                  Witnessed by
-                </p>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
-                    <p className="[font-size:var(--text-base)] text-foreground font-medium font-[family-name:var(--font-family-body)]">
-                      No witness yet
-                    </p>
-                    <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] leading-relaxed">
-                      Share a link for your witness to sign on their own device, or open it together now.
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6 pt-2 pb-2">
-                    <button
-                      onClick={handleShareWitnessLink}
-                      className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)] text-left"
-                    >
-                      Share witness link
-                    </button>
-                    <Link
-                      href={`/signed/${sessionId}/witness`}
-                      className="[font-size:var(--text-sm)] font-medium text-link underline underline-offset-2 hover:no-underline font-[family-name:var(--font-family-body)]"
-                    >
-                      Open now
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+            ) : signature ? (
+              <WitnessMode
+                sessionId={sessionId}
+                signerName={signature.signed_name}
+                onComplete={(record: WitnessRecord) => setWitness(record)}
+              />
+            ) : null}
 
           </div>
 
