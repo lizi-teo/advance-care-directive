@@ -99,9 +99,9 @@ export function QuestionCard({ question, onAnswerSelect, selectedAnswerId, initi
             className="min-h-[100px]"
             autoFocus
           />
-          <div className="flex gap-2">
-            <Button onClick={handleNoteDone}>Done</Button>
+          <div className="flex gap-2 justify-end">
             <Button variant="ghost" onClick={handleNoteCancel}>Cancel</Button>
+            <Button onClick={handleNoteDone}>Done</Button>
           </div>
         </div>
       ) : noteSaved ? (

@@ -451,6 +451,40 @@ export default function QAPage() {
                   </div>
                 </motion.div>
               </AnimatePresence>
+              <div className="w-full border-t border-border-emphasis py-4 bg-background">
+                <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:gap-3 md:justify-end">
+                  <AnimatePresence initial={false}>
+                    {currentQuestionIndex > 0 && !editingFromSummary && (
+                      <motion.div
+                        key="back-footer"
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -8 }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
+                        className="shrink-0 w-full md:w-auto"
+                      >
+                        <Button
+                          variant="ghost"
+                          size="lg"
+                          onClick={() => handleBack()}
+                          className="w-full md:w-auto h-12 md:h-11 gap-1 px-3"
+                          aria-label="Go to previous question"
+                        >
+                          Back
+                        </Button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Button
+                    size="lg"
+                    onClick={() => handleContinue()}
+                    disabled={!hasSelectedAnswer}
+                    className="w-full md:w-auto h-12 md:h-11"
+                  >
+                    {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
+                  </Button>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -466,42 +500,7 @@ export default function QAPage() {
         />
       ) : showSummary ? (
         <SummaryFooter onFinalise={handleFinalise} />
-      ) : (
-        <div className="w-full border-t border-border-emphasis py-4 shrink-0 bg-background">
-          <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:gap-3 md:justify-end">
-            <AnimatePresence initial={false}>
-              {currentQuestionIndex > 0 && !editingFromSummary && (
-                <motion.div
-                  key="back-footer"
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -8 }}
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="shrink-0 w-full md:w-auto"
-                >
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    onClick={() => handleBack()}
-                    className="w-full md:w-auto h-12 md:h-11 gap-1 px-3"
-                    aria-label="Go to previous question"
-                  >
-                    Back
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <Button
-              size="lg"
-              onClick={() => handleContinue()}
-              disabled={!hasSelectedAnswer}
-              className="w-full md:w-auto h-12 md:h-11"
-            >
-              {editingFromSummary ? 'Back to summary' : currentQuestionIndex === questions.length - 1 ? 'Review answers' : 'Continue'}
-            </Button>
-          </div>
-        </div>
-      )}
+      ) : null}
 
       {/* Breathing Exercise Overlay */}
       <BreathingOverlay
