@@ -1,6 +1,81 @@
-# Routine Prompts — User Research Pipeline
+# Routine Prompts
 
-Two routines power this folder. Set them up at claude.ai/code/routines.
+All three routines below are set up at claude.ai/code/routines.
+
+---
+
+## Routine 3: PR Review — Healthcare Checklist
+
+**Trigger:** GitHub event — pull_request.opened
+**Filter:** Base branch = `main`
+**Repositories:** lizi-teo/advance-care-directive
+**Connectors:** None
+
+### Prompt
+
+```
+You are reviewing a pull request on an advance care directive web application.
+This is a healthcare product used by people making end-of-life decisions —
+accuracy, accessibility, and data sensitivity are non-negotiable.
+
+Read the PR diff and check every changed file against this checklist.
+Leave an inline comment for every issue found. Be specific — quote the line.
+At the end, post a single summary comment with a pass/fail verdict per section.
+
+---
+
+CHECKLIST
+
+1. FORM VALIDATION
+   - Every form field that is required has a corresponding Zod schema rule
+   - Error messages are in plain language (no technical jargon)
+   - Required vs optional fields are visually distinguished
+
+2. DATA PRIVACY
+   - No patient data, health decisions, or personal identifiers appear in console.log,
+     error messages, analytics events, or any client-visible state
+   - Supabase queries use row-level security (RLS) — any new table must have RLS enabled
+   - No sensitive fields stored in localStorage or sessionStorage
+
+3. ACCESSIBILITY
+   - New UI components have appropriate ARIA labels and roles
+   - Interactive elements are keyboard navigable
+   - Colour contrast meets WCAG AA minimum (especially for elderly users)
+   - Touch targets are at least 44x44px on mobile
+
+4. LANGUAGE AND TONE
+   - Any new user-facing copy uses plain, calm language appropriate for end-of-life context
+   - No euphemisms that obscure meaning (users must clearly understand what they are signing)
+   - No legalese without an accompanying plain-language explanation
+
+5. PDF GENERATION
+   - If /features or /components related to PDF are changed, verify the output
+     structure still matches the legal advance directive format
+   - No fields removed from the PDF output without explicit justification in the PR description
+
+6. SUPABASE MIGRATIONS
+   - Any new migration in /supabase is reversible (has a down migration)
+   - No columns dropped from existing tables without a data migration strategy
+   - New tables have RLS policies defined before data is written to them
+
+7. COMPONENT STORIES
+   - Every new component in /components has a matching Storybook story in /stories
+   - Existing stories still reflect the component's current props
+
+8. DESIGN SYSTEM
+   - No hardcoded hex colours or font sizes — Tailwind tokens only
+   - New components follow the spacing and typography scales in
+     .docs/typography-system.md
+
+---
+
+Do not comment on code style, formatting, or things outside this checklist.
+If a section has no issues, say "✓ clear" and move on.
+```
+
+---
+
+## Research Pipeline
 
 ---
 
