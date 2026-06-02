@@ -36,10 +36,10 @@ const styles = StyleSheet.create({
     backgroundColor: c.white,
   },
   docTitle: {
-    fontSize: 12,
+    fontSize: 28,
     fontFamily: 'Helvetica-Bold',
     color: c.black,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   docSubtitle: {
     fontSize: 8,

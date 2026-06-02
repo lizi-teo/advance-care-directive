@@ -6,16 +6,19 @@ import { join } from 'path'
 
 const execAsync = promisify(exec)
 
-export async function GET() {
+export async function GET(request: Request) {
   if (process.env.NODE_ENV === 'production') {
     return Response.json({ error: 'Not available in production' }, { status: 403 })
   }
+
+  const { searchParams } = new URL(request.url)
+  const project = searchParams.get('project') === 'integration' ? 'integration' : 'unit'
 
   const outputFile = join(tmpdir(), `vitest-evals-${Date.now()}.json`)
 
   try {
     await execAsync(
-      `npx vitest run --project=unit --reporter=json --outputFile=${outputFile}`,
+      `npx vitest run --project=${project} --reporter=json --outputFile=${outputFile}`,
       { cwd: process.cwd(), timeout: 120_000 }
     )
   } catch {

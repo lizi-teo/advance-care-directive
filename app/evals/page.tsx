@@ -10,6 +10,7 @@ import {
   PenLine,
   FileText,
   Eye,
+  Database,
   ChevronRight,
   ChevronDown,
 } from 'lucide-react'
@@ -39,6 +40,8 @@ interface VitestJsonResult {
   testResults: TestSuiteResult[]
 }
 
+type Tab = 'unit' | 'integration'
+
 // ---------- journey steps ----------
 
 interface JourneyStep {
@@ -49,7 +52,7 @@ interface JourneyStep {
   match: (file: string, ancestors: string[]) => boolean
 }
 
-const STEPS: JourneyStep[] = [
+const UNIT_STEPS: JourneyStep[] = [
   {
     id: 'answer',
     label: 'Answer Questions',
@@ -82,6 +85,23 @@ const STEPS: JourneyStep[] = [
     sublabel: 'Signed page data assembly',
     icon: <Eye size={18} strokeWidth={ICON_STROKE_WIDTH} />,
     match: (file) => file.includes('signed-page'),
+  },
+]
+
+const INTEGRATION_STEPS: JourneyStep[] = [
+  {
+    id: 'responses',
+    label: 'Save Responses',
+    sublabel: 'Real DB — user_responses table',
+    icon: <MessageSquare size={18} strokeWidth={ICON_STROKE_WIDTH} />,
+    match: (file) => file.includes('responses'),
+  },
+  {
+    id: 'signatures',
+    label: 'Sign & Upload',
+    sublabel: 'Real DB + storage bucket',
+    icon: <PenLine size={18} strokeWidth={ICON_STROKE_WIDTH} />,
+    match: (file) => file.includes('signatures'),
   },
 ]
 
@@ -179,9 +199,7 @@ function StepColumn({
 
   return (
     <div className="flex flex-col md:flex-row items-stretch md:items-start gap-0 md:gap-0 flex-1 min-w-0">
-      {/* Column */}
       <div className="flex-1 min-w-0 flex flex-col rounded-lg border border-border overflow-hidden">
-        {/* Header */}
         <div className={`border-b px-3 py-3 flex flex-col gap-1.5 ${headerClass}`}>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -206,7 +224,6 @@ function StepColumn({
           </p>
         </div>
 
-        {/* Tests */}
         <div className="flex flex-col gap-2.5 p-3 flex-1">
           {tests.length === 0 ? (
             <div className="flex items-center gap-2 py-2">
@@ -221,14 +238,11 @@ function StepColumn({
         </div>
       </div>
 
-      {/* Connector arrow */}
       {!isLast && (
         <>
-          {/* Desktop: right arrow */}
           <div className="hidden md:flex items-start pt-4 px-1 shrink-0 text-border">
             <ChevronRight size={16} strokeWidth={ICON_STROKE_WIDTH} />
           </div>
-          {/* Mobile: down arrow */}
           <div className="flex md:hidden justify-center py-1 text-border">
             <ChevronDown size={16} strokeWidth={ICON_STROKE_WIDTH} />
           </div>
@@ -241,21 +255,29 @@ function StepColumn({
 // ---------- page ----------
 
 export default function EvalsPage() {
-  const [results, setResults] = useState<VitestJsonResult | null>(null)
+  const [tab, setTab] = useState<Tab>('unit')
+  const [unitResults, setUnitResults] = useState<VitestJsonResult | null>(null)
+  const [integrationResults, setIntegrationResults] = useState<VitestJsonResult | null>(null)
   const [running, setRunning] = useState(false)
   const [runError, setRunError] = useState<string | null>(null)
+
+  const results = tab === 'unit' ? unitResults : integrationResults
+  const steps = tab === 'unit' ? UNIT_STEPS : INTEGRATION_STEPS
 
   const run = async () => {
     setRunning(true)
     setRunError(null)
-    setResults(null)
+    if (tab === 'unit') setUnitResults(null)
+    else setIntegrationResults(null)
+
     try {
-      const res = await fetch('/api/run-evals')
+      const res = await fetch(`/api/run-evals?project=${tab}`)
       const json = await res.json()
       if (!res.ok) {
         setRunError(json.error ?? 'Unknown error')
       } else {
-        setResults(json as VitestJsonResult)
+        if (tab === 'unit') setUnitResults(json as VitestJsonResult)
+        else setIntegrationResults(json as VitestJsonResult)
       }
     } catch {
       setRunError('Could not reach /api/run-evals')
@@ -264,7 +286,7 @@ export default function EvalsPage() {
     }
   }
 
-  const stepData = STEPS.map(step => {
+  const stepData = steps.map(step => {
     const tests = results ? collectTests(step, results.testResults) : []
     return { step, tests, status: stepStatus(tests) }
   })
@@ -278,19 +300,55 @@ export default function EvalsPage() {
       <div className="page-container py-10 max-w-6xl">
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-6 mb-8">
+        <div className="flex items-start justify-between gap-6 mb-6">
           <div>
             <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
               Eval Suite
             </h1>
             <p className="mt-1.5 text-sm text-muted-foreground font-[family-name:var(--font-family-body)] max-w-sm">
-              Unit tests mapped to each step of the user journey. Run them to see which steps are healthy.
+              Tests mapped to each step of the user journey.
             </p>
           </div>
           <Button onClick={run} disabled={running} size="lg" className="shrink-0">
             {running ? 'Running…' : results ? 'Re-run' : 'Run tests'}
           </Button>
         </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 mb-6 border-b border-border">
+          <button
+            onClick={() => { setTab('unit'); setRunError(null) }}
+            className={`px-4 py-2 text-sm font-semibold font-[family-name:var(--font-family-body)] border-b-2 -mb-px transition-colors ${
+              tab === 'unit'
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Unit tests
+          </button>
+          <button
+            onClick={() => { setTab('integration'); setRunError(null) }}
+            className={`flex items-center gap-1.5 px-4 py-2 text-sm font-semibold font-[family-name:var(--font-family-body)] border-b-2 -mb-px transition-colors ${
+              tab === 'integration'
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Database size={13} strokeWidth={ICON_STROKE_WIDTH} />
+            Integration tests
+          </button>
+        </div>
+
+        {/* Integration notice */}
+        {tab === 'integration' && (
+          <div className="mb-6 rounded-lg border border-border bg-muted/40 px-4 py-3">
+            <p className="text-xs text-muted-foreground font-[family-name:var(--font-family-body)]">
+              Requires local Supabase running.{' '}
+              <code className="bg-foreground/8 px-1 py-0.5 rounded text-[11px]">npx supabase start</code>
+              {' '}in your terminal before running these.
+            </p>
+          </div>
+        )}
 
         {/* Error */}
         {runError && (
@@ -328,7 +386,7 @@ export default function EvalsPage() {
               index={i}
               tests={tests}
               status={status}
-              isLast={i === STEPS.length - 1}
+              isLast={i === steps.length - 1}
             />
           ))}
         </div>
@@ -342,7 +400,7 @@ export default function EvalsPage() {
 
         {running && (
           <p className="mt-6 text-sm text-muted-foreground font-[family-name:var(--font-family-body)]">
-            Running tests across all steps…
+            Running {tab} tests…
           </p>
         )}
       </div>

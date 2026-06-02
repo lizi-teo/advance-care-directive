@@ -46,6 +46,22 @@ export default defineConfig({
           include: ['evals/**/*.test.{ts,tsx}'],
         },
       },
+      {
+        resolve: {
+          alias: {
+            '@': path.resolve(dirname, '.'),
+          },
+        },
+        test: {
+          name: 'integration',
+          environment: 'node',
+          globals: true,
+          setupFiles: ['./evals/integration/setup.ts'],
+          include: ['evals/integration/**/*.test.ts'],
+          // Run serially — tests share a real database and must not collide
+          fileParallelism: false,
+        },
+      },
     ],
   },
 });
