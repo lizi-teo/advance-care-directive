@@ -33,7 +33,7 @@ export function WitnessFlow({ sessionId, signerName, onDone }: WitnessFlowProps)
 
     try {
       const blob = await fetch(witnessSignature).then(r => r.blob())
-      const filename = `witnesses/${sessionId}/${Date.now()}.png`
+      const filename = `${sessionId}/witness-${Date.now()}.png`
 
       const { error: uploadError } = await supabase.storage
         .from('signatures')
