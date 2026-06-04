@@ -58,6 +58,10 @@ https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?
 4. header-card
 https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=22-878&m=dev
 
+5. Audio progress bar
+https://www.figma.com/design/iMBw7JR7Gfon90hMoTBfcL/Advanced-Care-Directive-Web?node-id=85-1729&m=dev
+
+
 
 ---
 ## Organisms - Pages dark theme

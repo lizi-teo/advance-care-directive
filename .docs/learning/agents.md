@@ -9,3 +9,8 @@ You already have one planned (/api/enhance). Two more that would genuinely add v
 
 Plain language explainer — user taps "Tell me more" on a question (e.g. CPR, ventilators), Claude explains it in simple terms without medical jargon. Low risk, high value for this audience.
 Completeness reviewer — before the user signs, Claude reads back their answers and flags anything that seems contradictory or vague. Like a soft sanity check before a legal document is finalised.
+
+  - /vercel:react-best-practices — React patterns and best practices
+  - /vercel:shadcn — shadcn/ui component guidance 
+  - /vercel:next-cache-components — Next.js caching and components
+  - /ux-review — UX review for health tech (specific to your project)
