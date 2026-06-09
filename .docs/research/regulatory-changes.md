@@ -17,3 +17,19 @@ Tracked changes to Australian advance care directive legislation, forms, and req
 
 **VIC — Routine fines update only:** Department of Health published updated fines and penalties for the Medical Treatment Planning and Decisions Act 2016 for 2025–2026 financial year. Standard annual CPI indexation — not a substantive legislative change.
 **Action needed:** No
+
+---
+
+## 2026-06-09
+
+**SA — Regulations set to expire 1 September 2026 (84 days):** The Advance Care Directives Regulations 2014 carry a statutory expiry date of 1 September 2026, extended from the original 1 September 2025 under the Legislative Instruments Act 1978. No replacement regulations have been publicly announced. Combined with the January 2026 parliamentary reforms (logged 2026-06-03, action still pending), SA is approaching a significant regulatory transition point. If replacement regulations are not gazetted before 1 September, the existing delegated legislation lapses. Source: https://www.legislation.sa.gov.au/lz?path=%2FC%2FR%2FAdvance+Care+Directives+Regulations+2014
+**Action needed:** Yes — monitor SA Legislation website weekly for any draft or gazetted replacement regulations. Escalate if nothing has been published by late July 2026. Confirm with SA Health or a legal source whether the operative provisions of the Act remain intact if regulations lapse.
+
+**VIC — Adult ACD form updated February 2026 (not previously captured):** The health.vic.gov.au advance care planning forms page now hosts forms dated February 2026: the *Advance care directive for adults* PDF was published 4 February 2026 and the Word version 11 February 2026, alongside updated completion instructions. The previous monitoring entry (2026-06-03) logged only routine fines indexation for VIC and missed this form revision. The underlying Medical Treatment Planning and Decisions Act 2016 does not prescribe a mandatory form, so this is not a legal requirement change, but any app links, embedded PDFs, or guidance referencing an older form version should be updated. Sources: https://www.health.vic.gov.au/advance-care-planning/forms; https://www1.racgp.org.au/newsgp/professional/changes-to-victorian-advance-care-planning-laws
+**Action needed:** Yes — verify all VIC form links in the app point to the February 2026 versions. Retrieve the RACGP "Changes to Victorian advance care planning laws" article manually to confirm whether the form revision reflects a substantive law change or is a layout/formatting update only.
+
+**NSW — No new changes:** No statewide legislative or form changes detected this week. A Sydney Children's Hospitals Network electronic resuscitation plan policy (effective 1 January 2026) was noted but is facility-specific and does not affect the general public ACD framework.
+**Action needed:** No
+
+**QLD — No new changes:** No legislative or form changes detected. Last substantive change remains November 2020 (Form 4 AHD revision).
+**Action needed:** No
