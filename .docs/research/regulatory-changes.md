@@ -4,6 +4,13 @@ Tracked changes to Australian advance care directive legislation, forms, and req
 
 ---
 
+## 2026-06-16
+
+**All States — Monitoring run blocked (HTTP 403):** All five target pages (SA Health, NSW Health, advancecareplanning.org.au, QLD Health, VIC Health) returned HTTP 403 Forbidden during this automated check. Government sites are blocking the fetch tool's user-agent. No regulatory content could be retrieved or compared against prior state.
+**Action needed:** Yes — automated monitoring is currently non-functional for all sources. Manual review is required this week. Outstanding from 2026-06-03: SA January 2026 reform details still need manual retrieval from the Premier's media release or advancecaredirectives.sa.gov.au.
+
+---
+
 ## 2026-06-03
 
 **SA — New reforms passed parliament (16 January 2026):** The Premier of South Australia published a media release on 16 January 2026 confirming a further round of "Reforms to Advance Care Directives Pass Parliament." This is the second stage of the Malinauskas government's implementation of the Lacey review recommendations, building on the Advance Care Directives (Review) Amendment Act 2023 which commenced 1 March 2024. The 1 March 2024 changes included: witness list narrowed to health practitioners, JPs, legal practitioners, social workers, police officers and teachers; unlimited substitute decision-makers allowed; digital copies recognised as legally valid; interpreter restrictions tightened. The January 2026 reform content could not be retrieved via automated fetch (SA government pages returning 403). Source: https://www.premier.sa.gov.au/media-releases/news-archive/reforms-to-advance-care-directives-pass-parliament
