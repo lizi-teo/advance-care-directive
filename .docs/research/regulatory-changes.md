@@ -17,3 +17,16 @@ Tracked changes to Australian advance care directive legislation, forms, and req
 
 **VIC — Routine fines update only:** Department of Health published updated fines and penalties for the Medical Treatment Planning and Decisions Act 2016 for 2025–2026 financial year. Standard annual CPI indexation — not a substantive legislative change.
 **Action needed:** No
+
+---
+
+## 2026-06-23
+
+**Monitoring note — all 5 primary source pages returned HTTP 403 Forbidden:** sahealth.sa.gov.au, health.nsw.gov.au, advancecareplanning.org.au, health.qld.gov.au, and health.vic.gov.au all blocked automated access. Web search fallback used for all states.
+**Action needed:** No — but consider rotating the fetch strategy (e.g. adding a User-Agent header or using a browser-based fetch) to restore direct page monitoring.
+
+**VIC — Missed item from previous run (form instructions updated February 2026):** The Victorian Department of Health updated the *Instructions for completing the Advance care directive for adults form* in February 2026 (file path: `/sites/default/files/2026-02/instructions-advance-care-directive-adults-form.pdf`). This was not captured in the 2026-06-03 entry. Key witnessing clarifications in the updated instructions: (1) at least one of the two required adult witnesses must be a **registered medical practitioner**; (2) witnessing **cannot be done over audio visual link (remotely)** — must be in person; (3) forms may be completed electronically on-screen but signing and witnessing sections must be handwritten after printing. These rules apply under the Medical Treatment Planning and Decisions Act 2016 (VIC).
+**Action needed:** Yes — review the app's VIC guidance to confirm it reflects the in-person-only witnessing requirement and the registered medical practitioner witness rule. These are binding validity requirements; if the app's VIC content was written before February 2026 it may be incomplete.
+
+**SA, NSW, QLD — No new changes detected this week:** Web searches confirm no new legislation, forms, or amendments beyond what was logged 2026-06-03. SA January 2026 reform details remain pending manual retrieval (action carried forward from prior entry).
+**Action needed:** No (SA manual follow-up still outstanding from 2026-06-03 entry)
