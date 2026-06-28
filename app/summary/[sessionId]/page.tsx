@@ -6,6 +6,11 @@ import { motion } from 'motion/react'
 import { supabase } from '@/lib/supabase'
 import { InfoBox } from '@/components/ui/info-box'
 
+interface ValuesData {
+  selected_words: string[]
+  values_note: string | null
+}
+
 interface Response {
   question_id: string
   answer_option_id: string
@@ -31,6 +36,7 @@ export default function SummaryPage() {
   const [responses, setResponses] = useState<Response[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [answerOptions, setAnswerOptions] = useState<AnswerOption[]>([])
+  const [valuesData, setValuesData] = useState<ValuesData | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -56,14 +62,16 @@ export default function SummaryPage() {
         return true
       })
 
-      const [{ data: qs }, { data: opts }] = await Promise.all([
+      const [{ data: qs }, { data: opts }, { data: values }] = await Promise.all([
         supabase.from('questions').select('id, question_text, caption, display_order').order('display_order', { ascending: true }),
         supabase.from('answer_options').select('id, question_id, option_text'),
+        supabase.from('session_values').select('selected_words, values_note').eq('session_id', sessionId).maybeSingle(),
       ])
 
       setResponses(deduped)
       setQuestions(qs ?? [])
       setAnswerOptions(opts ?? [])
+      if (values) setValuesData(values)
       setLoading(false)
     }
 
@@ -133,6 +141,27 @@ export default function SummaryPage() {
               </a>
             </p>
           </InfoBox>
+
+          {valuesData && valuesData.selected_words.length > 0 && (
+            <motion.div
+              className="flex flex-col gap-3"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
+                What matters most to me
+              </p>
+              <p className="[font-size:var(--text-lg)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
+                {valuesData.selected_words.join(' · ')}
+              </p>
+              {valuesData.values_note && (
+                <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
+                  &ldquo;{valuesData.values_note}&rdquo;
+                </p>
+              )}
+            </motion.div>
+          )}
 
           <motion.div
             className="flex flex-col divide-y divide-border"

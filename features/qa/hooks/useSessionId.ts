@@ -26,5 +26,6 @@ export function useSessionId(): string | null {
 export function resetSessionId(): string {
   const id = crypto.randomUUID()
   localStorage.setItem(SESSION_KEY, id)
+  localStorage.removeItem('qa-values')
   return id
 }

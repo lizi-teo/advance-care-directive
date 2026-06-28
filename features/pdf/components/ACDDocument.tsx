@@ -13,6 +13,8 @@ export interface ACDDocumentProps {
   signedAt: string
   witnessName?: string
   witnessSignatureUrl?: string
+  selectedValues?: string[]
+  valuesNote?: string
 }
 
 const c = {
@@ -72,6 +74,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Helvetica-Bold',
     color: c.light,
     marginBottom: 8,
+  },
+  valuesWords: {
+    fontSize: 14,
+    fontFamily: 'Helvetica-Bold',
+    color: c.black,
+    marginBottom: 6,
+    lineHeight: 1.5,
+  },
+  valuesNote: {
+    fontSize: 9,
+    color: c.mid,
+    lineHeight: 1.5,
+    marginBottom: 4,
   },
   answerRow: {
     paddingTop: 10,
@@ -157,7 +172,7 @@ function formatDate(iso: string): string {
   })
 }
 
-export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, witnessName, witnessSignatureUrl }: ACDDocumentProps) {
+export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, witnessName, witnessSignatureUrl, selectedValues, valuesNote }: ACDDocumentProps) {
   return (
     <Document title="Advance Care Directive" author={signedName}>
       <Page size="A4" style={styles.page}>
@@ -173,6 +188,17 @@ export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, w
         <Text style={styles.dateValue}>{formatDate(signedAt)}</Text>
 
         <View style={styles.divider} />
+
+        {selectedValues && selectedValues.length > 0 ? (
+          <>
+            <Text style={styles.sectionHeader}>WHAT MATTERS MOST TO ME</Text>
+            <Text style={styles.valuesWords}>{selectedValues.join(' · ')}</Text>
+            {valuesNote ? (
+              <Text style={styles.valuesNote}>&ldquo;{valuesNote}&rdquo;</Text>
+            ) : null}
+            <View style={styles.divider} />
+          </>
+        ) : null}
 
         <Text style={styles.sectionHeader}>MY WISHES AND PREFERENCES</Text>
         {answers.map((item, i) => (

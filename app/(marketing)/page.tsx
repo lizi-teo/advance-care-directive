@@ -43,8 +43,8 @@ export default function HomePage() {
               <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 It helps the people who care about you make decisions you'd be comfortable with.
               </p>
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
-                This takes around <span className="font-semibold">15–20 minutes</span>. Completely free.
+              <p className="[font-size:var(--text-sm)] text-foreground/50 font-[family-name:var(--font-family-body)] [line-height:var(--leading-body)]">
+                Also called a DNR, advance care plan, or living will.
               </p>
             </motion.div>
             <motion.div custom={3} variants={fadeUp}>
@@ -53,8 +53,8 @@ export default function HomePage() {
                 asChild
                 className="rounded-full h-12 px-8 gap-2 w-full md:w-auto"
               >
-                <Link href="/qa">
-                  Start my directive
+                <Link href="/values">
+                  Begin — it takes 20 minutes
                   <ArrowRight size={18} strokeWidth={ICON_STROKE_WIDTH} />
                 </Link>
               </Button>
@@ -75,6 +75,32 @@ export default function HomePage() {
               priority
             />
           </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Timing callout */}
+      <section className="w-full shrink-0 border-y border-border">
+        <motion.div
+          className="page-container py-8 md:py-12 max-w-2xl"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+        >
+          <motion.p
+            custom={0}
+            variants={fadeUp}
+            className="[font-size:var(--text-lg)] md:[font-size:var(--text-xl)] font-[family-name:var(--font-family-display)] font-light text-foreground [line-height:var(--leading-body-lg)]"
+          >
+            The best time is before you need it.
+          </motion.p>
+          <motion.p
+            custom={1}
+            variants={fadeUp}
+            className="mt-3 [font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/60 font-[family-name:var(--font-family-body)] [line-height:var(--leading-body)]"
+          >
+            Most people only think about this when there&apos;s already a crisis. Completing it today — even if you&apos;re perfectly healthy — is the most useful thing you can do for the people who love you.
+          </motion.p>
         </motion.div>
       </section>
 

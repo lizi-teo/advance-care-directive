@@ -6,6 +6,7 @@ import { useQuestions } from '@/features/qa/hooks/useQuestions'
 import { useResponseSubmit } from '@/features/qa/hooks/useResponseSubmit'
 import { useProgressAutoSave } from '@/features/qa/hooks/useProgressAutoSave'
 import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
+import { ValuesDrawer, ValuesDrawerTrigger } from '@/features/qa/components/ValuesDrawer'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummaryScreen'
 import { FinaliseScreen, FinaliseFooter } from '@/features/qa/components/FinaliseScreen'
@@ -48,6 +49,8 @@ export default function QAPage() {
   const [signedSessionId, setSignedSessionId] = useState<string | null>(null)
   const [signingTimestamp, setSigningTimestamp] = useState<string | null>(null)
   const [direction, setDirection] = useState(0)
+  const [valuesData, setValuesData] = useState<{ words: string[]; note?: string } | null>(null)
+  const [showValuesDrawer, setShowValuesDrawer] = useState(false)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
   const summaryScrollRef = useRef<HTMLDivElement>(null)
@@ -83,6 +86,16 @@ export default function QAPage() {
       setDesktopImageLoaded(false)
     }
   }, [currentQuestion?.image_url])
+
+  // Read values from localStorage (written by /values page on completion)
+  useEffect(() => {
+    const stored = localStorage.getItem('qa-values')
+    if (!stored) return
+    try {
+      const parsed = JSON.parse(stored)
+      if (parsed?.words?.length > 0) setValuesData(parsed)
+    } catch {}
+  }, [])
 
   // Pulse the breathe button after 10s idle on a question
   useEffect(() => {
@@ -156,6 +169,8 @@ export default function QAPage() {
         signedAt: timestamp,
         witnessName: witness?.name,
         witnessSignatureUrl: witness?.signatureUrl,
+        selectedValues: valuesData?.words,
+        valuesNote: valuesData?.note,
       }),
     })
     if (!res.ok) throw new Error('PDF generation failed')
@@ -277,17 +292,22 @@ export default function QAPage() {
     <div className="h-dvh w-full flex flex-col bg-background overflow-x-hidden">
       <AppBar
         actions={
-          <Button
-            variant="ghost-subtle"
-            size="icon"
-            onClick={handlePause}
-            className={`w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5 ${breathePulse ? 'animate-breathe-pulse' : ''}`}
-            aria-label="Breathe"
-          >
-            <Wind size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
-            <Wind size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
-            <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">Breathe</span>
-          </Button>
+          <div className="flex items-center gap-1">
+            {valuesData && valuesData.words.length > 0 && (
+              <ValuesDrawerTrigger onClick={() => setShowValuesDrawer(true)} />
+            )}
+            <Button
+              variant="ghost-subtle"
+              size="icon"
+              onClick={handlePause}
+              className={`w-8 h-8 p-0 md:w-auto md:h-auto md:px-2 md:gap-1.5 ${breathePulse ? 'animate-breathe-pulse' : ''}`}
+              aria-label="Breathe"
+            >
+              <Wind size={24} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground md:hidden" />
+              <Wind size={20} strokeWidth={ICON_STROKE_WIDTH} className="text-foreground hidden md:block" />
+              <span className="hidden md:inline text-sm font-[family-name:var(--font-family-body)]">Breathe</span>
+            </Button>
+          </div>
         }
       />
 
@@ -347,6 +367,7 @@ export default function QAPage() {
                 responses={responses}
                 notes={notes}
                 onEdit={handleEditFromSummary}
+                valuesData={valuesData}
               />
             </motion.div>
           ) : (
@@ -501,6 +522,16 @@ export default function QAPage() {
       ) : showSummary ? (
         <SummaryFooter onFinalise={handleFinalise} />
       ) : null}
+
+      {/* Values drawer */}
+      {valuesData && (
+        <ValuesDrawer
+          open={showValuesDrawer}
+          onOpenChange={setShowValuesDrawer}
+          words={valuesData.words}
+          note={valuesData.note}
+        />
+      )}
 
       {/* Breathing Exercise Overlay */}
       <BreathingOverlay

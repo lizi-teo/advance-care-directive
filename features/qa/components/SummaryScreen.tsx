@@ -12,9 +12,10 @@ interface SummaryScreenProps {
   responses: Record<string, string>
   notes?: Record<string, string>
   onEdit: (questionIndex: number) => void
+  valuesData?: { words: string[]; note?: string } | null
 }
 
-export function SummaryScreen({ questions, responses, notes = {}, onEdit }: SummaryScreenProps) {
+export function SummaryScreen({ questions, responses, notes = {}, onEdit, valuesData }: SummaryScreenProps) {
   return (
     <div className="w-full">
       <div className="page-container py-8 md:py-12">
@@ -37,6 +38,28 @@ export function SummaryScreen({ questions, responses, notes = {}, onEdit }: Summ
             Review your answers below, then sign your directive when you're ready.
           </p>
         </motion.div>
+
+        {/* Values block */}
+        {valuesData && valuesData.words.length > 0 && (
+          <motion.div
+            className="flex flex-col gap-2 mb-10 md:mb-12 pb-10 md:pb-12 border-b border-border-emphasis"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut', delay: 0.05 }}
+          >
+            <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
+              What matters most to me
+            </p>
+            <p className="[font-size:var(--text-lg)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
+              {valuesData.words.join(' · ')}
+            </p>
+            {valuesData.note && (
+              <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
+                &ldquo;{valuesData.note}&rdquo;
+              </p>
+            )}
+          </motion.div>
+        )}
 
         {/* Q&A list */}
         <motion.div
