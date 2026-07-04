@@ -12,7 +12,7 @@ interface SummaryScreenProps {
   responses: Record<string, string>
   notes?: Record<string, string>
   onEdit: (questionIndex: number) => void
-  valuesData?: { words: string[]; note?: string } | null
+  valuesData?: { words: string[]; byCategory?: { category: string; words: string[] }[]; note?: string } | null
 }
 
 export function SummaryScreen({ questions, responses, notes = {}, onEdit, valuesData }: SummaryScreenProps) {
@@ -40,9 +40,9 @@ export function SummaryScreen({ questions, responses, notes = {}, onEdit, values
         </motion.div>
 
         {/* Values block */}
-        {valuesData && valuesData.words.length > 0 && (
+        {valuesData && valuesData.byCategory && valuesData.byCategory.length > 0 && (
           <motion.div
-            className="flex flex-col gap-2 mb-10 md:mb-12 pb-10 md:pb-12 border-b border-border-emphasis"
+            className="flex flex-col gap-5 mb-10 md:mb-12 pb-10 md:pb-12 border-b border-border-emphasis"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.22, ease: 'easeOut', delay: 0.05 }}
@@ -50,9 +50,18 @@ export function SummaryScreen({ questions, responses, notes = {}, onEdit, values
             <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
               What matters most to me
             </p>
-            <p className="[font-size:var(--text-lg)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
-              {valuesData.words.join(' · ')}
-            </p>
+            <div className="flex flex-col gap-3">
+              {valuesData.byCategory.map(({ category, words }) => (
+                <div key={category} className="flex flex-col gap-0.5">
+                  <p className="[font-size:var(--text-xs)] text-muted-foreground font-[family-name:var(--font-family-body)] uppercase tracking-wide">
+                    {category}
+                  </p>
+                  <p className="[font-size:var(--text-base)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
+                    {words.join(' · ')}
+                  </p>
+                </div>
+              ))}
+            </div>
             {valuesData.note && (
               <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
                 &ldquo;{valuesData.note}&rdquo;

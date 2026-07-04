@@ -1,46 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import type { ReactNode } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { AppBar } from '@/components/ui/app-bar'
 import { Button } from '@/components/ui/button'
+import { QuestionCard as QuestionHeaderCard } from '@/components/ui/question-card'
 import { cn } from '@/lib/utils'
 import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { useValuesSubmit } from '@/features/values/hooks/useValuesSubmit'
+import { useValuesCategories } from '@/features/values/hooks/useValuesCategories'
 import { toast } from 'sonner'
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
-
-const WORD_CATEGORIES = [
-  {
-    category: 'Connection',
-    words: ['Belonging', 'Closeness', 'Family', 'Friendship', 'Loyalty', 'Togetherness', 'Together'],
-  },
-  {
-    category: 'Who I am',
-    words: ['Being myself', 'Courage', 'Dignity', 'Gentleness', 'Humour', 'Independence', 'Integrity', 'Resilience', 'Strength'],
-  },
-  {
-    category: 'How I live',
-    words: ['Adventure', 'Creativity', 'Freedom', 'Joy', 'Playfulness', 'Simplicity', 'Stillness', 'Warmth'],
-  },
-  {
-    category: 'What I stand for',
-    words: ['Compassion', 'Faith', 'Goodness', 'Honesty', 'Justice', 'Kindness', 'Legacy', 'Truth', 'Wisdom'],
-  },
-  {
-    category: 'What sustains me',
-    words: ['Acceptance', 'Beauty', 'Community', 'Ease', 'Enough', 'Growth', 'Home', 'Nature', 'Peace', 'Security', 'Helping others', 'Spirituality'],
-  },
-]
 
 export default function ValuesPage() {
   const router = useRouter()
   const sessionId = useSessionId()
   const { submitValues, submitting } = useValuesSubmit()
+  const { categories, loading } = useValuesCategories()
   const reduceMotion = useReducedMotion()
 
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -65,10 +44,14 @@ export default function ValuesPage() {
       return
     }
 
-    localStorage.setItem('qa-values', JSON.stringify({ words, note: note || undefined }))
+    const byCategory = categories
+      .map(c => ({ category: c.name, words: c.words.map(w => w.word).filter(w => selected.has(w)) }))
+      .filter(c => c.words.length > 0)
+
+    localStorage.setItem('qa-values', JSON.stringify({ words, byCategory, note: note || undefined }))
 
     if (sessionId) {
-      const ok = await submitValues(sessionId, words, note || undefined)
+      const ok = await submitValues(sessionId, words, byCategory, note || undefined)
       if (!ok) {
         toast.error('Your values are saved on this device, but could not be backed up. Please try again later.')
       }
@@ -83,43 +66,56 @@ export default function ValuesPage() {
   }
 
   const selectedCount = selected.size
-  const activeCategory = WORD_CATEGORIES[activeCategoryIndex]!
+  const activeCategory = categories[activeCategoryIndex]
   const canGoBack = activeCategoryIndex > 0
-  const canGoNext = activeCategoryIndex < WORD_CATEGORIES.length - 1
+  const canGoNext = activeCategoryIndex < categories.length - 1
   const motionDuration = reduceMotion ? 0 : 0.22
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <AppBar />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="page-container pt-5 pb-28 md:py-8 lg:py-10 flex flex-col gap-5 md:gap-6">
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: motionDuration, ease: 'easeOut' }}
-            className="flex flex-col gap-3"
-          >
+        {/* Mobile: full-width header card with image at top (matches QA page) */}
+        <div className="md:hidden">
+          <QuestionHeaderCard
+            caption="Values warm-up"
+            title="What matters to you?"
+            size="small"
+            showImage
+            imageUrl="/images/values.png"
+            imageClassName="object-top"
+            roundedHeader={false}
+            className="pb-10"
+          />
+        </div>
+
+        {/* Desktop: gradient header */}
+        <div className="hidden md:block w-full py-6 question-card-gradient" data-size="large">
+          <div className="page-container">
             <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground/70 font-[family-name:var(--font-family-body)]">
               Values warm-up
             </p>
-            <h1 className="w-full max-w-[45ch] [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)]">
+            <h1 className="mt-3 w-full max-w-[45ch] [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)]">
               What matters to you?
             </h1>
-          </motion.div>
+          </div>
+        </div>
 
+        <div className="page-container pt-5 pb-28 md:py-8 lg:py-10 flex flex-col gap-5 md:gap-6">
           <div className="w-full flex flex-col md:flex-row gap-6 lg:gap-8 xl:gap-10 md:items-start">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: motionDuration, ease: 'easeOut' }}
-              className="w-full md:w-[280px] lg:w-[360px] xl:w-[428px] shrink-0"
+              className="hidden md:block md:w-[280px] lg:w-[360px] xl:w-[428px] shrink-0"
             >
-              <div className="relative h-[180px] sm:h-[220px] md:h-[280px] lg:h-[360px] xl:h-[428px] rounded-b-full overflow-hidden bg-muted">
+              <div className="relative md:h-[280px] lg:h-[360px] xl:h-[428px] rounded-b-full overflow-hidden bg-muted">
                 <Image
-                  src="/images/hero-landscape.png"
-                  alt="A serene watercolour landscape with soft mountains at dusk"
+                  src="/images/values.png"
+                  alt="Illustration for values warm-up"
                   fill
-                  sizes="(min-width: 1280px) 428px, (min-width: 1024px) 360px, (min-width: 768px) 280px, 100vw"
+                  sizes="(min-width: 1280px) 428px, (min-width: 1024px) 360px, (min-width: 768px) 280px"
                   className="object-cover"
                   priority
                 />
@@ -138,95 +134,93 @@ export default function ValuesPage() {
                   className="rounded-lg border border-border bg-background shadow-sm overflow-hidden"
                   aria-labelledby="values-category-title"
                 >
-                  <div className="border-b border-border bg-muted/70 px-4 py-4 md:px-6 md:py-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex flex-col gap-2">
-                    <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-foreground/50 font-[family-name:var(--font-family-body)]">
-                      {activeCategoryIndex + 1} of {WORD_CATEGORIES.length}
-                    </p>
-                    <h2
-                      id="values-category-title"
-                      className="[font-size:var(--text-2xl)] [line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] text-foreground"
-                    >
-                      {activeCategory.category}
-                    </h2>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-2">
-                    <IconButton
-                      label="Previous values category"
-                      disabled={!canGoBack}
-                      onClick={() => setActiveCategoryIndex(index => Math.max(0, index - 1))}
-                    >
-                      <ChevronLeft size={20} strokeWidth={ICON_STROKE_WIDTH} />
-                    </IconButton>
-                    <IconButton
-                      label="Next values category"
-                      disabled={!canGoNext}
-                      onClick={() => setActiveCategoryIndex(index => Math.min(WORD_CATEGORIES.length - 1, index + 1))}
-                    >
-                      <ChevronRight size={20} strokeWidth={ICON_STROKE_WIDTH} />
-                    </IconButton>
-                  </div>
-                </div>
-                <p className="[font-size:var(--text-base)] text-foreground/70 font-[family-name:var(--font-family-body)] leading-relaxed mt-3 max-w-2xl">
-                  {categoryPrompt(activeCategory.category)}
-                </p>
-              </div>
+                  {loading || !activeCategory ? (
+                    <div className="p-6 flex flex-col gap-4">
+                      <div className="h-4 w-16 rounded bg-muted animate-pulse" />
+                      <div className="h-7 w-36 rounded bg-muted animate-pulse" />
+                      <div className="flex flex-wrap gap-2.5 pt-2">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                          <div key={i} className="h-11 w-24 rounded-full bg-muted animate-pulse" />
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="border-b border-border bg-muted/70 px-4 py-4 md:px-6 md:py-5">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex flex-col gap-2">
+                            <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-foreground/50 font-[family-name:var(--font-family-body)]">
+                              {activeCategoryIndex + 1} of {categories.length}
+                            </p>
+                            <h2
+                              id="values-category-title"
+                              className="[font-size:var(--text-2xl)] [line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] text-foreground"
+                            >
+                              {activeCategory.name}
+                            </h2>
+                          </div>
+                        </div>
+                        <p className="[font-size:var(--text-base)] text-foreground/70 font-[family-name:var(--font-family-body)] leading-relaxed mt-3 max-w-2xl">
+                          {activeCategory.prompt_text}
+                        </p>
+                      </div>
 
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={activeCategory.category}
-                  initial={reduceMotion ? false : { opacity: 0, x: 18 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={reduceMotion ? undefined : { opacity: 0, x: -18 }}
-                  transition={{ duration: motionDuration, ease: 'easeOut' }}
-                  className="p-4 md:p-6"
-                >
-                  <div className="flex flex-wrap gap-2.5" role="group" aria-label={`${activeCategory.category} values`}>
-                    {activeCategory.words.map(word => (
-                      <WordChip
-                        key={word}
-                        word={word}
-                        selected={selected.has(word)}
-                        reduceMotion={!!reduceMotion}
-                        onToggle={() => toggleWord(word)}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                          key={activeCategory.name}
+                          initial={reduceMotion ? false : { opacity: 0, x: 18 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={reduceMotion ? undefined : { opacity: 0, x: -18 }}
+                          transition={{ duration: motionDuration, ease: 'easeOut' }}
+                          className="p-4 md:p-6"
+                        >
+                          <div className="flex flex-wrap gap-2.5" role="group" aria-label={`${activeCategory.name} values`}>
+                            {activeCategory.words.map(({ word }) => (
+                              <WordChip
+                                key={word}
+                                word={word}
+                                selected={selected.has(word)}
+                                reduceMotion={!!reduceMotion}
+                                onToggle={() => toggleWord(word)}
+                              />
+                            ))}
+                          </div>
+                        </motion.div>
+                      </AnimatePresence>
 
-              <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setActiveCategoryIndex(index => Math.max(0, index - 1))}
-                  disabled={!canGoBack}
-                  className="h-10 px-3"
-                >
-                  Back
-                </Button>
-                <div className="flex gap-1" aria-hidden="true">
-                  {WORD_CATEGORIES.map(({ category }, index) => (
-                    <span
-                      key={category}
-                      className={cn(
-                        'h-1.5 rounded-full transition-all',
-                        index === activeCategoryIndex ? 'w-6 bg-primary' : 'w-1.5 bg-border-emphasis'
-                      )}
-                    />
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setActiveCategoryIndex(index => Math.min(WORD_CATEGORIES.length - 1, index + 1))}
-                  disabled={!canGoNext}
-                  className="h-10 px-3"
-                >
-                  Next
-                </Button>
-              </div>
+                      <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setActiveCategoryIndex(index => Math.max(0, index - 1))}
+                          disabled={!canGoBack}
+                          className="h-10 px-3"
+                        >
+                          Back
+                        </Button>
+                        <div className="flex gap-1" aria-hidden="true">
+                          {categories.map(({ name }, index) => (
+                            <span
+                              key={name}
+                              className={cn(
+                                'h-1.5 rounded-full transition-all',
+                                index === activeCategoryIndex ? 'w-6 bg-primary' : 'w-1.5 bg-border-emphasis'
+                              )}
+                            />
+                          ))}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setActiveCategoryIndex(index => Math.min(categories.length - 1, index + 1))}
+                          disabled={!canGoNext}
+                          className="h-10 px-3"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </section>
 
                 <AnimatePresence initial={false}>
@@ -268,24 +262,22 @@ export default function ValuesPage() {
       <div className="w-full border-t border-border-emphasis bg-background/95 backdrop-blur shrink-0 sticky bottom-0 z-40">
         <div className="page-container pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:py-4 flex justify-end">
           <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={handleSkip}
-            className="hidden md:inline-flex w-full md:w-auto h-12 md:h-11"
-          >
-            Skip
-          </Button>
-          <Button
-            size="lg"
-            onClick={handleSave}
-            disabled={submitting}
-            className="w-full md:w-auto h-12 md:h-11"
-          >
-            {submitting
-              ? 'Saving…'
-              : 'Continue'}
-          </Button>
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={handleSkip}
+              className="hidden md:inline-flex w-full md:w-auto h-12 md:h-11"
+            >
+              Skip
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleSave}
+              disabled={submitting || loading}
+              className="w-full md:w-auto h-12 md:h-11"
+            >
+              {submitting ? 'Saving…' : 'Continue'}
+            </Button>
           </div>
         </div>
       </div>
@@ -335,45 +327,4 @@ function WordChip({
       {word}
     </motion.button>
   )
-}
-
-function IconButton({
-  label,
-  disabled,
-  onClick,
-  children,
-}: {
-  label: string
-  disabled: boolean
-  onClick: () => void
-  children: ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40"
-    >
-      {children}
-    </button>
-  )
-}
-
-function categoryPrompt(category: string) {
-  switch (category) {
-    case 'Connection':
-      return 'Who and what should stay close when care decisions feel hard?'
-    case 'Who I am':
-      return 'Choose words that protect your sense of self.'
-    case 'How I live':
-      return 'Think about the texture of a day that still feels like yours.'
-    case 'What I stand for':
-      return 'These are the principles you would want decisions to respect.'
-    case 'What sustains me':
-      return 'Pick the supports that help you feel steady and cared for.'
-    default:
-      return 'Choose the words that feel true to you.'
-  }
 }

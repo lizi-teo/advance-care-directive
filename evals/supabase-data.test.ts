@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import { useResponseSubmit } from '@/features/qa/hooks/useResponseSubmit'
 import { useSignature } from '@/features/qa/hooks/useSignature'
+import { useValuesSubmit } from '@/features/values/hooks/useValuesSubmit'
 
 const {
   mockInsert,
@@ -30,6 +31,65 @@ vi.mock('@/lib/supabase', () => ({
     storage: { from: mockStorageFrom },
   },
 }))
+
+describe('useValuesSubmit', () => {
+  beforeEach(() => {
+    mockInsert.mockResolvedValue({ error: null })
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  const byCategory = [
+    { category: 'Connection', words: ['Belonging', 'Family'] },
+    { category: 'Who I am', words: ['Courage'] },
+  ]
+
+  it('inserts session_id, selected_words, selected_by_category, and values_note', async () => {
+    const { result } = renderHook(() => useValuesSubmit())
+    await act(async () => {
+      await result.current.submitValues('sess-123', ['Belonging', 'Family', 'Courage'], byCategory, 'My note')
+    })
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session_id: 'sess-123',
+        selected_words: ['Belonging', 'Family', 'Courage'],
+        selected_by_category: byCategory,
+        values_note: 'My note',
+      })
+    )
+  })
+
+  it('sets values_note to null when omitted', async () => {
+    const { result } = renderHook(() => useValuesSubmit())
+    await act(async () => {
+      await result.current.submitValues('sess-123', ['Belonging'], byCategory)
+    })
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ values_note: null })
+    )
+  })
+
+  it('returns true on success', async () => {
+    const { result } = renderHook(() => useValuesSubmit())
+    let ok: boolean | undefined
+    await act(async () => {
+      ok = await result.current.submitValues('sess-123', ['Belonging'], byCategory)
+    })
+    expect(ok).toBe(true)
+  })
+
+  it('returns false when Supabase returns an error', async () => {
+    mockInsert.mockResolvedValue({ error: { message: 'DB error' } })
+    const { result } = renderHook(() => useValuesSubmit())
+    let ok: boolean | undefined
+    await act(async () => {
+      ok = await result.current.submitValues('sess-123', ['Belonging'], byCategory)
+    })
+    expect(ok).toBe(false)
+  })
+})
 
 describe('useResponseSubmit', () => {
   beforeEach(() => {

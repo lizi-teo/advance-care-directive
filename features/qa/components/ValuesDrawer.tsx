@@ -12,14 +12,19 @@ import {
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { useMediaQuery } from '@/lib/hooks/useMediaQuery'
 
+export interface ValuesByCategory {
+  category: string
+  words: string[]
+}
+
 interface ValuesDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  words: string[]
+  byCategory: ValuesByCategory[]
   note?: string
 }
 
-export function ValuesDrawer({ open, onOpenChange, words, note }: ValuesDrawerProps) {
+export function ValuesDrawer({ open, onOpenChange, byCategory, note }: ValuesDrawerProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const direction = isDesktop ? 'right' : 'bottom'
 
@@ -27,18 +32,27 @@ export function ValuesDrawer({ open, onOpenChange, words, note }: ValuesDrawerPr
     <Drawer open={open} onOpenChange={onOpenChange} direction={direction}>
       <DrawerContent className={isDesktop ? 'h-full flex flex-col' : 'flex flex-col'}>
         <div className="flex-1 overflow-y-auto px-6 md:px-8 pt-6 md:pt-10 pb-4">
-          <DrawerHeader className="px-0 pt-0 pb-4">
+          <DrawerHeader className="px-0 pt-0 pb-6">
             <DrawerTitle className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)] font-normal">
               What matters most to me
             </DrawerTitle>
           </DrawerHeader>
 
-          <p className="[font-size:var(--text-xl)] font-[family-name:var(--font-family-display)] text-foreground leading-snug">
-            {words.join(' · ')}
-          </p>
+          <div className="flex flex-col gap-6">
+            {byCategory.map(({ category, words }) => (
+              <div key={category} className="flex flex-col gap-1.5">
+                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-muted-foreground font-[family-name:var(--font-family-body)]">
+                  {category}
+                </p>
+                <p className="[font-size:var(--text-xl)] font-[family-name:var(--font-family-display)] text-foreground leading-snug">
+                  {words.join(' · ')}
+                </p>
+              </div>
+            ))}
+          </div>
 
           {note && (
-            <p className="mt-4 [font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
+            <p className="mt-6 [font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
               &ldquo;{note}&rdquo;
             </p>
           )}

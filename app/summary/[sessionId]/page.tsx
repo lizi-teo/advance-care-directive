@@ -8,6 +8,7 @@ import { InfoBox } from '@/components/ui/info-box'
 
 interface ValuesData {
   selected_words: string[]
+  selected_by_category: { category: string; words: string[] }[] | null
   values_note: string | null
 }
 
@@ -65,7 +66,7 @@ export default function SummaryPage() {
       const [{ data: qs }, { data: opts }, { data: values }] = await Promise.all([
         supabase.from('questions').select('id, question_text, caption, display_order').order('display_order', { ascending: true }),
         supabase.from('answer_options').select('id, question_id, option_text'),
-        supabase.from('session_values').select('selected_words, values_note').eq('session_id', sessionId).maybeSingle(),
+        supabase.from('session_values').select('selected_words, selected_by_category, values_note').eq('session_id', sessionId).maybeSingle(),
       ])
 
       setResponses(deduped)
@@ -142,9 +143,9 @@ export default function SummaryPage() {
             </p>
           </InfoBox>
 
-          {valuesData && valuesData.selected_words.length > 0 && (
+          {valuesData && valuesData.selected_by_category && valuesData.selected_by_category.length > 0 && (
             <motion.div
-              className="flex flex-col gap-3"
+              className="flex flex-col gap-5"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -152,9 +153,18 @@ export default function SummaryPage() {
               <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
                 What matters most to me
               </p>
-              <p className="[font-size:var(--text-lg)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
-                {valuesData.selected_words.join(' · ')}
-              </p>
+              <div className="flex flex-col gap-3">
+                {valuesData.selected_by_category.map(({ category, words }) => (
+                  <div key={category} className="flex flex-col gap-0.5">
+                    <p className="[font-size:var(--text-xs)] text-muted-foreground font-[family-name:var(--font-family-body)] uppercase tracking-wide">
+                      {category}
+                    </p>
+                    <p className="[font-size:var(--text-base)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
+                      {words.join(' · ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
               {valuesData.values_note && (
                 <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
                   &ldquo;{valuesData.values_note}&rdquo;

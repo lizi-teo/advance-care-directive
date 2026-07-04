@@ -84,4 +84,36 @@ describe('ACDDocument', () => {
     expect(() => render(<ACDDocument {...nullCaptionProps} />)).not.toThrow()
     expect(screen.getByText('Q?')).toBeInTheDocument()
   })
+
+  it('renders valuesByCategory grouped by category label', () => {
+    render(
+      <ACDDocument
+        {...baseProps}
+        valuesByCategory={[
+          { category: 'Connection', words: ['Belonging', 'Family'] },
+          { category: 'Who I am', words: ['Courage', 'Dignity'] },
+        ]}
+      />
+    )
+    expect(screen.getByText('CONNECTION')).toBeInTheDocument()
+    expect(screen.getByText('Belonging · Family')).toBeInTheDocument()
+    expect(screen.getByText('WHO I AM')).toBeInTheDocument()
+    expect(screen.getByText('Courage · Dignity')).toBeInTheDocument()
+  })
+
+  it('renders valuesNote below the category groups', () => {
+    render(
+      <ACDDocument
+        {...baseProps}
+        valuesByCategory={[{ category: 'Connection', words: ['Family'] }]}
+        valuesNote="I want to stay myself."
+      />
+    )
+    expect(screen.getByText(/I want to stay myself/)).toBeInTheDocument()
+  })
+
+  it('does not render values section when valuesByCategory is empty', () => {
+    render(<ACDDocument {...baseProps} valuesByCategory={[]} />)
+    expect(screen.queryByText('WHAT MATTERS MOST TO ME')).not.toBeInTheDocument()
+  })
 })

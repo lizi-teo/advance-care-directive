@@ -49,7 +49,7 @@ export default function QAPage() {
   const [signedSessionId, setSignedSessionId] = useState<string | null>(null)
   const [signingTimestamp, setSigningTimestamp] = useState<string | null>(null)
   const [direction, setDirection] = useState(0)
-  const [valuesData, setValuesData] = useState<{ words: string[]; note?: string } | null>(null)
+  const [valuesData, setValuesData] = useState<{ words: string[]; byCategory?: { category: string; words: string[] }[]; note?: string } | null>(null)
   const [showValuesDrawer, setShowValuesDrawer] = useState(false)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
@@ -170,6 +170,7 @@ export default function QAPage() {
         witnessName: witness?.name,
         witnessSignatureUrl: witness?.signatureUrl,
         selectedValues: valuesData?.words,
+        valuesByCategory: valuesData?.byCategory,
         valuesNote: valuesData?.note,
       }),
     })
@@ -293,7 +294,7 @@ export default function QAPage() {
       <AppBar
         actions={
           <div className="flex items-center gap-1">
-            {valuesData && valuesData.words.length > 0 && (
+            {valuesData && valuesData.byCategory && valuesData.byCategory.length > 0 && (
               <ValuesDrawerTrigger onClick={() => setShowValuesDrawer(true)} />
             )}
             <Button
@@ -524,11 +525,11 @@ export default function QAPage() {
       ) : null}
 
       {/* Values drawer */}
-      {valuesData && (
+      {valuesData && valuesData.byCategory && valuesData.byCategory.length > 0 && (
         <ValuesDrawer
           open={showValuesDrawer}
           onOpenChange={setShowValuesDrawer}
-          words={valuesData.words}
+          byCategory={valuesData.byCategory}
           note={valuesData.note}
         />
       )}

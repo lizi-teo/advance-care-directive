@@ -14,6 +14,7 @@ export interface ACDDocumentProps {
   witnessName?: string
   witnessSignatureUrl?: string
   selectedValues?: string[]
+  valuesByCategory?: { category: string; words: string[] }[]
   valuesNote?: string
 }
 
@@ -172,7 +173,7 @@ function formatDate(iso: string): string {
   })
 }
 
-export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, witnessName, witnessSignatureUrl, selectedValues, valuesNote }: ACDDocumentProps) {
+export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, witnessName, witnessSignatureUrl, selectedValues, valuesByCategory, valuesNote }: ACDDocumentProps) {
   return (
     <Document title="Advance Care Directive" author={signedName}>
       <Page size="A4" style={styles.page}>
@@ -189,10 +190,15 @@ export function ACDDocument({ answers, signedName, signatureDataUrl, signedAt, w
 
         <View style={styles.divider} />
 
-        {selectedValues && selectedValues.length > 0 ? (
+        {valuesByCategory && valuesByCategory.length > 0 ? (
           <>
             <Text style={styles.sectionHeader}>WHAT MATTERS MOST TO ME</Text>
-            <Text style={styles.valuesWords}>{selectedValues.join(' · ')}</Text>
+            {valuesByCategory.map(({ category, words }) => (
+              <View key={category} style={{ marginBottom: 8 }}>
+                <Text style={[styles.label, { marginBottom: 2 }]}>{category.toUpperCase()}</Text>
+                <Text style={styles.valuesWords}>{words.join(' · ')}</Text>
+              </View>
+            ))}
             {valuesNote ? (
               <Text style={styles.valuesNote}>&ldquo;{valuesNote}&rdquo;</Text>
             ) : null}
