@@ -1,14 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import type { ReactNode } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { AppBar } from '@/components/ui/app-bar'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { useValuesSubmit } from '@/features/values/hooks/useValuesSubmit'
 import { toast } from 'sonner'
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 
 const WORD_CATEGORIES = [
   {
@@ -37,9 +41,11 @@ export default function ValuesPage() {
   const router = useRouter()
   const sessionId = useSessionId()
   const { submitValues, submitting } = useValuesSubmit()
+  const reduceMotion = useReducedMotion()
 
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [note, setNote] = useState('')
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
 
   const toggleWord = (word: string) => {
     setSelected(prev => {
@@ -51,117 +57,236 @@ export default function ValuesPage() {
   }
 
   const handleSave = async () => {
-    if (!sessionId) return
     const words = Array.from(selected)
+
     if (words.length === 0) {
+      localStorage.removeItem('qa-values')
       router.push('/qa')
       return
     }
-    const ok = await submitValues(sessionId, words, note || undefined)
-    if (ok) {
-      localStorage.setItem('qa-values', JSON.stringify({ words, note: note || undefined }))
-      router.push('/qa')
-    } else {
-      toast.error('Something went wrong. Please try again.')
+
+    localStorage.setItem('qa-values', JSON.stringify({ words, note: note || undefined }))
+
+    if (sessionId) {
+      const ok = await submitValues(sessionId, words, note || undefined)
+      if (!ok) {
+        toast.error('Your values are saved on this device, but could not be backed up. Please try again later.')
+      }
     }
+
+    router.push('/qa')
   }
 
-  const handleSkip = () => router.push('/qa')
+  const handleSkip = () => {
+    localStorage.removeItem('qa-values')
+    router.push('/qa')
+  }
 
   const selectedCount = selected.size
-
+  const activeCategory = WORD_CATEGORIES[activeCategoryIndex]!
+  const canGoBack = activeCategoryIndex > 0
+  const canGoNext = activeCategoryIndex < WORD_CATEGORIES.length - 1
+  const motionDuration = reduceMotion ? 0 : 0.22
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <AppBar />
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="page-container py-8 md:py-12 max-w-2xl flex flex-col gap-8">
-
+      <main className="flex-1 overflow-y-auto">
+        <div className="page-container pt-5 pb-28 md:py-8 lg:py-10 flex flex-col gap-5 md:gap-6">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="flex flex-col gap-2"
+            transition={{ duration: motionDuration, ease: 'easeOut' }}
+            className="flex flex-col gap-3"
           >
-            <h1 className="[font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] font-[family-name:var(--font-family-display)] text-foreground">
+            <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground/70 font-[family-name:var(--font-family-body)]">
+              Values warm-up
+            </p>
+            <h1 className="w-full max-w-[45ch] [font-size:var(--text-h1-sm)] [line-height:var(--leading-h1-sm)] text-foreground font-[family-name:var(--font-family-display)]">
               What matters to you?
             </h1>
-            <p className="[font-size:var(--text-base)] text-foreground/70 font-[family-name:var(--font-family-body)]">
-              Choose the words that feel true to you.
-            </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.18, ease: 'easeOut', delay: 0.05 }}
-            className="flex flex-col gap-6"
-          >
-            {WORD_CATEGORIES.map(({ category, words }) => (
-              <div key={category} className="flex flex-col gap-3">
-                <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-foreground/40 font-[family-name:var(--font-family-body)]">
-                  {category}
+          <div className="w-full flex flex-col md:flex-row gap-6 lg:gap-8 xl:gap-10 md:items-start">
+            <motion.div
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: motionDuration, ease: 'easeOut' }}
+              className="w-full md:w-[280px] lg:w-[360px] xl:w-[428px] shrink-0"
+            >
+              <div className="relative h-[180px] sm:h-[220px] md:h-[280px] lg:h-[360px] xl:h-[428px] rounded-b-full overflow-hidden bg-muted">
+                <Image
+                  src="/images/hero-landscape.png"
+                  alt="A serene watercolour landscape with soft mountains at dusk"
+                  fill
+                  sizes="(min-width: 1280px) 428px, (min-width: 1024px) 360px, (min-width: 768px) 280px, 100vw"
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/35" />
+              </div>
+            </motion.div>
+
+            <div className="w-full flex-1 max-w-2xl min-w-0 flex flex-col gap-5 md:gap-6">
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: motionDuration, ease: 'easeOut', delay: reduceMotion ? 0 : 0.08 }}
+                className="flex flex-col gap-5"
+              >
+                <section
+                  className="rounded-lg border border-border bg-background shadow-sm overflow-hidden"
+                  aria-labelledby="values-category-title"
+                >
+                  <div className="border-b border-border bg-muted/70 px-4 py-4 md:px-6 md:py-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-2">
+                    <p className="[font-size:var(--text-xs)] uppercase tracking-wide text-foreground/50 font-[family-name:var(--font-family-body)]">
+                      {activeCategoryIndex + 1} of {WORD_CATEGORIES.length}
+                    </p>
+                    <h2
+                      id="values-category-title"
+                      className="[font-size:var(--text-2xl)] [line-height:var(--leading-2xl)] font-[family-name:var(--font-family-display)] text-foreground"
+                    >
+                      {activeCategory.category}
+                    </h2>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <IconButton
+                      label="Previous values category"
+                      disabled={!canGoBack}
+                      onClick={() => setActiveCategoryIndex(index => Math.max(0, index - 1))}
+                    >
+                      <ChevronLeft size={20} strokeWidth={ICON_STROKE_WIDTH} />
+                    </IconButton>
+                    <IconButton
+                      label="Next values category"
+                      disabled={!canGoNext}
+                      onClick={() => setActiveCategoryIndex(index => Math.min(WORD_CATEGORIES.length - 1, index + 1))}
+                    >
+                      <ChevronRight size={20} strokeWidth={ICON_STROKE_WIDTH} />
+                    </IconButton>
+                  </div>
+                </div>
+                <p className="[font-size:var(--text-base)] text-foreground/70 font-[family-name:var(--font-family-body)] leading-relaxed mt-3 max-w-2xl">
+                  {categoryPrompt(activeCategory.category)}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {words.map(word => (
-                    <WordChip
-                      key={word}
-                      word={word}
-                      selected={selected.has(word)}
-                      onToggle={() => toggleWord(word)}
+              </div>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={activeCategory.category}
+                  initial={reduceMotion ? false : { opacity: 0, x: 18 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={reduceMotion ? undefined : { opacity: 0, x: -18 }}
+                  transition={{ duration: motionDuration, ease: 'easeOut' }}
+                  className="p-4 md:p-6"
+                >
+                  <div className="flex flex-wrap gap-2.5" role="group" aria-label={`${activeCategory.category} values`}>
+                    {activeCategory.words.map(word => (
+                      <WordChip
+                        key={word}
+                        word={word}
+                        selected={selected.has(word)}
+                        reduceMotion={!!reduceMotion}
+                        onToggle={() => toggleWord(word)}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveCategoryIndex(index => Math.max(0, index - 1))}
+                  disabled={!canGoBack}
+                  className="h-10 px-3"
+                >
+                  Back
+                </Button>
+                <div className="flex gap-1" aria-hidden="true">
+                  {WORD_CATEGORIES.map(({ category }, index) => (
+                    <span
+                      key={category}
+                      className={cn(
+                        'h-1.5 rounded-full transition-all',
+                        index === activeCategoryIndex ? 'w-6 bg-primary' : 'w-1.5 bg-border-emphasis'
+                      )}
                     />
                   ))}
                 </div>
-              </div>
-            ))}
-
-            {selectedCount > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.15 }}
-                className="flex flex-col gap-2 pt-2"
-              >
-                <label
-                  htmlFor="values-note"
-                  className="[font-size:var(--text-sm)] text-foreground/60 font-[family-name:var(--font-family-body)]"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveCategoryIndex(index => Math.min(WORD_CATEGORIES.length - 1, index + 1))}
+                  disabled={!canGoNext}
+                  className="h-10 px-3"
                 >
-                  Anything you want to add?{' '}
-                  <span className="text-foreground/40">(optional)</span>
-                </label>
-                <textarea
-                  id="values-note"
-                  value={note}
-                  onChange={e => setNote(e.target.value)}
-                  rows={3}
-                  placeholder="e.g. I want to stay myself, even if I can't speak."
-                  className="w-full rounded-lg border border-border bg-background px-4 py-3 [font-size:var(--text-base)] font-[family-name:var(--font-family-body)] text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                />
+                  Next
+                </Button>
+              </div>
+                </section>
+
+                <AnimatePresence initial={false}>
+                  {selectedCount > 0 && (
+                    <motion.div
+                      key="values-note"
+                      initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
+                      transition={{ duration: motionDuration, ease: 'easeOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="flex flex-col gap-2 rounded-lg border border-border bg-background p-4 md:p-5">
+                        <label
+                          htmlFor="values-note"
+                          className="[font-size:var(--text-sm)] text-foreground/70 font-[family-name:var(--font-family-body)]"
+                        >
+                          Anything you want to add?{' '}
+                          <span className="text-foreground/40">(optional)</span>
+                        </label>
+                        <textarea
+                          id="values-note"
+                          value={note}
+                          onChange={e => setNote(e.target.value)}
+                          rows={3}
+                          placeholder="e.g. I want to stay myself, even if I can't speak."
+                          className="w-full rounded-lg border border-border bg-background px-4 py-3 [font-size:var(--text-base)] font-[family-name:var(--font-family-body)] text-foreground placeholder:text-foreground/30 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-none"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
-            )}
-          </motion.div>
-
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
 
-      <div className="w-full border-t border-border-emphasis py-4 bg-background shrink-0">
-        <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:justify-end md:gap-3">
+      <div className="w-full border-t border-border-emphasis bg-background/95 backdrop-blur shrink-0 sticky bottom-0 z-40">
+        <div className="page-container pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:py-4 flex justify-end">
+          <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
           <Button
             variant="ghost"
             size="lg"
             onClick={handleSkip}
-            className="w-full md:w-auto h-12 md:h-11"
+            className="hidden md:inline-flex w-full md:w-auto h-12 md:h-11"
           >
             Skip
           </Button>
           <Button
             size="lg"
             onClick={handleSave}
-            disabled={selectedCount === 0 || submitting}
+            disabled={submitting}
             className="w-full md:w-auto h-12 md:h-11"
           >
-            {submitting ? 'Saving…' : 'Continue to questions'}
+            {submitting
+              ? 'Saving…'
+              : 'Continue'}
           </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -171,23 +296,84 @@ export default function ValuesPage() {
 function WordChip({
   word,
   selected,
+  reduceMotion,
   onToggle,
 }: {
   word: string
   selected: boolean
+  reduceMotion: boolean
   onToggle: () => void
 }) {
   return (
-    <button
+    <motion.button
+      type="button"
       onClick={onToggle}
+      aria-pressed={selected}
+      layout={!reduceMotion}
+      whileTap={reduceMotion ? undefined : { scale: 0.97 }}
       className={cn(
-        'px-4 py-2 rounded-full border [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'inline-flex min-h-11 items-center gap-2 px-4 py-2 rounded-full border [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         selected
-          ? 'bg-foreground text-background border-foreground'
+          ? 'bg-primary text-primary-foreground border-primary'
           : 'bg-background text-foreground border-border hover:border-foreground/40'
       )}
     >
+      <AnimatePresence initial={false}>
+        {selected && (
+          <motion.span
+            key="check"
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0, scale: 0.6 }}
+            transition={{ duration: reduceMotion ? 0 : 0.14, ease: 'easeOut' }}
+            aria-hidden="true"
+          >
+            <Check size={16} strokeWidth={ICON_STROKE_WIDTH} />
+          </motion.span>
+        )}
+      </AnimatePresence>
       {word}
+    </motion.button>
+  )
+}
+
+function IconButton({
+  label,
+  disabled,
+  onClick,
+  children,
+}: {
+  label: string
+  disabled: boolean
+  onClick: () => void
+  children: ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-foreground transition-colors hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40"
+    >
+      {children}
     </button>
   )
+}
+
+function categoryPrompt(category: string) {
+  switch (category) {
+    case 'Connection':
+      return 'Who and what should stay close when care decisions feel hard?'
+    case 'Who I am':
+      return 'Choose words that protect your sense of self.'
+    case 'How I live':
+      return 'Think about the texture of a day that still feels like yours.'
+    case 'What I stand for':
+      return 'These are the principles you would want decisions to respect.'
+    case 'What sustains me':
+      return 'Pick the supports that help you feel steady and cared for.'
+    default:
+      return 'Choose the words that feel true to you.'
+  }
 }
