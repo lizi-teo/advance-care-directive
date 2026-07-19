@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/awake", "schedule": "0 7 * * *" },
+    { "path": "/api/awake", "schedule": "0 19 * * *" }
+  ]
+}
