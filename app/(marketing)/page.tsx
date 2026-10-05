@@ -38,13 +38,10 @@ export default function HomePage() {
             </motion.h1>
             <motion.div custom={2} variants={fadeUp} className="flex flex-col gap-5 max-w-lg">
               <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
-                An Advance Care Directive lets you share what matters to you about medical care, in case you're ever seriously ill and can't communicate.
+                Share what matters to you about medical care, in case you&apos;re ever too ill to speak for yourself.
               </p>
               <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
-                It helps the people who care about you make decisions you'd be comfortable with.
-              </p>
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
-                The best time is before you need it. Most people only think about this when there&apos;s already a crisis — completing it today, even if you&apos;re perfectly healthy, is the most useful thing you can do for the people who love you.
+                Do it now, while you&apos;re well. It makes hard choices easier for the people who love you.
               </p>
               <p className="[font-size:var(--text-sm)] text-foreground/50 font-[family-name:var(--font-family-body)] [line-height:var(--leading-body)]">
                 Also called a DNR, advance care plan, or living will.
