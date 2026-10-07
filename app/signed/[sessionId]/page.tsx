@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { useTheme } from 'next-themes'
 import { supabase } from '@/lib/supabase'
-import { Printer, Share2 } from 'lucide-react'
+import { Link2, Printer, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { WitnessMode, type WitnessRecord } from '@/features/witness/WitnessMode'
 
@@ -146,6 +146,15 @@ export default function SignedPage() {
     }
   }
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      toast.success('Link copied to clipboard')
+    } catch {
+      toast.error('Could not copy the link. Please try again.')
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -184,6 +193,13 @@ export default function SignedPage() {
           >
             <Printer size={16} />
             Print
+          </button>
+          <button
+            onClick={handleCopyLink}
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-[family-name:var(--font-family-body)]"
+          >
+            <Link2 size={16} />
+            Copy link
           </button>
           <button
             onClick={handleShare}
