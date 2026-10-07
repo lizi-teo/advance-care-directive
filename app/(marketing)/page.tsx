@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'motion/react'
-import { FileText, Link2, Signature, ArrowRight, HeartHandshake, FileKey, ChevronRight } from 'lucide-react'
+import { FileText, Link2, Signature, ArrowRight, HeartHandshake, FileKey, ChevronRight, Flower2 } from 'lucide-react'
 import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 import { Button } from '@/components/ui/button'
 import { AppBar } from '@/components/ui/app-bar'
+import { HeroDirectivePreview } from '@/components/marketing/hero-directive-preview'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -20,30 +21,49 @@ export default function HomePage() {
       <AppBar />
 
       {/* Hero banner */}
-      <section className="w-full shrink-0" style={{ background: 'var(--mkt-hero-bg)' }}>
+      <section className="relative isolate overflow-hidden w-full shrink-0" style={{ background: 'var(--mkt-hero-bg)' }}>
+        {/* Watercolour hills as a soft texture — strongest at the bottom, fading out behind the text */}
+        <Image
+          src="/images/hero-landscape.png"
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className="-z-10 object-cover object-bottom pointer-events-none [mask-image:linear-gradient(to_top,black_35%,transparent_80%)]"
+          style={{ opacity: 'var(--mkt-hero-texture-opacity)', mixBlendMode: 'var(--mkt-hero-texture-blend)' as React.CSSProperties['mixBlendMode'] }}
+        />
+        {/* Dark-mode scrim over the hills so the hero text keeps AA contrast */}
+        <div aria-hidden className="absolute inset-0 -z-10 pointer-events-none" style={{ background: 'var(--mkt-hero-scrim)' }} />
         <motion.div
-          className="page-container py-8 md:py-14 lg:py-16 flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12"
+          className="page-container py-8 md:py-14 lg:py-16 flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-16"
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
         >
           {/* Left: text */}
           <div className="flex-1 flex flex-col gap-6 max-w-2xl lg:max-w-none">
+            {/* Brand flower, same mark as the app bar logo */}
+            <motion.div custom={0} variants={fadeUp} aria-hidden className="text-foreground -mb-3">
+              {/* Inline stroke width beats the global svg.lucide rule, for a thin line at this size */}
+              <Flower2 className="size-16 md:size-20" style={{ strokeWidth: 0.5 }} />
+            </motion.div>
             <motion.h1
               custom={1}
               variants={fadeUp}
               className="[font-size:var(--text-display-1-sm)] md:[font-size:var(--text-display-1-sm)] lg:[font-size:var(--text-display-1-lg)] [line-height:var(--leading-display-1-sm)] lg:[line-height:var(--leading-display-1-lg)] font-[family-name:var(--font-family-display)] font-light text-foreground"
             >
-              Make your wishes known
+              Make your
+              <br />
+              wishes known
             </motion.h1>
             <motion.div custom={2} variants={fadeUp} className="flex flex-col gap-5 max-w-lg">
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 Share what matters to you about medical care, in case you&apos;re ever too ill to speak for yourself.
               </p>
-              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground/80 font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-base)] md:[font-size:var(--text-lg)] text-foreground font-[family-name:var(--font-family-display)] [line-height:var(--leading-body)]">
                 Do it now, while you&apos;re well. It makes hard choices easier for the people who love you.
               </p>
-              <p className="[font-size:var(--text-sm)] text-foreground/50 font-[family-name:var(--font-family-body)] [line-height:var(--leading-body)]">
+              <p className="[font-size:var(--text-sm)] text-foreground font-[family-name:var(--font-family-body)] [line-height:var(--leading-body)]">
                 Also called a DNR, advance care plan, or living will.
               </p>
             </motion.div>
@@ -61,19 +81,9 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* Right: landscape image */}
-          <motion.div
-            custom={4}
-            variants={fadeUp}
-            className="hidden lg:block flex-1 self-stretch relative min-h-[440px] rounded-tl-[96px] rounded-b-[9999px] overflow-hidden"
-          >
-            <Image
-              src="/images/hero-landscape.png"
-              alt="A serene watercolour landscape — soft mountains at dusk"
-              fill
-              className="object-cover"
-              priority
-            />
+          {/* Right: preview of the finished directive */}
+          <motion.div custom={4} variants={fadeUp} className="hidden lg:block lg:self-stretch shrink-0">
+            <HeroDirectivePreview />
           </motion.div>
         </motion.div>
       </section>

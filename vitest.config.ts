@@ -44,6 +44,8 @@ export default defineConfig({
           globals: true,
           setupFiles: ['./evals/setup.ts'],
           include: ['evals/**/*.test.{ts,tsx}'],
+          // Integration tests need a real database and run in their own project
+          exclude: ['evals/integration/**'],
         },
       },
       {

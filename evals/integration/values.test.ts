@@ -38,8 +38,9 @@ describe('values_categories — real database', () => {
     expect(names).toContain('Connection')
     expect(names).toContain('Who I am')
     expect(names).toContain('How I live')
-    expect(names).toContain('What I stand for')
-    expect(names).toContain('What sustains me')
+    expect(names).not.toContain('What I stand for')
+    expect(names).not.toContain('What sustains me')
+    expect(data!.length).toBe(3)
     // Verify ordering
     expect(data![0].name).toBe('Connection')
   })
@@ -84,6 +85,11 @@ describe('values_words — real database', () => {
     expect(wordList).toContain('Belonging')
     expect(wordList).toContain('Family')
     expect(wordList).toContain('Friendship')
+    // Moved in from the old "What sustains me" category
+    expect(wordList).toContain('Community')
+    expect(wordList).toContain('Helping others')
+    // Duplicate of "Togetherness", removed
+    expect(wordList).not.toContain('Together')
   })
 
   it('anon cannot insert into values_words', async () => {

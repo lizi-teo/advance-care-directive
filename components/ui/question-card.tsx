@@ -11,6 +11,7 @@ interface QuestionCardProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "small" | "large"
   showImage?: boolean
   imageUrl?: string
+  imageClassName?: string
   roundedHeader?: boolean
 }
 
@@ -23,6 +24,7 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
       size = "small",
       showImage = false,
       imageUrl,
+      imageClassName,
       roundedHeader = true,
       className,
       style,
@@ -72,7 +74,8 @@ const QuestionCard = React.forwardRef<HTMLDivElement, QuestionCardProps>(
               alt=""
               className={cn(
                 "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
-                imageLoaded ? "opacity-100" : "opacity-0"
+                imageLoaded ? "opacity-100" : "opacity-0",
+                imageClassName
               )}
               onLoad={() => setImageLoaded(true)}
             />

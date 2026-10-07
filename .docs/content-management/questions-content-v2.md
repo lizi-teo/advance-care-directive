@@ -164,7 +164,7 @@ Examples:
 
 **Options:**
 1. Yes. Keep treating infections and supporting my body
-2. No. Just focus on my comfort and ease my symptoms
+2. No. Allow a natural death and keep me comfortable
 3. It depends. Some medications yes, others no
 
 **Tell Me More:**
@@ -356,7 +356,7 @@ Both are deeply human responses to an impossibly hard situation.
 
 **Options:** *(unchanged)*
 1. Yes. Keep treating infections and supporting my body
-2. No. Just focus on my comfort and ease my symptoms
+2. No. Allow a natural death and keep me comfortable
 3. It depends. Some medications yes, others no
 
 **Tell Me More (rewritten):**

@@ -7,6 +7,7 @@ const QA_PROGRESS_KEY = 'qa-progress'
 interface QAProgress {
   currentQuestionIndex: number
   responses: Record<string, string>
+  notes?: Record<string, string>
   timestamp: string
 }
 

@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Flower2 } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 interface AppBarProps {
   actions?: React.ReactNode
@@ -20,11 +21,10 @@ export function AppBar({ actions }: AppBarProps) {
           <Flower2 size={20} strokeWidth={1.25} />
           <span className="text-sm font-[family-name:var(--font-family-body)]">My Care Wishes</span>
         </Link>
-        {actions && (
-          <div className="flex items-center gap-1">
-            {actions}
-          </div>
-        )}
+        <div className="flex items-center gap-1">
+          {actions}
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   )

@@ -7,6 +7,7 @@ import { useResponseSubmit } from '@/features/qa/hooks/useResponseSubmit'
 import { useProgressAutoSave } from '@/features/qa/hooks/useProgressAutoSave'
 import { BreathingOverlay } from '@/features/qa/components/BreathingOverlay'
 import { ValuesDrawer, ValuesDrawerTrigger } from '@/features/qa/components/ValuesDrawer'
+import { StepMenu } from '@/features/qa/components/StepMenu'
 import { TellMeMoreModal } from '@/features/qa/components/TellMeMoreModal'
 import { SummaryScreen, SummaryFooter } from '@/features/qa/components/SummaryScreen'
 import { FinaliseScreen, FinaliseFooter } from '@/features/qa/components/FinaliseScreen'
@@ -28,7 +29,7 @@ export default function QAPage() {
   const { questions, loading, error } = useQuestions()
   const { submitResponse, submitting } = useResponseSubmit()
   const sessionId = useSessionId()
-  const { saveProgress } = useProgressAutoSave()
+  const { saveProgress, getSavedProgress, clearProgress } = useProgressAutoSave()
   const { save: saveSignature } = useSignature()
   const router = useRouter()
   const [responses, setResponses] = useState<Record<string, string>>({})
@@ -54,6 +55,7 @@ export default function QAPage() {
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const questionScrollRef = useRef<HTMLDivElement>(null)
   const summaryScrollRef = useRef<HTMLDivElement>(null)
+  const progressRestoredRef = useRef(false)
   const swipeRef = useRef<{ handleContinue: (fromSwipe?: boolean) => void; handleBack: (fromSwipe?: boolean) => void; hasSelected: boolean }>({ handleContinue: () => {}, handleBack: () => {}, hasSelected: false })
 
   // Define currentQuestion early so it can be used in useEffect hooks
@@ -97,6 +99,23 @@ export default function QAPage() {
     } catch {}
   }, [])
 
+  // Restore answers saved on this device, so leaving to /values and coming back keeps them
+  useEffect(() => {
+    if (questions.length === 0 || progressRestoredRef.current) return
+    progressRestoredRef.current = true
+    const saved = getSavedProgress()
+    if (!saved) return
+    setResponses(saved.responses ?? {})
+    setNotes(saved.notes ?? {})
+    setCurrentQuestionIndex(Math.min(Math.max(saved.currentQuestionIndex ?? 0, 0), questions.length - 1))
+  }, [questions, getSavedProgress])
+
+  // Keep saved progress up to date as people answer and move around
+  useEffect(() => {
+    if (!progressRestoredRef.current) return
+    saveProgress({ currentQuestionIndex, responses, notes, timestamp: new Date().toISOString() })
+  }, [currentQuestionIndex, responses, notes, saveProgress])
+
   // Pulse the breathe button after 10s idle on a question
   useEffect(() => {
     setBreathePulse(false)
@@ -137,7 +156,20 @@ export default function QAPage() {
     setDirection(fromSwipe ? -1 : 0)
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1)
+    } else if (!fromSwipe) {
+      router.push('/values')
     }
+  }
+
+  const handleGoToQuestion = (index: number) => {
+    setDirection(0)
+    setEditingFromSummary(false)
+    setCurrentQuestionIndex(index)
+  }
+
+  const handleGoToReview = () => {
+    setEditingFromSummary(false)
+    setShowSummary(true)
   }
 
   const handleFinalise = () => {
@@ -195,6 +227,7 @@ export default function QAPage() {
       }
       const completedSessionId = sessionId
       resetSessionId()
+      clearProgress()
       setSignedSessionId(completedSessionId)
       setSigningTimestamp(timestamp)
       setFinalising(false)
@@ -210,6 +243,7 @@ export default function QAPage() {
     saveProgress({
       currentQuestionIndex,
       responses,
+      notes,
       timestamp: new Date().toISOString()
     })
     setShowBreathing(true)
@@ -294,6 +328,17 @@ export default function QAPage() {
       <AppBar
         actions={
           <div className="flex items-center gap-1">
+            {!showSummary && !showFinalise && !showWitnessFlow && (
+              <StepMenu
+                className="md:hidden"
+                questions={questions}
+                responses={responses}
+                currentIndex={currentQuestionIndex}
+                onGoToValues={() => router.push('/values')}
+                onGoToQuestion={handleGoToQuestion}
+                onGoToReview={handleGoToReview}
+              />
+            )}
             {valuesData && valuesData.byCategory && valuesData.byCategory.length > 0 && (
               <ValuesDrawerTrigger onClick={() => setShowValuesDrawer(true)} />
             )}
@@ -375,7 +420,7 @@ export default function QAPage() {
             <motion.div
               key="question"
               ref={questionScrollRef}
-              className="absolute inset-0 overflow-y-auto overscroll-y-none"
+              className="absolute inset-0 overflow-y-auto overscroll-y-none flex flex-col"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -415,9 +460,15 @@ export default function QAPage() {
                         <p className="[font-size:var(--text-sm)] uppercase leading-none text-foreground/70 font-[family-name:var(--font-family-body)]">
                           {currentQuestion.caption || "VALUES AND WHAT MATTERS"}
                         </p>
-                        <span className="[font-size:var(--text-sm)] text-foreground/50 font-[family-name:var(--font-family-body)]">
-                          {currentQuestionIndex + 1} of {questions.length}
-                        </span>
+                        <StepMenu
+                          className="-mr-2"
+                          questions={questions}
+                          responses={responses}
+                          currentIndex={currentQuestionIndex}
+                          onGoToValues={() => router.push('/values')}
+                          onGoToQuestion={handleGoToQuestion}
+                          onGoToReview={handleGoToReview}
+                        />
                       </div>
                       <h1
                         ref={questionHeadingRef}
@@ -473,10 +524,10 @@ export default function QAPage() {
                   </div>
                 </motion.div>
               </AnimatePresence>
-              <div className="w-full border-t border-border-emphasis py-4 bg-background">
+              <div className="sticky bottom-0 z-10 mt-auto shrink-0 w-full border-t border-border-emphasis py-4 bg-background">
                 <div className="page-container flex flex-col-reverse gap-2 md:flex-row md:items-center md:gap-3 md:justify-end">
                   <AnimatePresence initial={false}>
-                    {currentQuestionIndex > 0 && !editingFromSummary && (
+                    {!editingFromSummary && (
                       <motion.div
                         key="back-footer"
                         initial={{ opacity: 0, x: -8 }}
@@ -490,7 +541,7 @@ export default function QAPage() {
                           size="lg"
                           onClick={() => handleBack()}
                           className="w-full md:w-auto h-12 md:h-11 gap-1 px-3"
-                          aria-label="Go to previous question"
+                          aria-label={currentQuestionIndex === 0 ? 'Go back to your values' : 'Go to previous question'}
                         >
                           Back
                         </Button>

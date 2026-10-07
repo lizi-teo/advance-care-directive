@@ -15,6 +15,12 @@ interface SignatureRecord {
   signed_at: string
 }
 
+interface ValuesData {
+  selected_words: string[]
+  selected_by_category: { category: string; words: string[] }[] | null
+  values_note: string | null
+}
+
 interface Response {
   question_id: string
   answer_option_id: string
@@ -44,6 +50,7 @@ export default function SignedPage() {
   const [responses, setResponses] = useState<Response[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [answerOptions, setAnswerOptions] = useState<AnswerOption[]>([])
+  const [valuesData, setValuesData] = useState<ValuesData | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
@@ -57,6 +64,7 @@ export default function SignedPage() {
         { data: rawResponses, error: responsesError },
         { data: qs },
         { data: opts },
+        { data: values },
       ] = await Promise.all([
         supabase
           .from('signatures')
@@ -80,6 +88,7 @@ export default function SignedPage() {
           .select('id, question_text, caption, display_order')
           .order('display_order', { ascending: true }),
         supabase.from('answer_options').select('id, question_id, option_text'),
+        supabase.from('session_values').select('selected_words, selected_by_category, values_note').eq('session_id', sessionId).maybeSingle(),
       ])
 
       if (responsesError || !rawResponses || rawResponses.length === 0) {
@@ -100,6 +109,7 @@ export default function SignedPage() {
       setResponses(deduped)
       setQuestions(qs ?? [])
       setAnswerOptions(opts ?? [])
+      if (values) setValuesData(values)
       setLoading(false)
     }
 
@@ -224,6 +234,37 @@ export default function SignedPage() {
                 This document was completed on {signedDate}.
               </p>
             </div>
+          )}
+
+          {/* Values */}
+          {valuesData && valuesData.selected_by_category && valuesData.selected_by_category.length > 0 && (
+            <motion.div
+              className="flex flex-col gap-5"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <p className="[font-size:var(--text-xs)] uppercase text-muted-foreground font-[family-name:var(--font-family-body)] tracking-wide">
+                What matters most to me
+              </p>
+              <div className="flex flex-col gap-3">
+                {valuesData.selected_by_category.map(({ category, words }) => (
+                  <div key={category} className="flex flex-col gap-0.5">
+                    <p className="[font-size:var(--text-xs)] text-muted-foreground font-[family-name:var(--font-family-body)] uppercase tracking-wide">
+                      {category}
+                    </p>
+                    <p className="[font-size:var(--text-base)] font-medium text-foreground font-[family-name:var(--font-family-display)]">
+                      {words.join(' · ')}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {valuesData.values_note && (
+                <p className="[font-size:var(--text-base)] text-muted-foreground font-[family-name:var(--font-family-body)] italic">
+                  &ldquo;{valuesData.values_note}&rdquo;
+                </p>
+              )}
+            </motion.div>
           )}
 
           {/* Q&A */}

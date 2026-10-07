@@ -30,7 +30,7 @@ GET /api/awake  ──(Authorization: Bearer CRON_SECRET)
                 ▼
         Supabase sees daily activity → project stays awake
 
-Claude routine (every 2 days)
+Claude routine (every 2 days)   ⚠️ PAUSED — blocked by cloud egress policy
         │
         ▼
 GET /api/awake/status  ──(no auth)
@@ -130,6 +130,8 @@ Every 2 days caps alert latency at 2 days, leaving 5 days to fix it.
 
 ## The Watchdog Routine
 
+> ⚠️ **PAUSED as of 23 July 2026.** See *Watchdog blocked by cloud egress policy* under Known Issues. The Vercel cron heartbeat is unaffected and still running — only the alerting is off.
+
 - **Manage at:** https://claude.ai/code/routines/trig_01WyBUmLNBrKTibuGZQKydgL
 - **Schedule:** `0 22 */2 * *` — every 2 days, 22:00 UTC (8am Sydney)
 - **Model:** `claude-sonnet-5`
@@ -184,6 +186,10 @@ Work through in order:
 ---
 
 ## Known Issues
+
+- **Watchdog blocked by cloud egress policy (23 July 2026 — routine now paused).** The Claude cloud routine fired on schedule but could never complete its check: the sandbox's outbound proxy returns 403 on CONNECT to `advance-care-directive.vercel.app` (*"gateway answered 403 to CONNECT (policy denial or upstream failure)"*). Cloud agents run behind an **egress allowlist** — the same restriction CLAUDE.md already records for `api.tavily.com`. Nothing is wrong with the app or the heartbeat; the watchdog simply cannot reach the host.
+
+  Paused via `RemoteTrigger` (`enabled: false`) rather than deleted, so it can be re-armed by flipping `enabled` back to `true` once the host is reachable. **Until then there is no automated alerting** — a silent cron failure would go unnoticed until the project pauses. An external uptime monitor pointed at `/api/awake/status` is the better replacement anyway (see Alternatives): it needs no credentials, no tokens, and alerts on the 503 alone.
 
 - **Vercel preview env vars won't set** via CLI 54.7.1 — fails even using Vercel's own suggested command. Doesn't matter (crons are production-only). Retry after `npm i -g vercel@latest`.
 - **Two GitHub accounts** are authenticated (`lizzie-teo` and `lizi-teo`). This repo belongs to `lizi-teo`; pushes 403 if the wrong one is active. Fix: `gh auth switch --user lizi-teo`.

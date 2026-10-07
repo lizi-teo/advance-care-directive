@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -12,8 +12,6 @@ import { useSessionId } from '@/features/qa/hooks/useSessionId'
 import { useValuesSubmit } from '@/features/values/hooks/useValuesSubmit'
 import { useValuesCategories } from '@/features/values/hooks/useValuesCategories'
 import { toast } from 'sonner'
-import { Check } from 'lucide-react'
-import { ICON_STROKE_WIDTH } from '@/lib/theme-config'
 
 export default function ValuesPage() {
   const router = useRouter()
@@ -25,6 +23,19 @@ export default function ValuesPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [note, setNote] = useState('')
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
+
+  // Bring back earlier picks when someone returns here from the questions
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('qa-values')
+      if (!stored) return
+      const parsed = JSON.parse(stored)
+      // Read after mount (not in useState) so the server and first client render match
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (Array.isArray(parsed?.words)) setSelected(new Set(parsed.words))
+      if (typeof parsed?.note === 'string') setNote(parsed.note)
+    } catch {}
+  }, [])
 
   const toggleWord = (word: string) => {
     setSelected(prev => {
@@ -102,7 +113,7 @@ export default function ValuesPage() {
           </div>
         </div>
 
-        <div className="page-container pt-5 pb-28 md:py-8 lg:py-10 flex flex-col gap-5 md:gap-6">
+        <div className="page-container pt-5 pb-10 md:py-8 lg:py-10 flex flex-col gap-5 md:gap-6">
           <div className="w-full flex flex-col md:flex-row gap-6 lg:gap-8 xl:gap-10 md:items-start">
             <motion.div
               initial={reduceMotion ? false : { opacity: 0, y: 12 }}
@@ -159,6 +170,14 @@ export default function ValuesPage() {
                               {activeCategory.name}
                             </h2>
                           </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleSkip}
+                            className="h-10 px-3 -mr-2 -mt-1 text-foreground/70"
+                          >
+                            Skip
+                          </Button>
                         </div>
                         <p className="[font-size:var(--text-base)] text-foreground/70 font-[family-name:var(--font-family-body)] leading-relaxed mt-3 max-w-2xl">
                           {activeCategory.prompt_text}
@@ -209,15 +228,25 @@ export default function ValuesPage() {
                             />
                           ))}
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setActiveCategoryIndex(index => Math.min(categories.length - 1, index + 1))}
-                          disabled={!canGoNext}
-                          className="h-10 px-3"
-                        >
-                          Next
-                        </Button>
+                        {canGoNext ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setActiveCategoryIndex(index => index + 1)}
+                            className="h-10 px-3"
+                          >
+                            Next
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            onClick={handleSave}
+                            disabled={submitting}
+                            className="h-10 px-3"
+                          >
+                            {submitting ? 'Saving…' : 'Continue →'}
+                          </Button>
+                        )}
                       </div>
                     </>
                   )}
@@ -258,29 +287,6 @@ export default function ValuesPage() {
           </div>
         </div>
       </main>
-
-      <div className="w-full border-t border-border-emphasis bg-background/95 backdrop-blur shrink-0 sticky bottom-0 z-40">
-        <div className="page-container pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:py-4 flex justify-end">
-          <div className="flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center md:justify-end md:gap-3">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={handleSkip}
-              className="hidden md:inline-flex w-full md:w-auto h-12 md:h-11"
-            >
-              Skip
-            </Button>
-            <Button
-              size="lg"
-              onClick={handleSave}
-              disabled={submitting || loading}
-              className="w-full md:w-auto h-12 md:h-11"
-            >
-              {submitting ? 'Saving…' : 'Continue'}
-            </Button>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
@@ -301,7 +307,6 @@ function WordChip({
       type="button"
       onClick={onToggle}
       aria-pressed={selected}
-      layout={!reduceMotion}
       whileTap={reduceMotion ? undefined : { scale: 0.97 }}
       className={cn(
         'inline-flex min-h-11 items-center gap-2 px-4 py-2 rounded-full border [font-size:var(--text-sm)] font-[family-name:var(--font-family-body)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
@@ -310,20 +315,6 @@ function WordChip({
           : 'bg-background text-foreground border-border hover:border-foreground/40'
       )}
     >
-      <AnimatePresence initial={false}>
-        {selected && (
-          <motion.span
-            key="check"
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={reduceMotion ? undefined : { opacity: 0, scale: 0.6 }}
-            transition={{ duration: reduceMotion ? 0 : 0.14, ease: 'easeOut' }}
-            aria-hidden="true"
-          >
-            <Check size={16} strokeWidth={ICON_STROKE_WIDTH} />
-          </motion.span>
-        )}
-      </AnimatePresence>
       {word}
     </motion.button>
   )

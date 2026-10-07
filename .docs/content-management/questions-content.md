@@ -84,7 +84,7 @@ Heading: Infections and Medications Question: If you are not expected to recover
 
 [ ] Yes. Keep treating infections and supporting my body.
 
-[ ] No. Just focus on my comfort and ease my symptoms.
+[ ] No. Allow a natural death and keep me comfortable.
 
 [ ] It depends. Some medications yes, others no.
 

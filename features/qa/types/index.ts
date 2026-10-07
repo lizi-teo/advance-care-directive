@@ -12,6 +12,7 @@ export interface AnswerOption {
   question_id: string
   option_text: string
   option_order: number
+  is_active: boolean
 }
 
 export interface UserResponse {

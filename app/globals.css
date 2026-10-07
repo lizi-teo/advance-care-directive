@@ -147,6 +147,14 @@
     --mkt-section-1: var(--gray-100);
     --mkt-section-1-card: var(--basics-white);
     --mkt-section-2: var(--purple-50);
+    --mkt-paper: linear-gradient(180deg, rgb(255 255 255 / 0.98) 0%, rgb(255 255 255 / 0.82) 40%, rgb(255 255 255 / 0.3) 100%);
+    --mkt-paper-back: rgb(255 255 255 / 0.45);
+    --mkt-paper-rule: rgb(48 34 122 / 0.12);
+    --mkt-hero-texture-opacity: 1;
+    --mkt-hero-texture-blend: normal;
+    /* Phone: soft white glow behind the hero text so it reads clearly over the hills */
+    --mkt-hero-scrim: radial-gradient(ellipse 120% 85% at 35% 50%, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0.5) 55%, rgb(255 255 255 / 0.1) 100%);
+    --mkt-paper-shadow: 0 1px 2px rgb(48 34 122 / 0.06), 0 18px 40px -12px rgb(48 34 122 / 0.28);
 
     /* Typography - Font Families */
     --font-family-body: var(--font-poppins);
@@ -252,6 +260,15 @@
     --mkt-section-1: #1B1724;
     --mkt-section-1-card: #292337;
     --mkt-section-2: #292337;
+    --mkt-paper: linear-gradient(180deg, rgb(41 35 55 / 0.98) 0%, rgb(41 35 55 / 0.82) 40%, rgb(41 35 55 / 0.3) 100%);
+    --mkt-paper-back: rgb(41 35 55 / 0.45);
+    --mkt-paper-rule: rgb(255 255 255 / 0.45);
+    --mkt-hero-texture-opacity: 0.6;
+    --mkt-hero-texture-blend: normal;
+    /* Darkens the hills so hero text stays above 4.5:1 contrast */
+    /* Phone: soft round glow behind the hero text, pink still shows at the edges */
+    --mkt-hero-scrim: radial-gradient(ellipse 120% 85% at 35% 50%, rgb(27 23 36 / 0.3) 0%, rgb(27 23 36 / 0.3) 55%, rgb(27 23 36 / 0.05) 100%);
+    --mkt-paper-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 18px 40px -12px rgb(0 0 0 / 0.6);
 
     /* Gradients - Dark Mode */
     --gradient-dark-1: linear-gradient(-65.99deg, rgb(119, 88, 176) 7.45%, rgb(134, 78, 107) 20.65%, rgb(63, 34, 116) 81.64%);
@@ -535,5 +552,15 @@
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
+  }
+}
+
+/* Desktop: soft round glow behind the hero text, pink stays clear behind the directive preview */
+@media (min-width: 1024px) {
+  :root {
+    --mkt-hero-scrim: radial-gradient(ellipse 52% 85% at 22% 55%, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0.5) 50%, rgb(255 255 255 / 0) 100%);
+  }
+  .dark {
+    --mkt-hero-scrim: radial-gradient(ellipse 52% 85% at 22% 55%, rgb(27 23 36 / 0.3) 0%, rgb(27 23 36 / 0.3) 50%, rgb(27 23 36 / 0) 100%);
   }
 }

@@ -30,10 +30,11 @@ export function useQuestions() {
           return
         }
 
-        // Fetch all answer options
+        // Fetch active answer options (retired ones stay in the table for saved answers)
         const { data: optionsData, error: optionsError } = await supabase
           .from('answer_options')
           .select('*')
+          .eq('is_active', true)
           .order('option_order')
 
         if (optionsError) {

@@ -40,7 +40,9 @@ VALUES (
 • Some people feel that even in advanced dementia, life still holds value, and want all care continued.
 • Others feel that if they can no longer recognise the people they love, they would not want treatments that only prolong life.
 
-If you answer this question, your wishes here take priority over your earlier answer about tube feeding — specifically in the context of dementia.$$,
+If you answer this question, your wishes here take priority over your earlier answer about tube feeding — specifically in the context of dementia.
+
+Assisted dying cannot be requested in this document, or by your family on your behalf. You must ask for it yourself, while you can still make your own decisions. Most people with dementia alone do not qualify. If this matters to you, talk to your doctor early. A later question lets you record your values about assisted dying.$$,
   10
 );
 
@@ -51,11 +53,10 @@ WITH new_q AS (
 INSERT INTO answer_options (question_id, option_text, option_order)
 SELECT new_q.id, opts.option_text, opts.option_order
 FROM new_q, (VALUES
-  ('I would want all life-prolonging treatments continued, including tube feeding.', 1),
-  ('I would want care focused on comfort and quality of life — not prolonging life.', 2),
-  ('I''m not sure — it would depend on my overall condition at the time.', 3),
-  ('I''d want my loved ones to decide when the time comes.', 4),
-  ('If assisted dying is available where I live, I would want to explore that option while I still have capacity — not wait until this stage.', 5)
+  ('Keep me alive. Continue all treatments, including tube feeding.', 1),
+  ('Let me die naturally. Stop treatments that only keep me alive, such as tube feeding. Keep me comfortable and free from pain.', 2),
+  ('I''m not sure. It would depend on my condition at the time.', 3),
+  ('Let my loved ones or substitute decision-maker decide when the time comes.', 4)
 ) AS opts(option_text, option_order);
 
 
@@ -85,7 +86,7 @@ FROM new_q, (VALUES
   ('I want maximum pain relief, even if it may shorten my life.', 1),
   ('I want pain relief balanced with staying as alert and present as possible.', 2),
   ('I want to stay as conscious as I can, even if that means more discomfort.', 3),
-  ('I''d want my loved ones and care team to decide what''s best.', 4)
+  ('Let my loved ones, substitute decision-maker and care team decide what''s best.', 4)
 ) AS opts(option_text, option_order);
 
 
@@ -116,7 +117,7 @@ FROM new_q, (VALUES
   ('At home, surrounded by the people I love.', 1),
   ('In a hospice or palliative care setting.', 2),
   ('In a hospital, with full medical support nearby.', 3),
-  ('I don''t have a strong preference — I trust my loved ones to decide.', 4)
+  ('I don''t have a strong preference. Let my loved ones or substitute decision-maker decide.', 4)
 ) AS opts(option_text, option_order);
 
 
